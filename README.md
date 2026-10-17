@@ -193,6 +193,32 @@ Two rules matter more than the format:
 
 ---
 
+## Battle report style
+
+A report is read to understand the battle, not to audit the sources. Those are two jobs, so they live
+in two fields. Mixing them produced paragraphs that answered a question nobody asked:
+
+> "赵军降卒约四十万系《史记》所载数字、学界有争议；秦军总数《史记》未载，仅记奇兵二万五千、骑五千。"
+
+Every fact there is correct. None of it says what is happening on the ground.
+
+| Field | Carries | Length |
+|---|---|---|
+| `situation_report` / `report` | Narration: where each army is, what it is doing, who holds the advantage and why, what happens next | 150–200 chars |
+| `source_note` | Provenance: the figures, their citations, what is disputed | 30–60 chars |
+| `current_time` | The timestamp, nothing else | 8–18 chars |
+
+The body is banned from textual-criticism vocabulary (`史料未载` / `学界有争议` / `据《史记》载` /
+`可考` / `存疑`) and from citing works in 《》 brackets; those belong in `source_note`, which renders as
+a separate dimmed line under the report. An empty note renders nothing — a stray "考据：" hanging
+under every turn would be worse than having no note at all.
+
+The prompt ships a matched pair of ✗/✓ examples, because "write in a narrative register" on its own
+produces something half-academic. The model has to see that the target is a causal chain
+("they were not trying to stop him, they were letting him go deeper"), not a different adjective.
+
+---
+
 ## Model configuration
 
 Model assignments live in `gentactix/config.py`:
@@ -215,6 +241,7 @@ To point at a different OpenAI-compatible provider, change `DEEPSEEK_BASE_URL` a
 - **The map is rebuilt on every rerun, on purpose.** Folium mutates its own layer tree when the map is serialized, so a cached map object produces a different component hash on each run; Streamlit then tears down and rebuilds the iframe, which reads as a flickering map. Rebuilding from state keeps the hash stable, and the rebuild is cheap next to the map paint.
 - **Retrieval can fail quietly, so it is not allowed to.** A disabled toggle, an empty corpus and a zero-hit query each surface a different, visible message. The failure mode being guarded against is not a crash — it is a turn that reads as well-sourced while the model was improvising.
 - **Field names are normalized in one place.** Units arrive from the model with either English or Chinese keys; `state.get_unit_field` is the single resolution point, so tolerance for alias drift never has to be re-implemented.
+- **Unreadable reports are a field-design failure, not a tone failure.** The first version asked for a 100-character assessment and also demanded that sources be cited inside it. Crowded into one field, the only possible output is compressed noun phrases — which is why adding "be more conversational" to a prompt does nothing, while splitting the field fixes it outright.
 
 ---
 
