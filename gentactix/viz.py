@@ -4,6 +4,8 @@
 均由 app.py 显式传入，便于缓存与单测。
 """
 
+import math
+
 import streamlit as st
 import folium
 from folium import plugins
@@ -193,6 +195,35 @@ def draw_units_and_trails(m, current_units, color, team_key, last_war_state):
                     break
 
 
+def impact_sector_vertices(origin_lat, origin_lng, target_lat, target_lng,
+                           radius_m, half_angle_deg=30.0, step_deg=5.0):
+    """生成「定向扇区」的多边形顶点（folium 要求的 [lat, lng] 序列）。
+
+    设计取舍（替代原先的正圆）：
+      1. 圆心是**攻击方位置**，不是交战点 —— 扇区回答的是「谁朝哪个方向能打到」，
+         交战点只是打击落点。用交战点当圆心会让方向信息彻底消失。
+      2. 方位角从正北顺时针计（a=0 → 北，a=90 → 东），与 atan2(Δlng, Δlat) 一致。
+      3. 半角取 ±30°：冷兵器/线列交战是正面接触，不是全向覆盖；
+         真正的"全向"场景请用空心环（调用方会在无 attack 方向时降级）。
+      4. 东西向按 cos(lat) 修正，避免高纬度扇区被压扁。战场尺度下这是必要且足够的近似。
+    """
+    bearing = math.degrees(math.atan2(target_lng - origin_lng, target_lat - origin_lat))
+
+    r_lat = radius_m / 111320.0
+    r_lng = radius_m / (111320.0 * max(0.1, math.cos(math.radians(abs(origin_lat)))))
+
+    steps = max(1, int(round(2 * half_angle_deg / step_deg)))
+    pts = [[origin_lat, origin_lng]]
+    for i in range(steps + 1):
+        angle = math.radians(bearing - half_angle_deg + i * step_deg)
+        pts.append([
+            origin_lat + r_lat * math.cos(angle),
+            origin_lng + r_lng * math.sin(angle),
+        ])
+    pts.append([origin_lat, origin_lng])
+    return pts
+
+
 def build_tactical_map(war_state, last_war_state, turn_count):
     """根据当前战局构建 folium 战术地图对象。纯函数：相同入参产出相同地图。"""
     # 🐛 修复：原代码直接索引 war_state['center']，AI 漏字段时会 KeyError 白屏
@@ -253,31 +284,57 @@ def build_tactical_map(war_state, last_war_state, turn_count):
 
         # 🐛 修复：坐标可能是字符串，统一做数值校验，避免 folium 收到脏数据
         b_lat_f, b_lng_f = to_float(b_lat), to_float(b_lng)
-        if b_lat_f is not None and b_lng_f is not None:
-            battle_pos = [b_lat_f, b_lng_f]
+        if b_lat_f is None or b_lng_f is None:
+            continue
+        battle_pos = [b_lat_f, b_lng_f]
 
-            folium.Marker(battle_pos, icon=folium.Icon(color=icon_color, icon='fire', prefix='fa'),
-                          tooltip=f"💥 <b>交战发生 (波及 {impact_radius} 米)</b><br>{desc}").add_to(m)
-            folium.Circle(location=battle_pos, radius=impact_radius, color=border_color, weight=2,
-                          fill=True, fill_color=fill_color, fill_opacity=0.4,
-                          tooltip=f"杀伤/影响范围: {impact_radius} 米").add_to(m)
+        # 🌟 定向扇区：攻击方坐标决定方位角（arc 从攻击方指向交战点）
+        attacker_pos_raw = battle.get('attacker_pos')
+        a_lat = a_lng = None
+        if isinstance(attacker_pos_raw, (list, tuple)) and len(attacker_pos_raw) == 2:
+            a_lat = to_float(attacker_pos_raw[0])
+            a_lng = to_float(attacker_pos_raw[1])
 
-            # 🌟 修复：安全提取 attacker_pos 并绘制火力打击轨迹
-            attacker_pos_raw = battle.get('attacker_pos')
-            if isinstance(attacker_pos_raw, (list, tuple)) and len(attacker_pos_raw) == 2:
-                a_lat = to_float(attacker_pos_raw[0])
-                a_lng = to_float(attacker_pos_raw[1])
-                if a_lat is not None and a_lng is not None:
-                    # 🌟 升级为动态火力打击轨迹
-                    plugins.AntPath(
-                        locations=[[a_lat, a_lng], battle_pos],
-                        color=border_color,
-                        pulse_color='white',  # 脉冲颜色设为白色，有种曳光弹/激光的视觉效果
-                        weight=2,
-                        dash_array=[5, 20],
-                        delay=400,            # 动画速度极快，模拟火力投射
-                        tooltip="🔥 火力打击方向"
-                    ).add_to(m)
+        # 攻击方缺失 / 非法 / 与交战点重合（方位角无意义）⇒ 降级为空心虚线环。
+        # ⚠️ 绝不能「猜一个方向」硬画：指向错误的扇区比不表达方向更有害。
+        same_as_target = (a_lat is not None and a_lng is not None
+                          and abs(a_lat - b_lat_f) < 1e-9 and abs(a_lng - b_lng_f) < 1e-9)
+        use_sector = (a_lat is not None and a_lng is not None and not same_as_target)
+
+        # 形状自身的 tooltip 必须带上交战描述：
+        # 原实现把描述放在 marker 上，而 marker 被整片圆盖住，hover 命中的永远是圆，
+        # 于是「谁打谁」这条最关键的信息在界面上等于不存在。
+        shape_tooltip = (f"💥 <b>{desc}</b><br>波及范围 ≈ {impact_radius:.0f} 米"
+                         + ("" if use_sector else "<br>（未提供攻击方位，仅显示范围）"))
+
+        if use_sector:
+            folium.Polygon(
+                locations=impact_sector_vertices(a_lat, a_lng, b_lat_f, b_lng_f, impact_radius),
+                color=border_color, weight=1.5,
+                fill=True, fill_color=fill_color, fill_opacity=0.12,
+                dash_array='6 4', tooltip=shape_tooltip,
+            ).add_to(m)
+        else:
+            folium.Circle(
+                location=battle_pos, radius=impact_radius, color=border_color,
+                weight=1.5, fill=False, dash_array='6 4', tooltip=shape_tooltip,
+            ).add_to(m)
+
+        folium.Marker(battle_pos, icon=folium.Icon(color=icon_color, icon='fire', prefix='fa'),
+                      tooltip=f"💥 <b>交战发生 (波及 {impact_radius:.0f} 米)</b><br>{desc}").add_to(m)
+
+        # 火力打击轨迹：扇区已经表达了方向，这里的动画只负责指向落点，故压细压淡
+        if use_sector:
+            plugins.AntPath(
+                locations=[[a_lat, a_lng], battle_pos],
+                color=border_color,
+                pulse_color='white',  # 脉冲颜色设为白色，有种曳光弹/激光的视觉效果
+                weight=1.5,
+                opacity=0.55,
+                dash_array=[5, 20],
+                delay=400,            # 动画速度极快，模拟火力投射
+                tooltip="🔥 火力打击方向"
+            ).add_to(m)
 
     # 🌟 核心升级：战术沙盘全屏展开模块
     plugins.Fullscreen(
