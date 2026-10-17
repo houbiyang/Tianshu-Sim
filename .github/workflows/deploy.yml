@@ -59,7 +59,6 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          WRANGLER_LOG: debug
         run: npx wrangler deploy
 
       # 部署后快照容器状态（即使失败也不阻塞，仅作信息输出）
