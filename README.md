@@ -3,11 +3,37 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](requirements.txt)
 
-**An AI-driven wargame simulator that turns historical events and hypothetical conflicts into a live, turn-based tactical sandbox on a real map.**
+**A teaching sandbox for military history: put a campaign on a real map, then watch the decisions play out round by round.**
 
-Describe a scenario — *"Pearl Harbor, 1941"*, *"Normandy, 1944"*, or a conflict that never happened — and GenTactix deploys the order of battle onto an interactive map, then advances the battle round by round while a second AI model sits in the command tent as your chief of staff to review every decision.
+Describe a scenario — *"Changping, 262 BC"*, *"Pearl Harbor, 1941"*, or a campaign that never happened — and GenTactix lays the order of battle onto an interactive map. Each round advances the situation and explains why it moved that way; a second AI model sits alongside as chief of staff to critique the decisions taken.
 
 Built with Streamlit, Folium, and DeepSeek, and packaged for deployment as a container on Cloudflare.
+
+---
+
+## Scope: what this is, and what it is not
+
+GenTactix is a **teaching aid for military history and strategic thinking**. Its job is to make the
+geography of a campaign legible — why a pass mattered, why a supply line was exposed, why an army
+that outnumbered its opponent still lost.
+
+It is **not an operations simulator**. There is no adjudication engine: casualties, morale and combat
+power are narrated by a language model, not computed from a model of combat. Running the same
+scenario twice produces different numbers. Read it as a wargame, or use it to reason about real
+operations, and it will mislead you — the figures exist to make a situation concrete, not to be
+trusted as estimates.
+
+**Good for**
+
+- Seeing how terrain and distance constrain a plan
+- Comparing a historical decision against the alternatives it ruled out
+- Learning where a claim comes from: every report separates narration from sourcing
+
+**Not for**
+
+- Force-on-force analysis, attrition estimates, or any comparison that needs reproducible numbers
+- Operational planning, professional military training, or advice of any kind
+- Anything where a wrong number has a cost
 
 ---
 
@@ -235,6 +261,26 @@ To point at a different OpenAI-compatible provider, change `DEEPSEEK_BASE_URL` a
 
 ---
 
+## Limitations
+
+Listed before you find them yourself. Every item here is a deliberate trade-off, not a bug waiting
+to be fixed:
+
+| Limitation | What it means in practice |
+|---|---|
+| **Outcomes are not computed** | No adjudication engine, no attrition equation, no Lanchester model, no logistics curve. The model narrates what happens next. Two runs of the same scenario diverge. |
+| **12–24 units per side, by design** | Armies are symbolic formations, not troops. Changping's hundreds of thousands collapse into a dozen markers — the map teaches *position*, never *scale*. |
+| **No C2, sensor or supply model** | Command delay, detection range and fuel consumption are absent. Manoeuvre therefore looks cleaner and faster than it was. |
+| **Engagement radii are derived, not measured** | The sector radius comes from `attack_range × 1.2`, falling back to a per-arm-type table. It marks *who can reach whom*, not a hit probability. |
+| **Grounding is not verification** | RAG makes the model quote your corpus instead of its memory, but a wrong corpus produces confident wrong answers. `source_note` tells you which claim came from where; it cannot tell you the source is right. |
+| **UI is Chinese-only** | Scenario text and model output handle English; the interface labels do not. |
+
+If you need reproducible numbers, this is the wrong tool — a rule-based wargame or a proper
+simulation will serve you better. GenTactix is for the step before that: understanding what the
+problem looked like from the inside.
+
+---
+
 ## Design notes
 
 - **The scenario is a closed sandbox.** The engine is explicitly instructed not to invent capabilities outside what the scenario establishes, and there is no live web access — DeepSeek's API offers no native browsing. Grounding, when enabled, comes only from the local corpus, never from the network. The "live intel" toggle only biases the model toward injecting unexpected events.
@@ -253,4 +299,4 @@ Free to use, modify, and redistribute — including commercially — provided th
 
 ---
 
-**Author:** [pystrategylab](https://github.com/pystrategylab) — *Turning history into a testbed.*
+**Author:** [pystrategylab](https://github.com/pystrategylab) — *Turning history into something you can see.*
