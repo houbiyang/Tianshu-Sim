@@ -25,21 +25,25 @@ from .state import get_unit_field, extract_lat_lng
 TILE_LAYERS = [
     dict(name="🛰️ 天眼卫星实景", show=True,
          url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-         attr="Esri World Imagery"),
+         attr="Esri World Imagery", max_native_zoom=18),
     dict(name="🌊 海洋底图", show=False,
          url="https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}",
-         attr="Esri Ocean Base"),
+         attr="Esri Ocean Base", max_native_zoom=10),
+    # ⚠️ 实测（长平 35.70,112.93）：Esri 地形底图在中国大陆只到 z13，
+    #    z14+ 返回官方的 "Map data not yet available" 灰色占位瓦片（2521 字节）。
+    #    这里声明 max_native_zoom=13，Leaflet 会在更高缩放时放大 z13 瓦片
+    #    —— 画面会糊，但不会整片空白。（卫星实景实测到 z18 正常，故设为 18。）
     dict(name="🏔️ 战术地形图", show=False,
          url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
-         attr="Esri World Topo"),
+         attr="Esri World Topo", max_native_zoom=13),
     dict(name="🗺️ OpenTopoMap（国内网络通常不可达）", show=False,
          url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
-         attr="OpenTopoMap"),
+         attr="OpenTopoMap", max_native_zoom=17),
     # ⚠️ 高德的瓦片是 GCJ-02 坐标系，而本应用所有单位坐标是 WGS-84，
     #    直接叠加会有数百米偏移，仅作应急备用。
     dict(name="🇨🇳 高德路网（GCJ-02，点位会有数百米偏移）", show=False,
          url="https://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
-         attr="高德地图"),
+         attr="高德地图", max_native_zoom=18),
 ]
 
 
@@ -384,7 +388,10 @@ def build_tactical_map(war_state, last_war_state, turn_count):
             name=_cfg["name"],
             overlay=False,   # False = 互斥底图，而不是透明叠加层
             control=True,
-            show=_cfg["show"]
+            show=_cfg["show"],
+            # 超过该级别不再请求瓦片，改为放大最后一级 —— 避免整片
+            # "Map data not yet available" 占位图（Esri 地形/街道在中国的实际上限）
+            max_native_zoom=_cfg.get("max_native_zoom"),
         ).add_to(m)
 
     draw_units_and_trails(m, war_state.get('red_units', []), 'red', 'red_units', last_war_state)
