@@ -4,9 +4,16 @@
 #       无需浏览器登录（区别于 deploy.sh 的 wrangler login）。
 # 触发：① push 到 main 且改动涉及下列路径；② 手动 Run workflow。
 # 前置（仓库 Settings → Secrets and variables → Actions）：
-#   CLOUDFLARE_API_TOKEN  = Cloudflare API Token（"Edit Cloudflare Workers" 模板）
+#   CLOUDFLARE_API_TOKEN  = Cloudflare API Token
 #   CLOUDFLARE_ACCOUNT_ID = 你的 Account ID
+# ⚠️ Token 权限必须同时包含（缺一不可）：
+#   ① Account → Workers Scripts:Edit    —— 上传 Worker 脚本
+#   ② Account → Workers Containers:Edit —— 构建/查询容器镜像
+#    注意控制台里叫 "Workers Containers"（Developer Platform 分组下）。
+#    只给 Workers 权限时，镜像能构建、Worker 也能上传，但最后会卡在
+#    GET /accounts/{id}/containers/me 返回 401 Unauthorized。
 # 注意：Cloudflare 账号需已订阅 Workers Paid（$5/月），否则 Containers 不可用。
+# 注意：wrangler 4.x 要求 Node.js >= 22，下方 setup-node 版本不要降回 20。
 
 name: Deploy GenTactix → Cloudflare Containers
 
