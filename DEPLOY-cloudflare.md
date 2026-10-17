@@ -371,6 +371,10 @@ Streamlit 进程上，session 才能被正确识别与保持。因此用固定�
 | `curl api.cloudflare.com` 返回 `000` | 你自己终端没带代理 | 本机代理是 `127.0.0.1:60660`，`export HTTPS_PROXY=...` 后重试 |
 | CI 里 `npm ci` 报 lock 不同步 | 改过 `package.json` 版本但没更新 lock | 本地跑一次 `npm install` 后把 `package-lock.json` 一起提交 |
 | CI 类型检查失败 | `src/index.ts` 类型错 | 本地 `npx tsc --noEmit` 能复现同样报错，先修再推 |
+| CI 报 `A request to the Cloudflare API (/accounts/***/containers/me) failed.`（无详情） | wrangler 把这个 API 的响应体吞掉了，只留一行错误 | 别猜，直接裸 curl 看真实 body：<br>`curl -s -H "Authorization: Bearer $CF_TOKEN" "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/containers/me"`<br>也可在 Actions 里手动 **Run workflow**，会自动跑诊断步骤打印 body |
+| 上面 curl 返回 `Unauthorized: You do not have access to Cloudflare Containers. Deploying containers requires the Workers Paid plan.` | **账号是免费版**，Containers 属于 Workers Paid 权益 | 去 https://dash.cloudflare.com/?to=/:account/workers/plans 订阅 **Workers Paid（$5/月）**。注意：这与 token 权限无关，token 配得再对也没用 |
+| 上面 curl 返回 401 且 token 权限里确实没有 Containers | token 缺 **Account → Workers Containers: Edit**（控制台在 *Developer Platform* 分组下，名字叫 "Workers Containers"，不叫 "Cloudflare Containers"） | 编辑 token 补该权限。多数情况下改权限不改 token 值，secret 无需更新 |
+| CI 报 `Wrangler requires at least Node.js v22.0.0` | workflow 里 `setup-node` 版本太低 | 保持 `node-version: '22'` |
 
 ### 🗺️ 附注：地图底图已改为「多源可切换」（已修复，重要）
 
