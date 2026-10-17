@@ -31,6 +31,68 @@ def ensure_session_state():
             st.session_state[_key] = _default
 
 
+# ==========================================
+# 🔤 单位字段名归一化（中文键 → 标准英文键）
+# ==========================================
+# 🐛 修复「地图上所有单位都显示为『未知单位』」：
+#    Init Prompt 里原本用中文描述单位属性（"必须包含：名称、类型、经纬度、HP、战斗力…"），
+#    只有坐标被强制要求用 "lat"/"lng"，其余字段没规定键名。
+#    AI 于是很自然地输出 {"名称": "...", "类型": "步兵", ...}，
+#    而渲染层只认 unit.get('name') ⇒ 铭牌全部回退成 "未知单位"；
+#    同时 '类型' 恰好被 get_unit_field 的别名链兜住，所以符号还能显示（步兵 X），
+#    表现为「名字全丢、军标还在」这种极具迷惑性的半坏状态。
+#    现在在鉴权入口统一归一化，下游（渲染 / 海陆判定 / 锚点吸附 / 复盘）只认英文标准键。
+UNIT_TEAM_KEYS = ('red_units', 'blue_units')
+
+UNIT_KEY_ALIASES = {
+    'name': ('名称', '单位名称', '部队名称', '单位', '部队', 'unit_name'),
+    'type': ('类型', '兵种', '兵种类型', '单位类型', '类别', 'unit_type'),
+    'hp': ('HP', 'hp值', '兵力', '生命值', '血量', '耐久', '存活兵力'),
+    'combat_power': ('战斗力', '战力', '攻击力', '攻击强度', 'power', 'attack'),
+    'speed': ('移动速度', '速度', '行进速度', 'mobility'),
+    'attack_range': ('射程', '攻击范围', '打击范围', 'range'),
+    'morale': ('士气', '士气值'),
+    'supply': ('补给', '补给值', '后勤', '后勤补给'),
+    'lat': ('纬度', 'latitude', 'current_lat'),
+    'lng': ('经度', 'longitude', 'current_lng'),
+}
+
+
+def normalize_unit_keys(unit):
+    """把单位字典里的中文/别名键补成标准英文键（幂等，且不覆盖已有英文值）。
+
+    只做「补缺失键」，不删除原始键 —— 导出的 JSON 仍保留 AI 原始字段，
+    便于排查 AI 又发明了什么新键名。
+    """
+    if not isinstance(unit, dict):
+        return unit
+    for std_key, aliases in UNIT_KEY_ALIASES.items():
+        if unit.get(std_key) not in (None, ''):
+            continue
+        for alias in aliases:
+            if alias in unit and unit[alias] not in (None, ''):
+                unit[std_key] = unit[alias]
+                break
+    return unit
+
+
+def normalize_state_units(war_state):
+    """对一整份战局数据（含 updated_state 嵌套层）里的所有单位做键名归一化。"""
+    if not isinstance(war_state, dict):
+        return war_state
+    targets = [war_state]
+    inner = war_state.get('updated_state')
+    if isinstance(inner, dict):
+        targets.append(inner)
+    for container in targets:
+        for team in UNIT_TEAM_KEYS:
+            units = container.get(team)
+            if isinstance(units, list):
+                for unit in units:
+                    normalize_unit_keys(unit)
+    return war_state
+
+
 def get_unit_field(unit, *keys, default=''):
     """从单位字典中按候选键名顺序取出第一个**存在且非 None** 的字段值。
 

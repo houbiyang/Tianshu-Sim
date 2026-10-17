@@ -11,7 +11,7 @@ from global_land_mask import globe  # 🌟 核心：引入地球海陆面具
 from folium import plugins  # 🌟 新增：引入 folium 插件库以使用 AntPath
 
 from .config import to_float, is_naval
-from .state import get_unit_field
+from .state import get_unit_field, normalize_state_units
 
 # 红蓝双方单位容器键名（全应用统一引用，避免硬编码字符串漂移）
 UNIT_TEAMS = ["red_units", "blue_units"]
@@ -72,7 +72,7 @@ def get_coordinate_errors(state):
 
     for team in UNIT_TEAMS:
         for unit in state.get(team, []):
-            unit_type = get_unit_field(unit, 'type', '类型', 'unit_type', 'class')
+            unit_type = get_unit_field(unit, 'type', '类型', '兵种', 'unit_type', 'class')
 
             if is_naval(unit_type):
                 lat = get_unit_field(unit, 'lat', 'latitude', '纬度')
@@ -80,8 +80,10 @@ def get_coordinate_errors(state):
 
                 # 🌟 核心升级：使用双波段雷达进行绝对物理校验
                 if not is_water_precise(lat, lng):
+                    unit_name = get_unit_field(
+                        unit, 'name', '名称', '单位名称', '部队名称', 'unit_name', default='未命名单位')
                     errors.append(
-                        f"错误：你将海军单位 '{unit.get('name')}' 部署在了坐标 [{lat}, {lng}]，"
+                        f"错误：你将海军单位 '{unit_name}' 部署在了坐标 [{lat}, {lng}]，"
                         f"该坐标的绝对海拔高度处于陆地之上！海军必须在水域，请重新规划航线。"
                     )
     return errors
@@ -146,10 +148,15 @@ def sanitize_init_units(init_state, available_nodes):
       - 命中智库锚点 → 坐标由人工核定，直接采信，无需再走雷达；
       - 未命中      → AI 自由坐标，海军单位必须过海陆雷达。
     """
+    # 🐛 修复：AI 若用中文键名（"名称"/"类型"），锚点匹配和海军判定会全部失效，
+    #    这里先归一化，保证下面的 lat/lng/type/name 读取口径统一。
+    normalize_state_units(init_state)
+
     for team in UNIT_TEAMS:
         for unit in init_state.get(team, []):
-            unit_type = get_unit_field(unit, 'type', '类型', 'unit_type', 'class')
-            unit_name = unit.get('name', '') or ''
+            unit_type = get_unit_field(unit, 'type', '类型', '兵种', 'unit_type', 'class')
+            unit_name = get_unit_field(
+                unit, 'name', '名称', '单位名称', '部队名称', 'unit_name') or ''
 
             # 1. 优先查表：遍历高精锚点字典，寻找名称交集
             anchor_name, coords = match_anchor(unit_name, available_nodes)
@@ -178,13 +185,13 @@ def sanitize_init_units(init_state, available_nodes):
 
                 if offset_km <= 5:
                     # 🟢 5公里以内：属于战术微调，正常放行
-                    st.toast(f"⚓ 战术微调：{unit.get('name')} 偏航，已拖拽 {offset_km:.1f} 公里至港口/水域。", icon="🌊")
+                    st.toast(f"⚓ 战术微调：{unit_name} 偏航，已拖拽 {offset_km:.1f} 公里至港口/水域。", icon="🌊")
                 elif offset_km <= 15:
                     # 🟡 5~15公里：大模型产生中度幻觉，提出警告
-                    st.toast(f"⚠️ 战略警告：{unit.get('name')} 偏航严重！系统强行跨越 {offset_km:.1f} 公里将其拖入海中，可能偏离原定战区！", icon="⚠️")
+                    st.toast(f"⚠️ 战略警告：{unit_name} 偏航严重！系统强行跨越 {offset_km:.1f} 公里将其拖入海中，可能偏离原定战区！", icon="⚠️")
                 else:
                     # 🔴 15公里以上（逼近22公里极限）：发生严重空间扭曲
-                    st.error(f"🚨 极限地理穿透：{unit.get('name')} 被 AI 投送至内陆深处！系统实施了 {offset_km:.1f} 公里的强行拖拽。战术意图已遭破坏，建议总参谋长重点核查该单位坐标！")
+                    st.error(f"🚨 极限地理穿透：{unit_name} 被 AI 投送至内陆深处！系统实施了 {offset_km:.1f} 公里的强行拖拽。战术意图已遭破坏，建议总参谋长重点核查该单位坐标！")
 
                 unit['lat'] = new_lat
                 unit['lng'] = new_lng
@@ -195,9 +202,11 @@ def sanitize_step_units(updated_data):
     🌟🌟🌟 单回合推演后的强制洗数据（落水算法） 🌟🌟🌟
     仅对海军单位执行强制落水；非海军单位不受海陆雷达约束。
     """
+    normalize_state_units(updated_data)
+
     for team in UNIT_TEAMS:
         for unit in updated_data.get(team, []):
-            unit_type = get_unit_field(unit, 'type', '类型', 'unit_type', 'class')
+            unit_type = get_unit_field(unit, 'type', '类型', '兵种', 'unit_type', 'class')
             if is_naval(unit_type):
                 lat = unit.get('lat')
                 lng = unit.get('lng')
@@ -207,6 +216,9 @@ def sanitize_step_units(updated_data):
 
                 # 如果坐标被算法纠正过，通过 Toast 提示用户
                 if (new_lat != lat) or (new_lng != lng):
-                    st.toast(f"⚓ 系统强制干预：检测到 {unit.get('name')} 偏航至陆地，已强制拖入附近海域！", icon="🌊")
+                    unit_name = get_unit_field(
+                        unit, 'name', '名称', '单位名称', '部队名称', 'unit_name',
+                        default='未命名单位')
+                    st.toast(f"⚓ 系统强制干预：检测到 {unit_name} 偏航至陆地，已强制拖入附近海域！", icon="🌊")
                     unit['lat'] = new_lat
                     unit['lng'] = new_lng

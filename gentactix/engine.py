@@ -19,6 +19,7 @@ from .config import (
     MODEL_FALLBACKS,
 )
 from .geo import get_coordinate_errors
+from .state import normalize_state_units
 
 # 已确认失效的模型，后续直接走回退，避免每回合都撞一次 400
 _MODEL_DEGRADED = set()
@@ -104,6 +105,10 @@ def get_ai_response_with_retry(prompt, api_key, max_retries=MAX_API_RETRIES):
 
     for attempt in range(max_retries):
         result_json = get_ai_response(current_prompt, api_key)
+        # 🐛 修复：键名归一化必须早于坐标校验。AI 若输出 {"名称":..,"类型":"驱逐舰"}，
+        #    未归一化时 'type' 读不到 ⇒ is_naval() 判不出海军 ⇒ 坐标红线形同虚设，
+        #    舰艇可以大摇大摆停在陆地上而不被纠错循环拦截。
+        normalize_state_units(result_json)
         state_to_check = result_json.get("updated_state", result_json)
         errors = get_coordinate_errors(state_to_check)
 

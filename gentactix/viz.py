@@ -45,8 +45,11 @@ TILE_LAYERS = [
 # 🌟 核心升级：北约 APP-6 标准军标渲染引擎
 # ==========================================
 def get_nato_html(unit, color_theme):
-    unit_type = str(get_unit_field(unit, 'type', '类型', 'unit_type', 'class')).lower()
-    unit_name = str(unit.get('name', '未知单位'))
+    unit_type = str(get_unit_field(unit, 'type', '类型', '兵种', 'unit_type', 'class')).lower()
+    # 🐛 修复：原先只认 unit.get('name')，AI 一旦按中文键名（"名称"/"单位名称"）输出，
+    #          所有铭牌就集体退化成 "未知单位"。这里补上中文别名，杜绝半坏状态。
+    unit_name = str(get_unit_field(
+        unit, 'name', '名称', '单位名称', '部队名称', 'unit_name', default='未知单位'))
 
     # 1. 判定内部战术核心符号
     symbol = "?"
@@ -111,7 +114,7 @@ def get_nato_html(unit, color_theme):
 def draw_units_and_trails(m, current_units, color, team_key, last_war_state):
     """在地图 m 上绘制一支军队的单位军标，并按名称匹配上一回合位置绘制行军轨迹。"""
     for unit in current_units:
-        hp = unit.get('hp', unit.get('HP', unit.get('health', '未知')))
+        hp = unit.get('hp', unit.get('HP', unit.get('health', unit.get('兵力', '未知'))))
         # 🐛 修复：原代码只判 None，字符串坐标会被原样塞给 folium，导致标记整体不渲染
         lat, lng = extract_lat_lng(unit)
 
@@ -119,7 +122,10 @@ def draw_units_and_trails(m, current_units, color, team_key, last_war_state):
             continue
         curr_pos = [lat, lng]
 
-        unit_type = get_unit_field(unit, 'type', '类型', 'unit_type', 'class')
+        unit_type = get_unit_field(unit, 'type', '类型', '兵种', 'unit_type', 'class')
+        # 🐛 修复：同上，名称读取统一走别名链，避免铭牌/弹窗/轨迹提示三处口径不一致
+        unit_name = get_unit_field(
+            unit, 'name', '名称', '单位名称', '部队名称', 'unit_name', default='未知单位')
         # 🐛 修复：AI 可能把 morale/supply 写成字符串，原代码直接比较会 TypeError
         morale = to_float(unit.get('morale', 100))
         supply = to_float(unit.get('supply', 100))
@@ -130,7 +136,7 @@ def draw_units_and_trails(m, current_units, color, team_key, last_war_state):
         supply_icon = "🔋" if supply > 50 else "🪫"
 
         # 鼠标点击后的浮动详细情报
-        popup_text = f"<b>{unit.get('name', '未知单位')}</b><br>类型: {unit_type}<br>HP: ❤️ {hp}<br>士气: {morale_icon} {morale}%<br>补给: {supply_icon} {supply}%"
+        popup_text = f"<b>{unit_name}</b><br>类型: {unit_type}<br>HP: ❤️ {hp}<br>士气: {morale_icon} {morale}%<br>补给: {supply_icon} {supply}%"
 
         # 🌟 调用纯手工编写的 CSS 北约军标
         html_icon = get_nato_html(unit, color)
@@ -144,7 +150,13 @@ def draw_units_and_trails(m, current_units, color, team_key, last_war_state):
 
         if last_war_state:
             for last_unit in last_war_state.get(team_key, []):
-                if last_unit.get('name') == unit.get('name'):
+                if not isinstance(last_unit, dict):
+                    continue
+                # 🐛 修复：上一回合单位若带的是中文键名，原 `last_unit.get('name')` 恒为 None，
+                #    会导致行军轨迹整段画不出来（只有军标、没有足迹线）。
+                last_name = get_unit_field(
+                    last_unit, 'name', '名称', '单位名称', '部队名称', 'unit_name')
+                if last_name == unit_name:
                     # 🐛 修复：上一回合坐标同样需要数值校验，否则行军轨迹线不渲染
                     last_lat = to_float(last_unit.get('lat'))
                     last_lng = to_float(last_unit.get('lng'))
@@ -158,7 +170,7 @@ def draw_units_and_trails(m, current_units, color, team_key, last_war_state):
                             weight=2,
                             opacity=0.6,
                             dash_array='5, 5',
-                            tooltip=f"{unit.get('name')} 的行军路线"
+                            tooltip=f"{unit_name} 的行军路线"
                         ).add_to(m)
 
                         plugins.PolyLineTextPath(
