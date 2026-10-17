@@ -195,6 +195,140 @@ def draw_units_and_trails(m, current_units, color, team_key, last_war_state):
                     break
 
 
+# ==========================================
+# 1.4 🎯 交战波及半径：按攻击单位射程推导（不再写死 1500）
+# ==========================================
+# 🐛 修复：prompts.py 的返回示例里曾固定写着 "radius": 1500，AI 直接照抄，
+#    于是**每一场**交战的半径都恒等于 1500 米 —— 圆的尺寸不携带任何信息，
+#    tooltip 全是「1500.0 米」。半径必须由数据推导，而不是由示例文本决定：
+#      攻击单位 attack_range × 1.2（射程 + 落点散布）
+#      ↓ 射程缺失
+#      兵种查表（骑射 800 / 弓弩 300 / 步战 500）
+#      ↓ 连攻击单位都匹配不到
+#      战局显式半径 → 中性默认值
+# ⚠️ 战局显式 radius 只作最后兜底：它最可能就是从示例里抄来的那个 1500。
+ENGAGEMENT_RADIUS_FACTOR = 1.2
+
+# 兵种默认射程（米），仅用于 attack_range 缺失时。
+# ⚠️ 顺序有意义：更具体的关键词必须排在前面（"骑射" 先于 "骑兵" / "弓"）。
+UNIT_TYPE_RANGE_HINTS = (
+    ('骑射', 800.0), ('弓骑', 800.0), ('mounted archer', 800.0), ('horse archer', 800.0),
+    ('投石', 400.0), ('弩', 300.0), ('弓', 300.0), ('archer', 300.0), ('bow', 300.0),
+    ('步', 500.0), ('infantry', 500.0), ('战车', 500.0), ('chariot', 500.0),
+    ('骑兵', 500.0), ('cavalry', 500.0),
+)
+DEFAULT_MELEE_RANGE = 500.0          # 兵种也未知时按步战推定
+NEUTRAL_ENGAGEMENT_RADIUS = 1500.0   # 完全没有任何线索时的中性值
+MIN_ENGAGEMENT_RADIUS = 50.0
+MAX_ENGAGEMENT_RADIUS = 50000.0
+
+# 就近匹配攻击单位的容差（度，约 15 km）：超出视为「不是这一场的人」，
+# 宁可退回兵种估算，也不要把 20 km 外的部队当成攻击方。
+MAX_ATTACKER_MATCH_DEG = 0.15
+
+
+def _clamp_engagement_radius(radius_m):
+    return max(MIN_ENGAGEMENT_RADIUS, min(MAX_ENGAGEMENT_RADIUS, float(radius_m)))
+
+
+def unit_type_default_range(unit_type):
+    """按兵种关键词查默认射程（米）。查不到返回 None，调用方自行兜底。"""
+    text = str(unit_type or '').strip().lower()
+    if not text:
+        return None
+    for keyword, default_range in UNIT_TYPE_RANGE_HINTS:
+        if keyword in text:
+            return default_range
+    return None
+
+
+def _unit_distance_deg(unit, lat, lng):
+    """单位到某点的近似平面距离（度，经度已按纬度修正），仅用于就近匹配。"""
+    u_lat = to_float(get_unit_field(unit, 'lat', 'latitude', '纬度'))
+    u_lng = to_float(get_unit_field(unit, 'lng', 'longitude', '经度'))
+    if u_lat is None or u_lng is None:
+        return None
+    k = max(0.1, math.cos(math.radians(abs(lat))))
+    return math.hypot(u_lat - lat, (u_lng - lng) * k)
+
+
+def _nearest_unit(units, lat, lng, max_deg=MAX_ATTACKER_MATCH_DEG):
+    best, best_dist = None, None
+    for unit in units:
+        if not isinstance(unit, dict):
+            continue
+        dist = _unit_distance_deg(unit, lat, lng)
+        if dist is None or dist > max_deg:
+            continue
+        if best_dist is None or dist < best_dist:
+            best, best_dist = unit, dist
+    return best
+
+
+def find_attacker_unit(battle, war_state, lat, lng):
+    """定位交战对应的攻击单位：显式名称 → 攻击方坐标就近 → 交战点就近。
+
+    名称匹配最可靠；坐标匹配覆盖 AI 只给位置的情况；交战点就近是最后的近似。
+    全都失败返回 None —— 此时宁可用兵种默认值，也不猜一个单位。
+    """
+    units = []
+    for key in ('red_units', 'blue_units'):
+        team = war_state.get(key) or []
+        if isinstance(team, list):
+            units.extend(u for u in team if isinstance(u, dict))
+    if not units:
+        return None
+
+    raw_name = battle.get('attacker') or battle.get('attacker_name') or battle.get('攻击方')
+    if isinstance(raw_name, str) and raw_name.strip():
+        target = raw_name.strip()
+        for unit in units:
+            name = get_unit_field(unit, 'name', '名称', 'unit_name')
+            if str(name or '').strip() == target:
+                return unit
+
+    attacker_pos = battle.get('attacker_pos')
+    if isinstance(attacker_pos, (list, tuple)) and len(attacker_pos) == 2:
+        a_lat = to_float(attacker_pos[0])
+        a_lng = to_float(attacker_pos[1])
+        if a_lat is not None and a_lng is not None:
+            unit = _nearest_unit(units, a_lat, a_lng)
+            if unit is not None:
+                return unit
+
+    return _nearest_unit(units, lat, lng)
+
+
+def resolve_engagement_radius(battle, war_state, lat, lng):
+    """返回 (半径米, 推导依据)。依据会直接进 tooltip，让读数可追溯而非凭空。"""
+    unit = find_attacker_unit(battle, war_state, lat, lng)
+
+    if unit is not None:
+        unit_name = str(get_unit_field(unit, 'name', '名称', 'unit_name') or '攻击方')
+        unit_type = str(get_unit_field(unit, 'type', '类型', '兵种', 'unit_type') or '')
+        attack_range = to_float(get_unit_field(
+            unit, 'attack_range', '射程', '攻击范围', '打击范围', 'range'))
+
+        if attack_range is not None and attack_range > 0:
+            radius = _clamp_engagement_radius(attack_range * ENGAGEMENT_RADIUS_FACTOR)
+            return radius, f"{unit_name} 射程 {attack_range:g}m × {ENGAGEMENT_RADIUS_FACTOR:g}"
+
+        hint = unit_type_default_range(unit_type)
+        if hint is not None:
+            radius = _clamp_engagement_radius(hint * ENGAGEMENT_RADIUS_FACTOR)
+            label = f"{unit_name}·{unit_type}" if unit_type else unit_name
+            return radius, f"{label} 按兵种射程 {hint:g}m × {ENGAGEMENT_RADIUS_FACTOR:g}"
+
+        # 有单位但射程/兵种都读不出：按步战推定，明确标注，不假装精确。
+        radius = _clamp_engagement_radius(DEFAULT_MELEE_RANGE * ENGAGEMENT_RADIUS_FACTOR)
+        return radius, f"{unit_name} 射程与兵种均未知，按步战推定 {DEFAULT_MELEE_RANGE:g}m × {ENGAGEMENT_RADIUS_FACTOR:g}"
+
+    explicit = to_float(battle.get('radius'))
+    if explicit is not None and explicit > 0:
+        return _clamp_engagement_radius(explicit), "未匹配到攻击单位，沿用战局给出的半径"
+    return _clamp_engagement_radius(NEUTRAL_ENGAGEMENT_RADIUS), "未匹配到攻击单位，使用中性默认值"
+
+
 def impact_sector_vertices(origin_lat, origin_lng, target_lat, target_lng,
                            radius_m, half_angle_deg=30.0, step_deg=5.0):
     """生成「定向扇区」的多边形顶点（folium 要求的 [lat, lng] 序列）。
@@ -265,13 +399,17 @@ def build_tactical_map(war_state, last_war_state, turn_count):
         b_lat, b_lng = battle.get('lat'), battle.get('lng')
         desc = battle.get('description', '激烈交火区域')
 
-        # 🐛 修复：原为裸 except，会吞掉 KeyboardInterrupt 等系统级异常
-        try:
-            impact_radius = float(battle.get('radius', 1500))
-        except (TypeError, ValueError):
-            impact_radius = 1500.0
-        if impact_radius <= 0:
-            impact_radius = 1500.0
+        # 🐛 修复：坐标可能是字符串，统一做数值校验，避免 folium 收到脏数据；
+        #    先转数值再推导半径（就近匹配攻击单位要用浮点坐标）。
+        b_lat_f, b_lng_f = to_float(b_lat), to_float(b_lng)
+        if b_lat_f is None or b_lng_f is None:
+            continue
+        battle_pos = [b_lat_f, b_lng_f]
+
+        # 🐛 修复：原先直接读 battle['radius'] 并默认 1500，而 prompt 示例里正是
+        #    "radius": 1500 ⇒ AI 照抄 ⇒ 所有交战半径一模一样。现按攻击单位射程推导。
+        impact_radius, radius_basis = resolve_engagement_radius(
+            battle, war_state, b_lat_f, b_lng_f)
 
         if impact_radius >= 20000:
             border_color, fill_color, icon_color = 'black', 'purple', 'darkpurple'
@@ -281,12 +419,6 @@ def build_tactical_map(war_state, last_war_state, turn_count):
             border_color, fill_color, icon_color = 'darkorange', 'orange', 'orange'
         else:
             border_color, fill_color, icon_color = 'crimson', 'red', 'red'
-
-        # 🐛 修复：坐标可能是字符串，统一做数值校验，避免 folium 收到脏数据
-        b_lat_f, b_lng_f = to_float(b_lat), to_float(b_lng)
-        if b_lat_f is None or b_lng_f is None:
-            continue
-        battle_pos = [b_lat_f, b_lng_f]
 
         # 🌟 定向扇区：攻击方坐标决定方位角（arc 从攻击方指向交战点）
         attacker_pos_raw = battle.get('attacker_pos')
@@ -305,6 +437,7 @@ def build_tactical_map(war_state, last_war_state, turn_count):
         # 原实现把描述放在 marker 上，而 marker 被整片圆盖住，hover 命中的永远是圆，
         # 于是「谁打谁」这条最关键的信息在界面上等于不存在。
         shape_tooltip = (f"💥 <b>{desc}</b><br>波及范围 ≈ {impact_radius:.0f} 米"
+                         f"<br><span style='color:#8a8a8a'>依据：{radius_basis}</span>"
                          + ("" if use_sector else "<br>（未提供攻击方位，仅显示范围）"))
 
         if use_sector:

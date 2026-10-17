@@ -93,6 +93,10 @@ def build_step_prompt(war_state, next_turn_num, time_step, use_live_intel):
         speed / attack_range / morale / supply，严禁改成 "名称"、"类型"、"兵种" 等中文键；
         "name"、"type"、"lat"、"lng" 这四个字段一个都不能丢。
 
+        engagements 里不要输出 radius 字段：波及半径由系统按攻击单位的 attack_range × 1.2 推导。
+        你必须为每场交战给出 "attacker"（发起攻击的单位名称，必须与 red_units/blue_units 的 name 完全一致）
+        与 "attacker_pos"（该单位坐标），否则系统只能按兵种估算，范围会失真。
+
         请直接返回以下 JSON 结构：
         {{
           "updated_state": {{
@@ -107,8 +111,8 @@ def build_step_prompt(war_state, next_turn_num, time_step, use_live_intel):
                  "lat": 目标纬度,
                  "lng": 目标经度,
                  "description": "交战描述",
-                 "attacker_pos": [攻击者lat, 攻击者lng],
-                 "radius": 1500
+                 "attacker": "发起攻击的单位名称",
+                 "attacker_pos": [攻击者lat, 攻击者lng]
                }}
             ]
           }},
