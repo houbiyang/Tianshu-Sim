@@ -62,6 +62,33 @@ jobs:
       - name: Type check (tsc --noEmit)
         run: npm run typecheck
 
+      # 诊断：确认 secret 里的 token 到底是谁、有哪些权限、containers 接口真实返回什么。
+      # wrangler 会把 API 响应体吞掉只留一行 ERROR，所以这里直接裸 curl。
+      - name: Diagnose Cloudflare token
+        continue-on-error: true
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          echo "=== 1. token 指纹（前后各 6 位，用于核对是不是你改的那个）==="
+          echo "${CLOUDFLARE_API_TOKEN:0:6}...${CLOUDFLARE_API_TOKEN: -6}  (len=${#CLOUDFLARE_API_TOKEN})"
+          echo "=== 2. account id ==="
+          echo "$CLOUDFLARE_ACCOUNT_ID"
+          echo "=== 3. token verify ==="
+          curl -s -w "\n[http=%{http_code}]\n" \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            https://api.cloudflare.com/client/v4/user/tokens/verify | head -c 1200
+          echo
+          echo "=== 4. GET /accounts/{id}/containers/me ==="
+          curl -s -w "\n[http=%{http_code}]\n" \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/containers/me" | head -c 2000
+          echo
+          echo "=== 5. GET /accounts/{id}/workers/subdomain（验证 Workers 权限）==="
+          curl -s -w "\n[http=%{http_code}]\n" \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/subdomain" | head -c 800
+
       - name: Deploy to Cloudflare Containers
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
