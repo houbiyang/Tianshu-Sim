@@ -10,7 +10,49 @@ from pathlib import Path
 import streamlit as st
 from streamlit_folium import st_folium
 
-from gentactix import anchors, engine, geo, prompts, state, viz
+from gentactix import anchors, engine, geo, prompts, rag, state, viz
+
+
+def _retrieve_briefing(query, enabled, top_k, max_chars, phase):
+    """检索本地史料并返回 (briefing_text, meta)。
+
+    三条降级路径（开关关闭 / 语料为空 / 零命中）都必须把原因写进 meta 并显示到界面上。
+    这个功能最危险的失败方式不是报错，而是**静默退化**：用户以为有史料约束，
+    实际模型在自由发挥，而战报看起来同样「言之凿凿」。
+    """
+    meta = {
+        "phase": phase, "query": query, "enabled": bool(enabled),
+        "hits": [], "injected": 0, "note": "",
+    }
+    if not enabled:
+        meta["note"] = "史料检索未开启"
+        return "", meta
+
+    stats = rag.corpus_stats()
+    if stats["chunks"] == 0:
+        meta["note"] = f"史料库为空（{stats['dir']}），本次为模型自由发挥"
+        return "", meta
+
+    hits = rag.search(query, top_k=top_k)
+    if not hits:
+        meta["note"] = "未命中相关史料，本次为模型自由发挥"
+        return "", meta
+
+    text, used = rag.build_briefing(hits, max_chars=max_chars)
+    meta["hits"] = [
+        {
+            "doc_title": hit["doc_title"],
+            "section": hit["section"],
+            "source": hit["source"],
+            "score": hit["score"],
+            "preview": hit["text"][:180] + ("…" if len(hit["text"]) > 180 else ""),
+        }
+        for hit in hits
+    ]
+    meta["injected"] = used
+    if used < len(hits):
+        meta["note"] = f"命中 {len(hits)} 段，受长度上限约束仅注入 {used} 段"
+    return text, meta
 
 # --- 页面配置（必须早于任何其他 Streamlit 调用）---
 st.set_page_config(layout="wide", page_title="GenTactix AI 推演系统 (DeepSeek 驱动)")
@@ -37,6 +79,42 @@ with st.sidebar:
     st.header("高级功能")
     # DeepSeek 官方 API 暂无原生搜索工具，此处留作接口扩展提示
     use_live_intel = st.toggle("🌐 开启实时情报搜集", value=False, help="注：DeepSeek 原生不支持直接联网，目前此开关仅作为外部 API 预留。开启后 AI 将尝试模拟突发事件。")
+
+    st.header("史料与情报")
+    use_rag = st.toggle(
+        "📚 启用史料检索（RAG）",
+        value=False,
+        help="从 corpus/ 目录的 Markdown 史料卡片中检索相关片段，注入推演提示词。"
+             "纯本地 BM25：不联网、不调用额外 API、不产生费用。"
+             "关闭时模型仅凭自身历史知识推演，数字与时间线不可追溯。",
+    )
+    _corpus = rag.corpus_stats()
+    if not use_rag:
+        st.caption("未开启：模型凭自身历史知识推演，**数字与时间线不可追溯**。")
+    elif _corpus["chunks"] == 0:
+        st.warning(
+            f"⚠️ 史料库为空（`{_corpus['dir']}`）。本次推演仍由模型自由发挥，"
+            f"**没有史料约束**。把 `.md` 文件放进该目录即可生效，格式见其中的 README.md。"
+        )
+    else:
+        st.caption(
+            f"已索引 **{_corpus['files']}** 个文件 / **{_corpus['chunks']}** 个片段"
+            f"（{_corpus['chars']:,} 字）"
+        )
+
+    _rag_last = st.session_state.get("rag_last")
+    if use_rag and _rag_last:
+        _hits = _rag_last.get("hits") or []
+        with st.expander(f"📚 最近一次注入（{_rag_last.get('injected', 0)}/{len(_hits)} 段）"):
+            if _rag_last.get("note"):
+                st.caption(_rag_last["note"])
+            if not _hits:
+                st.caption(f"查询：`{_rag_last.get('query', '')[:60]}`")
+            for _hit in _hits:
+                st.markdown(f"**{_hit['section']}**　`{_hit['source']}`")
+                st.caption(_hit["preview"])
+            st.divider()
+            st.caption("若这里的内容与战报不符，说明模型没有遵守史料约束，应以史料为准。")
 
     st.header("推演设定")
     scenario_input = st.text_area("输入历史事件或假设冲突：",
@@ -98,14 +176,17 @@ if btn_init:
         # 🌟 1. 战前情报检索：检查用户输入是否命中了我们的高精坐标库
         available_nodes = anchors.collect_available_nodes(scenario_input)
 
-        # 🌟 2. 动态组装高精导航指令（由 prompts 内部完成）
-        # 🌟 3. 将动态指令无缝嵌入 Prompt（见 prompts.build_init_prompt）
+        # 📚 2. 史料检索（可选）：初始化阶段把整张战役卡片尽量都取回来——
+        #    兵力、时间线、地形、兵力争议都在不同的 `##` 段落里，只要 3 段会漏。
+        briefing, rag_meta = _retrieve_briefing(
+            scenario_input, use_rag, top_k=8, max_chars=3200, phase="init")
+        st.session_state.rag_last = rag_meta
 
         with st.spinner("DeepSeek正在侦察地形并部署单位..."):
             try:
                 # 1. 获取 AI 的初始阵型分布
                 init_state = engine.get_ai_response_with_retry(
-                    prompts.build_init_prompt(scenario_input, available_nodes),
+                    prompts.build_init_prompt(scenario_input, available_nodes, briefing),
                     deepseek_api_key,
                 )
 
@@ -115,6 +196,9 @@ if btn_init:
                 st.session_state.war_state = init_state
                 st.session_state.last_war_state = None
                 st.session_state.turn_count = 0
+                # 📚 保存场景原文：后续回合的史料检索要用「这一局是什么仗」，
+                #    而不是用户此刻在输入框里改成的别的内容。
+                st.session_state.scenario_input = scenario_input
                 # 🐛 修复：重新开新局时旧复盘与旧对话会残留，导致「张冠李戴」；
                 #         新沙盘必须是一张白纸。
                 st.session_state.review_text = None
@@ -135,10 +219,23 @@ if btn_next:
         current_time_str = st.session_state.war_state.get('current_time', '00:00')
         next_turn_num = st.session_state.turn_count + 1
 
+        # 📚 史料检索：单回合只取 4 段。查询拼上「哪场战役 + 当前时间 + 当前地形」，
+        #    让排名偏向与本回合时段相关的小节，而不是每回合把整张卡片重复灌一遍。
+        _query = " ".join(str(x) for x in (
+            st.session_state.get("scenario_input", ""),
+            current_time_str,
+            st.session_state.war_state.get("current_terrain", ""),
+        ) if x)
+        briefing, rag_meta = _retrieve_briefing(
+            _query, use_rag, top_k=4, max_chars=2200, phase="step")
+        st.session_state.rag_last = rag_meta
+
         with st.spinner(f"DeepSeek正在推演未来 {time_step} 的战况..."):
             try:
                 result = engine.get_ai_response_with_retry(
-                    prompts.build_step_prompt(st.session_state.war_state, next_turn_num, time_step, use_live_intel),
+                    prompts.build_step_prompt(
+                        st.session_state.war_state, next_turn_num, time_step,
+                        use_live_intel, briefing),
                     deepseek_api_key,
                 )
 
@@ -239,6 +336,20 @@ with col1:
                 _unique = "、".join(dict.fromkeys(_eng['reasons']))
                 _note = f" · ⚠️ 另有 {_eng['skipped']} 处被丢弃：{_unique}"
             st.caption(f"⚔️ 本回合交战：**{_eng['valid']} 处**（{'；'.join(_parts)}）{_note}")
+
+        # 📚 史料约束状态：让看地图的人一眼知道「这局的数字可不可追溯」。
+        #    开启 RAG 但没注入成功时，必须明说，否则战报看起来同样言之凿凿。
+        _rag_meta = st.session_state.get("rag_last") or {}
+        if _rag_meta.get("enabled"):
+            if _rag_meta.get("injected"):
+                _first = (_rag_meta.get("hits") or [{}])[0]
+                st.caption(
+                    f"📚 本回合注入史料 **{_rag_meta['injected']}** 段"
+                    f" · 主要来源：{_first.get('doc_title', '')}·{_first.get('section', '')}"
+                )
+            else:
+                st.caption(f"📚 本回合**无史料注入**：{_rag_meta.get('note', '')}"
+                           f" —— 数字与时间线不可追溯，仅作推演参考。")
 
     else:
         # --- 🌟 启动前的中心 Logo 欢迎界面 ---

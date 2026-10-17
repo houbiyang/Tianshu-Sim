@@ -30,9 +30,10 @@ ARG PIP_INDEX_URL=https://pypi.org/simple
 COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir --index-url "${PIP_INDEX_URL}" -r /app/requirements.txt
 
-# 再拷应用代码（入口 app.py + gentactix 包 + 静态资源）
+# 再拷应用代码（入口 app.py + gentactix 包 + 静态资源 + 史料语料）
 COPY app.py /app/app.py
 COPY gentactix /app/gentactix
+COPY corpus /app/corpus
 COPY logo.png /app/logo.png
 COPY .streamlit /app/.streamlit
 
