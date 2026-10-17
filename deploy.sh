@@ -53,7 +53,17 @@ fi
 #   而且这套判断还隐含依赖 pipefail 这个前提，换 shell / 去掉这行就崩。
 #
 #   所以统一改成：输出落盘，直接用命令**自身**的退出码判断。不依赖任何隐含前提。
-LOG="$(mktemp -t gentactix-deploy.XXXXXX 2>/dev/null || echo /tmp/gentactix-deploy.log)"
+# 🐛 修复：不再用 `mktemp -t` —— Git Bash 下它可能返回 "C:/Users/.../Temp/xxx"
+#    或 "/c/Users/..." 两种 Windows 形态。删除拦截层（安全删除包装器）会把它们
+#    误判成**相对路径**并与 cwd 拼接，得到 "c:\Gentactix\C:\Users\..." 这种非法路径
+#    ⇒ 删除 FAIL_CLOSED、临时文件残留，还会在自检全部通过之后补打一行
+#    SAFE_DELETE_FAIL_CLOSED，看起来像部署失败（实际是清理步骤）。
+#    /tmp 是 MSYS 里 Windows Temp 的固定别名，直接用固定形态，不让路径形式飘。
+LOG="/tmp/gentactix-deploy.$$.log"
+if ! : > "$LOG" 2>/dev/null; then
+  LOG="./.gentactix-deploy.$$.log"          # /tmp 不可写时退回工作目录
+  : > "$LOG" 2>/dev/null || LOG="/dev/null"
+fi
 trap 'rm -f "$LOG"' EXIT
 
 # 取输出文本（用于展示与判断内容），不关心退出码
