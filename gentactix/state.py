@@ -163,6 +163,23 @@ def extract_lat_lng(unit):
     return lat, lng
 
 
+def compose_report_entry(body, source_note=None, prefix=""):
+    """把战报正文与考据注组合成一条历史记录。
+
+    为什么要分两段：正文是战场讲解，考据是文献核对，两者混在一段里就会写成
+    「赵军约四十万系《史记》所载数字、学界有争议」这种文献综述腔。分开之后
+    正文能讲人话，考据也仍然可查。
+
+    考据注单独成段、用斜体压暗；为空（None / 空白）时不留下多余空行 ——
+    否则每条战报下面都会挂一行空的「📚 考据：」，比没有更糟。
+    """
+    text = f"{prefix}{body}".rstrip()
+    note = str(source_note or "").strip()
+    if note:
+        return f"{text}\n\n*📚 考据：{note}*"
+    return text
+
+
 def generate_json_export():
     """提取 Session State 并打包为完整的 JSON 数据。"""
     export_data = {

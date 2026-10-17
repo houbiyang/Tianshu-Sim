@@ -206,8 +206,15 @@ if btn_init:
                 st.session_state.chat_messages = []
 
                 start_time = st.session_state.war_state.get("current_time", "未知时间")
-                initial_report = st.session_state.war_state.get("situation_report", "各单位已进入战斗位置，战役即将打响。")
-                st.session_state.history = [f"**【T+0 | {start_time}】初始态势评估**：\n{initial_report}"]
+                initial_report = st.session_state.war_state.get(
+                    "situation_report", "各单位已进入战斗位置，战役即将打响。")
+                # 📚 考据注单独成行、斜体压暗：正文负责讲战场，考据负责可核对。
+                #    两者混在一段里，就是「赵军约四十万系《史记》所载数字、学界有争议」那种
+                #    文献综述腔——信息没错，但读者想知道的是现在战场上怎么样了。
+                initial_note = st.session_state.war_state.get("source_note")
+                st.session_state.history = [state.compose_report_entry(
+                    initial_report, initial_note,
+                    prefix=f"**【T+0 | {start_time}】初始态势评估**：\n")]
 
             except Exception as e:
                 st.error(f"初始化失败: {e}")
@@ -253,7 +260,12 @@ if btn_next:
                 st.session_state.war_state = updated_data
 
                 if report_text:
-                    st.session_state.history.insert(0, report_text)
+                    # 📚 考据注拼在正文之后、斜体压暗，与 T+0 的呈现保持一致
+                    _note = result.get("source_note")
+                    if not _note and isinstance(updated_data, dict):
+                        _note = updated_data.get("source_note")
+                    st.session_state.history.insert(
+                        0, state.compose_report_entry(report_text, _note))
 
                 st.session_state.turn_count = next_turn_num
 

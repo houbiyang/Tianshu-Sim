@@ -285,7 +285,9 @@ BRIEFING_HEADER = """【史料摘录 · 最高优先级】
 1. 与之冲突时，一律以史料为准。史料给出的数字、日期、人名、地名**不得改写、不得四舍五入、不得补全**。
 2. 史料明确标注「未载」「有争议」的内容，你必须在文字中保留这一限定，禁止编造成确数。
 3. 史料未覆盖的细节可以合理推演，但不得伪造出处、不得虚构书名或章节。
-4. 这些内容只能写进文字字段（situation_report / report / description），不得新增 JSON 字段。"""
+4. 这些内容只能写进文字字段（situation_report / report / description / source_note），
+   不得新增其他 JSON 字段。其中**出处、争议、未载的说明写进 source_note**，
+   不要塞进正文——正文是战场讲解，读者在那里不想读到文献综述。"""
 
 
 def build_briefing(results, max_chars: int = 2400):
