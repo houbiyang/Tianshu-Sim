@@ -1,0 +1,17 @@
+[theme]
+# 核心主色调 (Primary Color)
+# 方案 A (推荐)：深邃机构蓝 (与 PDF 标题 RGB 20,50,90 对应，十六进制 #14325A)
+# 方案 B：赛博物理青 (如果你更喜欢极客感，可以换成 #00ADB5)
+primaryColor = "#14325A"
+
+# 全局背景色 (深渊黑，也就是你在代码里设定的 #0e1117)
+backgroundColor = "#0e1117"
+
+# 侧边栏/卡片背景色 (比深渊黑稍微亮一点的碳灰)
+secondaryBackgroundColor = "#1A1C24"
+
+# 默认文字颜色 (冷白色，确保高对比度)
+textColor = "#E0E0E0"
+
+# 字体选择 (使用无衬线现代字体)
+font = "sans serif" 

@@ -1,0 +1,35 @@
+# ---- Node / Worker 侧 ----
+node_modules/
+.wrangler/
+.dev.vars
+.env
+.env.*
+!.env.example
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# ---- 密钥与本地凭据（务必不要提交）----
+*.pem
+*.key
+.secrets
+CLOUDFLARE_API_TOKEN
+
+# ---- 备份与临时产物 ----
+*.orig_backup
+*.bak
+.pytest_cache/
+
+# ---- 编辑器 / 系统 ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- 本地 SRTM 高程瓦片缓存 ----
+.cache/

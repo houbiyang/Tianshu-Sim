@@ -1,0 +1,27 @@
+# Docker 构建上下文排除项 —— 只让 Streamlit 运行时真正需要的文件进镜像
+# 位置要求：必须放在构建上下文的根目录（即项目根）
+
+# Worker 侧
+node_modules
+.wrangler
+src
+package.json
+package-lock.json
+tsconfig.json
+wrangler.jsonc
+
+# 版本控制 / 编辑器
+.git
+.gitignore
+.vscode
+
+# 文档与测试产物
+*.md
+*.orig_backup
+__pycache__
+*.pyc
+.pytest_cache
+
+# 本地虚拟环境（若有）
+.venv
+venv

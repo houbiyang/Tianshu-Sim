@@ -1,0 +1,27 @@
+# ============================================================
+# GenTactix 运行依赖（在 Cloudflare Containers 镜像内安装）
+# 全部版本区间均已对 PyPI 索引实测校验过存在性
+# ============================================================
+
+# Web 框架本体
+# 锁死 <1.50：从 1.50 起 Streamlit 把 use_container_width 标记为弃用
+# （全面转向 width="stretch"），而 Gentactix.py 目前仍有 4 处使用该参数。
+# 锁在此区间可避免满屏弃用告警，也避免该参数被真正移除后直接报错。
+streamlit>=1.40,<1.50
+
+# 地图渲染
+folium>=0.17,<2.0
+streamlit-folium>=0.20,<1.0
+
+# LLM 调用（DeepSeek 走 OpenAI 兼容协议）
+openai>=1.40,<4.0
+
+# 海陆宏观判定（自带数据文件）
+# 注意：PyPI 上该包只有 0.0.1 / 0.0.2 / 0.0.3 / 1.0.0 四个版本，没有 1.0.1
+global_land_mask>=1.0.0
+
+# 高程微观复判 —— 包名极易写错，务必注意：
+# Gentactix.py 里的 `import srtm` 来自 PyPI 包 "SRTM.py"（作者 tkrajina，装完即 import srtm）。
+# 切勿写成 `srtm`：PyPI 上那个同名包是另一个 Rust 重写版（htg 绑定），API 完全不同
+# （SrtmService，且不自动下载瓦片），还要求 Python>=3.12，会直接让本镜像构建失败。
+SRTM.py>=0.3.7

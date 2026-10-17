@@ -1,0 +1,21 @@
+{
+  "name": "gentactix",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "GenTactix Streamlit 推演系统 —— Cloudflare Containers 部署壳",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "tail": "wrangler tail"
+  },
+  "dependencies": {
+    "@cloudflare/containers": "0.3.7"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "5.20260926.1",
+    "typescript": "7.0.2",
+    "wrangler": "4.141.0"
+  }
+}

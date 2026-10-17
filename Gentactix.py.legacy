@@ -1,0 +1,1044 @@
+import streamlit as st
+import math
+from pathlib import Path
+from openai import OpenAI
+import folium
+from streamlit_folium import st_folium
+import json
+import copy
+from global_land_mask import globe  # 🌟 核心：引入地球海陆面具
+from folium import plugins  # 🌟 新增：引入 folium 插件库以使用 AntPath
+import srtm
+
+# ==========================================
+# ⚙️ 引擎参数集中配置（原先散落在各处的硬编码统一到此）
+# ==========================================
+DEEPSEEK_BASE_URL = "https://api.deepseek.com"
+MODEL_ENGINE = "deepseek-v4-flash"      # 引擎 A：快速 JSON 战局推演
+MODEL_STRATEGIST = "deepseek-v4-pro"    # 引擎 B：深度战略复盘
+MODEL_CHAT = "deepseek-reasoner"        # 侧栏璇玑实时问答
+MAX_API_RETRIES = 3                     # 坐标修正反思循环上限
+
+# 🛡️ 模型回退链：若 MODEL_* 常量在你的账号下不存在（API 返回 400 model not exist），
+#    系统会自动降级到下列稳定模型名，而不是让整条推演链直接崩掉。
+MODEL_FALLBACKS = {
+    MODEL_ENGINE: ["deepseek-chat"],
+    MODEL_STRATEGIST: ["deepseek-reasoner", "deepseek-chat"],
+    MODEL_CHAT: ["deepseek-chat"],
+}
+_MODEL_DEGRADED = set()   # 已确认失效的模型，后续直接走回退，避免每回合都撞一次 400
+
+
+def _looks_like_model_error(exc):
+    """区分「模型名不存在」与「网络/鉴权/配额」等不该回退的错误。"""
+    text = str(exc).lower()
+    return "model" in text and any(
+        k in text for k in ("not exist", "does not exist", "invalid", "unknown", "not found"))
+
+
+def chat_completion(client, model, messages, **kwargs):
+    """统一模型调用入口：主模型失效时自动回退，保证推演链不因模型名写错而全挂。"""
+    chain = [model] if model in _MODEL_DEGRADED else [model] + MODEL_FALLBACKS.get(model, [])
+    last_exc = None
+    for idx, m in enumerate(chain):
+        try:
+            resp = client.chat.completions.create(model=m, messages=messages, **kwargs)
+            if idx > 0:
+                _MODEL_DEGRADED.add(model)
+                st.warning(f"⚠️ 模型 `{model}` 不可用，已自动回退至 `{m}`。"
+                           f"建议在文件顶部配置区修正 MODEL_* 常量。")
+            return resp
+        except Exception as exc:
+            last_exc = exc
+            if not _looks_like_model_error(exc):
+                raise      # 鉴权/网络/配额问题原样抛出，别用回退掩盖真实故障
+    raise last_exc
+
+# 海军单位判定关键词（原先在 3 处重复实现，口径易漂移）
+NAVAL_KEYWORDS = ['舰', '船', '航母', '潜艇', 'ship', 'carrier',
+                  'submarine', 'cruiser', 'destroyer', 'fleet']
+
+
+def is_naval(unit_type):
+    """统一的「是否海军单位」判定。"""
+    return any(k in str(unit_type).lower() for k in NAVAL_KEYWORDS)
+
+
+def to_float(value):
+    """安全数值转换：失败返回 None，避免坐标异常把整次推演拖崩。"""
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+# 🗄️ PHSL 绝密战略数据库：高精坐标锚点
+# ==========================================
+STRATEGIC_NODES = {
+    "珍珠港": {
+        # 🌟 细化：战列舰大街各核心舰艇高精锚点 (F码头)
+        "福特岛-战列舰大街-内华达号": [21.3680, -157.9472],
+        "福特岛-战列舰大街-亚利桑那号": [21.3650, -157.9500],
+        "福特岛-战列舰大街-田纳西号": [21.3631, -157.9523],
+        "福特岛-战列舰大街-马里兰号": [21.3615, -157.9542],
+        "福特岛-战列舰大街-加利福尼亚号": [21.3589, -157.9573],
+        
+        # 🌟 细化：其他关键被袭舰艇停泊点
+        "造船厂-1号干船坞-宾夕法尼亚号": [21.3524, -157.9499],
+        "福特岛-西北侧靶舰区-犹他号": [21.3671, -157.9625],
+        
+        # 保留原有的宏观战术水道和警戒区
+        "内港-西水道": [21.3461, -157.9715],
+        "外海-拦截警戒区": [21.2855, -157.9702]
+    },
+    "马六甲": {
+        "新加坡海峡咽喉": [1.196, 103.823],
+        "皇京港外海": [2.164, 102.215]
+    },
+    "中途岛": {
+        "环礁核心防空圈": [28.210, -177.376]
+    },
+    "波斯湾": {
+        "霍尔木兹海峡-最窄咽喉": [26.5667, 56.2500],
+        "阿巴斯港 (伊方海防核心)": [27.1400, 56.0600],
+        "巴林-美第五舰队司令部": [26.2167, 50.6200],
+        "阿拉伯海-美航母打击群游弋区": [23.5000, 60.5000],
+        "格什姆岛 (伊方导弹阵地)": [26.7500, 55.8300]
+    }
+}
+
+# --- 页面配置（必须早于任何其他 Streamlit 调用）---
+st.set_page_config(layout="wide", page_title="GenTactix AI 推演系统 (DeepSeek 驱动)")
+
+# --- 初始化 Session State ---
+# 🐛 修复：原代码缺少 chat_messages 初始化，一旦战局生成后切到「参谋长复盘」页
+#         就会抛 AttributeError: st.session_state has no attribute 'chat_messages'
+_DEFAULT_SESSION_STATE = {
+    "war_state": None,
+    "last_war_state": None,
+    "history": [],
+    "turn_count": 0,
+    "review_text": None,
+    "review_reasoning": None,
+    "chat_messages": [],   # 璇玑对话记录
+}
+for _key, _default in _DEFAULT_SESSION_STATE.items():
+    if _key not in st.session_state:
+        st.session_state[_key] = _default
+
+st.title("🛡️ GenTactix: 现实地图全自动战略推演 (全 DeepSeek 版)")
+
+# --- 侧边栏：用户自定义输入 ---
+st.sidebar.image(
+    "https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=768,fit=crop,q=95/1evUiS818YahKfZE/pythonlogo2-AfiMET3ydIQjjfId.png", 
+    width="stretch"
+)
+
+st.sidebar.title("Python历史战略实验室")
+st.sidebar.markdown("以史为码，推演未来。www.pystrategylab.com")
+
+with st.sidebar:
+    st.header("系统设置")
+    # 🌟 统一使用一个 DeepSeek API Key 即可驱动双脑
+    deepseek_api_key = st.text_input("🧠 DeepSeek API Key :", type="password")
+
+    st.header("高级功能")
+    # DeepSeek 官方 API 暂无原生搜索工具，此处留作接口扩展提示
+    use_live_intel = st.toggle("🌐 开启实时情报搜集", value=False, help="注：DeepSeek 原生不支持直接联网，目前此开关仅作为外部 API 预留。开启后 AI 将尝试模拟突发事件。")
+
+    st.header("推演设定")
+    scenario_input = st.text_area("输入历史事件或假设冲突：", 
+                                 placeholder="例如：1944年诺曼底登陆...",
+                                 help="AI 会根据此描述初始化地图坐标和初始时间")
+    
+    time_step = st.select_slider(
+        "⏱️ 单回合时间跨度",
+        options=["5分钟", "15分钟", "30分钟", "1小时", "6小时", "12小时", "1天", "1周", "1个月"],
+        value="30分钟",
+        help="战术级交火建议选分钟，战略级宏观推演建议选天或月。"
+    )
+    
+    btn_init = st.button("🚀 初始化沙盘 (DeepSeek)")
+    btn_next = st.button("⏩ 下一轮推演 (DeepSeek)")
+    st.divider()
+    # 🐛 修复：该按钮此前被注释掉，但第 565 行仍在引用 btn_review，
+    #         导致应用一启动就抛 NameError 整体白屏。此处重新启用。
+    btn_review = st.button("🧐 呼叫总参谋长复盘 (璇玑)", type="primary")
+    # ==========================================
+    # 🌟 新增功能：一键导出推演数据快照 (JSON)
+    # ==========================================
+    st.divider()
+    
+    def generate_json_export():
+        """提取 Session State 并打包为完整的 JSON 数据"""
+        export_data = {
+            "turn_count": st.session_state.turn_count,
+            "war_state": st.session_state.war_state,
+            "history_logs": st.session_state.history,
+            "review": {
+                "reasoning": st.session_state.review_reasoning,
+                "conclusion": st.session_state.review_text
+            },
+            # 🐛 修复：原快照漏掉了璇玑对话记录，导出后无法完整复原战局
+            "chat_messages": st.session_state.chat_messages,
+        }
+        # 使用 indent=4 进行格式化，ensure_ascii=False 确保中文不乱码
+        return json.dumps(export_data, ensure_ascii=False, indent=4)
+
+    # 仅当存在推演历史时才显示导出按钮
+    if st.session_state.history:
+        json_string = generate_json_export()
+        st.download_button(
+            label="📥 一键导出战局快照 (JSON)",
+            data=json_string,
+            file_name=f"GenTactix_推演数据_T{st.session_state.turn_count}.json",
+            mime="application/json",
+            use_container_width=True,
+            help="将当前所有的底层战场坐标、单位状态与复盘记录导出为结构化 JSON 文件"
+        )
+    else:
+        st.button("📥 一键导出战局快照 (JSON)", disabled=True, use_container_width=True, help="请先进行沙盘推演再导出数据")
+# ==========================================
+# 🧠 引擎 A：DeepSeek V3 动态推演 (负责快速生成 JSON 战局)
+# ==========================================
+def get_ai_response(prompt, api_key, use_search=False):
+    client = OpenAI(api_key=api_key, base_url=DEEPSEEK_BASE_URL) 
+    
+    # 构建消息列表
+    messages = [
+        {"role": "system", "content": "你是一个高度严密的战棋推演引擎，你的任务是计算战损和坐标，并严格按照要求输出 JSON 格式。"},
+        {"role": "user", "content": prompt}
+    ]
+    
+    # 调用 DeepSeek V3 (deepseek-chat) 进行快速 JSON 生成
+    response = chat_completion(
+        client, MODEL_ENGINE, messages,
+        # 强制开启 JSON Mode，提高格式稳定性
+        response_format={"type": "json_object"},
+    )
+    
+    raw_text = response.choices[0].message.content or ""
+    
+    # 提取 JSON 数据（包围在 markdown 代码块里的情况也一并处理）
+    clean_text = raw_text.strip()
+    if clean_text.startswith("```"):
+        clean_text = clean_text.split("\n", 1)[-1].rsplit("```", 1)[0]
+
+    start_idx = clean_text.find('{')
+    end_idx = clean_text.rfind('}')
+    
+    if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
+        try:
+            return json.loads(clean_text[start_idx:end_idx + 1])
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"AI 返回的 JSON 无法解析：{exc}\n原始回复：\n{raw_text}") from exc
+    raise ValueError(f"未能提取到有效的 JSON。AI 原始回复：\n{raw_text}")
+
+# ==========================================
+# 🌍 战术雷达阵列初始化
+# ==========================================
+# 启动 SRTM 军用级高程探测器（第一次探测某区域时会在本地自动下载缓存文件）
+# 🐛 修复：原代码每次 rerun 都重新执行 srtm.get_data()，属无谓开销；改用进程级缓存
+@st.cache_resource(show_spinner=False)
+def _load_elevation_data():
+    try:
+        return srtm.get_data()
+    except Exception:
+        return None
+
+
+elevation_data = _load_elevation_data()
+if elevation_data is None:
+    st.warning("⚠️ SRTM 地形雷达初始化失败，已降级为「海陆面具」单波段扫描（近岸精度下降）。")
+
+def is_water_precise(lat, lng):
+    """
+    🌟 双波段海陆雷达扫描 (Macro + Micro)
+    返回 True 表示判定为水域。
+    """
+    lat_f, lng_f = to_float(lat), to_float(lng)
+    if lat_f is None or lng_f is None:
+        return False
+
+    # 1. 宏观波段：如果判定在大洋深处，瞬间放行，节省算力
+    if not globe.is_land(lat_f, lng_f):
+        return True
+        
+    # 2. 微观波段：如果靠近海岸线或宏观雷达误判为陆地，启动 SRTM 高程微雕复判
+    if elevation_data:
+        # 🐛 修复：原代码未保护取高程的调用，断网/越界时异常会直接中断整次推演
+        try:
+            elevation = elevation_data.get_elevation(lat_f, lng_f)
+        except Exception:
+            return False
+        # 海洋、港口和深水航道通常没有海拔数据 (None) 或海拔极低 (<=0米)
+        if elevation is None or elevation <= 0: 
+            return True
+            
+    return False
+
+# ==========================================
+# 🛡️ 引擎底层校验与物理修正法则
+# ==========================================
+def get_coordinate_errors(state):
+    """扫描地图，如果有海军在陆地上，返回具体的错误信息列表 (SRTM 升级版)"""
+    errors = []
+
+    for team in ['red_units', 'blue_units']:
+        for unit in state.get(team, []):
+            unit_type = unit.get('type', unit.get('类型', unit.get('unit_type', unit.get('class', ''))))
+            
+            if is_naval(unit_type):
+                lat = unit.get('lat', unit.get('latitude', unit.get('纬度')))
+                lng = unit.get('lng', unit.get('longitude', unit.get('经度')))
+                
+                # 🌟 核心升级：使用双波段雷达进行绝对物理校验
+                if not is_water_precise(lat, lng):
+                    errors.append(
+                        f"错误：你将海军单位 '{unit.get('name')}' 部署在了坐标 [{lat}, {lng}]，"
+                        f"该坐标的绝对海拔高度处于陆地之上！海军必须在水域，请重新规划航线。"
+                    )
+    return errors
+
+def force_into_water(lat, lng, max_radius_deg=0.2, step_deg=0.005):
+    """
+    🌊 高精度强制落水算法 (SRTM 近岸微雕版)
+
+    🐛 修复：
+      1. 原实现在 while 循环内重复构造 angles，且缺少数值校验；
+      2. 传入字符串/None 坐标时会抛出 TypeError 而不是安全返回。
+    """
+    lat_f, lng_f = to_float(lat), to_float(lng)
+    if lat_f is None or lng_f is None:
+        return lat, lng
+        
+    # 1. 启动高精雷达探测，如果已经在水里，安全放行
+    if is_water_precise(lat_f, lng_f):
+        return lat, lng
+
+    # 2. 如果确认在陆地上，开启极密雷达外扩搜索
+    angles = range(0, 360, 10)  # 每 10 度扫一下，共 36 个方向的高频阵列
+    radius = step_deg
+    while radius <= max_radius_deg:
+        for angle in angles:
+            rad = math.radians(angle)
+            test_lat = lat_f + radius * math.cos(rad)
+            test_lng = lng_f + radius * math.sin(rad)
+            
+            test_lat = max(-90, min(90, test_lat))
+            test_lng = ((test_lng + 180) % 360) - 180
+
+            # 只要微雕雷达扫到了海平线，立刻把船拖过去并返回！
+            if is_water_precise(test_lat, test_lng):
+                return round(test_lat, 5), round(test_lng, 5)
+        
+        radius += step_deg
+
+    return lat, lng
+
+def get_ai_response_with_retry(prompt, api_key, use_search=False, max_retries=MAX_API_RETRIES):
+    """带有反思循环的推演引擎，强制纠正 AI 坐标幻觉"""
+    current_prompt = prompt
+    result_json = None
+    
+    for attempt in range(max_retries):
+        result_json = get_ai_response(current_prompt, api_key, use_search)
+        state_to_check = result_json.get("updated_state", result_json)
+        errors = get_coordinate_errors(state_to_check)
+        
+        if not errors:
+            if attempt > 0:
+                st.toast("✅ DeepSeek 已成功自我修正坐标！", icon="🎉")
+            return result_json
+            
+        st.toast(f"🛑 检测到航母上岸，DeepSeek 正在进行第 {attempt + 1} 次重新推理...", icon="🔄")
+        
+        error_feedback = "\n\n【系统最高警告：坐标物理规则冲突！】\n你刚才生成的 JSON 中存在以下致命地理错误：\n"
+        for err in errors:
+            error_feedback += f"- {err}\n"
+        error_feedback += "请你立刻重新评估战局，重新生成一组合法的 JSON 数据。必须确保所有海军单位的经纬度都在海洋中！"
+        
+        current_prompt += error_feedback
+        
+    st.error(f"⚠️ AI 连续 {max_retries} 次未能修正坐标错误，系统强制放行，请注意地图穿模。")
+    return result_json
+
+# ==========================================
+# 🧠 引擎 B：DeepSeek R1 战略复盘 (负责深度思考)
+# ==========================================
+def get_r1_strategic_review(history, current_state, api_key):
+    client = OpenAI(api_key=api_key, base_url=DEEPSEEK_BASE_URL) 
+    
+    prompt = f"""
+    你现在是最高统帅部的首席战略推演官璇玑。
+    以下是本次沙盘推演从开战至今的全部战报记录：
+    {json.dumps(history, ensure_ascii=False, indent=2)}
+    
+    这是当前最新的战场单位状态（包含残余兵力、位置、士气、补给）：
+    {json.dumps(current_state, ensure_ascii=False, indent=2)}
+    
+    请你抛开一切 JSON 格式束缚，用极其专业的军事术语，写一份 500 字左右的【战局深度复盘】。
+    要求：
+    1. 分析双方在刚才几次交锋中的战略得失（谁占了便宜，谁犯了致命错误）。
+    2. 评估地形对当前局势的影响。
+    3. 为处于劣势的一方提供下一步的“破局建议”，为处于优势的一方提供“稳固胜势建议”。
+    4. 不仅要分析战术得失，还要说明当前的战术成果是否可以影响到战略层面的得失。
+    """
+    
+    response = chat_completion(
+        client, MODEL_STRATEGIST,
+        [
+            {"role": "system", "content": "你是一位冷酷、理性的军事战略大师。"},
+            {"role": "user", "content": prompt}
+        ]
+    )
+    
+    # 🐛 修复：原代码直接访问 .reasoning_content，一旦所用模型不返回思维链
+    #         （非 reasoner 系）就会抛 AttributeError，导致复盘整个失败。
+    message = response.choices[0].message
+    reasoning = getattr(message, 'reasoning_content', None) or ""
+    return reasoning, message.content
+
+# --- 逻辑处理 ---
+if btn_init:
+    if not deepseek_api_key or not scenario_input:
+        st.warning("⚠️ 请先输入 API Key 和推演场景！")
+    else:
+        # 🌟 1. 战前情报检索：检查用户输入是否命中了我们的高精坐标库
+        available_nodes = {}
+        for key, nodes in STRATEGIC_NODES.items():
+            if key in scenario_input:
+                available_nodes.update(nodes)
+        
+        # 🌟 2. 动态组装高精导航指令
+        node_instruction = ""
+        if available_nodes:
+            node_names_str = "、".join(available_nodes.keys())
+            node_instruction = f"""
+        5. ⚓ 【高精战术锚点解锁】：本次推演战区已被系统高精地图覆盖！你可以选择将核心单位部署在以下极高精度的锚点位置：
+           [{node_names_str}]
+           - 如果你决定使用锚点，请在单位 JSON 属性中新增字段 "node_name" 并填入对应锚点名称。
+           - 剩余不需要精确锚定的单位，或者未解锁锚点的单位，请照常生成 "lat" 和 "lng"。
+            """
+        else:
+            node_instruction = "5. 【通用地理生成】：请依靠你的历史地理知识，自行生成合理的 lat 和 lng 坐标。"
+
+        # 🌟 3. 将动态指令无缝嵌入原有的 Prompt 中
+        
+        init_prompt = f"""
+        你是一位顶级的军事战略分析师和历史学家。请针对以下背景进行推演初始化：'{scenario_input}'。
+        1. 确定核心战区的真实经纬度。
+        2. ⏱️ 【战前静默时间线】：必须将【起始时间】设定在历史冲突真正爆发的 **前 1 到 2 小时**（例如：日军第一波战机尚未起飞，美军尚在沉睡的宁静阶段）。第 0 回合绝对禁止发生交火。
+        
+        3. 🌟 【动态非对称兵力生成】：请严格依据真实历史背景中的【红蓝实力对比】，进行符合史实的兵力部署！
+           - 数量分配：全场核心单位总数严格控制在 12 到 24个之间。你需要根据历史真实的兵力悬殊比例，不对称地分配双方单位数量（例如：如果历史上是1:3的劣势，你可以分配为 红方4个 vs 蓝方12个）。
+           - 质量代换：对于历史上【兵力较少，但单兵素质/装备更优】的一方，你必须在其单体单位的 HP、战斗力、morale(士气0-100) 上给予显著的数值优势。
+           - 单位属性必须包含：名称、类型、经纬度 [lat, lng]、HP、战斗力、移动速度、射程、morale(士气0-100)、supply(补给0-100)。
+        4. ⚓ 【微观锚地与坐标授权】：
+           - 如果推演的是港口遇袭战（如珍珠港事件），你**必须**将防守方舰队部署在真实的港口内部锚地（例如珍珠港福特岛战列舰大街，坐标范围大致在 [21.36, -157.96] 附近），**绝对禁止**为了规避地理限制而将舰队违背历史地放置在外海大洋上！
+              - 其他海战场景也必须尽量贴近历史真实的海域位置，绝对禁止将舰队放在完全不合理的陆地坐标上（例如：将航母放在某个内陆城市的坐标上）。    
+        5. 撰写一段 100 字以内的【初始战场态势评估】。请注意，目前是战前部署阶段，请描述出“大战略下的平静”或“暗流涌动”，不要出现战斗已经打响的描述。
+        【绝对地理红线】：所有包含“舰”、“船”、“航母”、“潜艇”的海洋单位，经纬度必须位于水域中！
+        6.历史锚定原则：如果是历史上的战争，需要严格按照历史剧本进行推演。
+        【最高级 JSON 格式强制警告】：
+        经纬度必须且只能使用 "lat" 和 "lng" 这两个独立的键名！
+        绝对不允许擅自发明同义词或将其打包合并！
+
+        请直接返回 JSON 数据，格式如下：
+        {{
+          "center": [lat, lng],
+          "current_time": "设定的起始时间",
+          "era": "时代背景",
+          "red_units": [...],
+          "blue_units": [...],
+          "current_terrain": "当前核心战区的地形特征",
+          "situation_report": "在这里填写初始态势评估..."
+        }}
+        """
+        with st.spinner("DeepSeek正在侦察地形并部署单位..."):
+            try:
+                # 1. 获取 AI 的初始阵型分布
+                init_state = get_ai_response_with_retry(init_prompt, deepseek_api_key, use_search=use_live_intel)
+                
+                # ==========================================
+                # 🌟 核心防线修补：在创世阶段就进行绝对物理清洗
+                # 🐛 修复：原代码把「未命中锚点」与「命中锚点」两个分支都写成了落水清洗，
+                #         注释与实现自相矛盾，整段约 45 行逻辑完全重复。
+                #         正确语义：命中智库锚点 → 坐标由人工核定，直接采信；
+                #                   未命中      → AI 自由坐标，必须过海陆雷达。
+                # ==========================================
+                for team in ['red_units', 'blue_units']:
+                    for unit in init_state.get(team, []):
+                        unit_type = unit.get('type', unit.get('类型', unit.get('unit_type', unit.get('class', ''))))
+                        unit_name = unit.get('name', '') or ''
+                        matched_anchor = None
+
+                        # 1. 优先查表：遍历高精锚点字典，寻找名称交集
+                        for anchor_name, coords in available_nodes.items():
+                            # 提取核心短键名（如 "福特岛-战列舰大街-亚利桑那号" → "亚利桑那号"）
+                            core_name = anchor_name.split('-')[-1]
+                            if core_name and (core_name in unit_name or unit_name in core_name):
+                                unit['lat'] = coords[0]
+                                unit['lng'] = coords[1]
+                                st.toast(f"🎯 智库强制导航：[{unit_name}] 已精确吸附至锚点 [{anchor_name}]", icon="⚓")
+                                matched_anchor = anchor_name
+                                break  # 匹配成功，跳出字典遍历
+
+                        if matched_anchor:
+                            # 锚点是人工核定的合法水域坐标，无需再走雷达
+                            continue
+
+                        # 2. 降级路径：AI 自由坐标，必须过一遍海陆雷达
+                        if not is_naval(unit_type):
+                            continue
+
+                        lat = unit.get('lat')
+                        lng = unit.get('lng')
+                        new_lat, new_lng = force_into_water(lat, lng)
+
+                        if (new_lat != lat) or (new_lng != lng):
+                            lat_f, lng_f = to_float(lat), to_float(lng)
+                            new_lat_f, new_lng_f = to_float(new_lat), to_float(new_lng)
+                            if None in (lat_f, lng_f, new_lat_f, new_lng_f):
+                                offset_km = 0.0
+                            else:
+                                # 计算拖拽的粗略直线距离 (1度约等于111公里)
+                                offset_km = math.sqrt((new_lat_f - lat_f) ** 2 + (new_lng_f - lng_f) ** 2) * 111
+
+                            if offset_km <= 5:
+                                # 🟢 5公里以内：属于战术微调，正常放行
+                                st.toast(f"⚓ 战术微调：{unit.get('name')} 偏航，已拖拽 {offset_km:.1f} 公里至港口/水域。", icon="🌊")
+                            elif offset_km <= 15:
+                                # 🟡 5~15公里：大模型产生中度幻觉，提出警告
+                                st.toast(f"⚠️ 战略警告：{unit.get('name')} 偏航严重！系统强行跨越 {offset_km:.1f} 公里将其拖入海中，可能偏离原定战区！", icon="⚠️")
+                            else:
+                                # 🔴 15公里以上（逼近22公里极限）：发生严重空间扭曲
+                                st.error(f"🚨 极限地理穿透：{unit.get('name')} 被 AI 投送至内陆深处！系统实施了 {offset_km:.1f} 公里的强行拖拽。战术意图已遭破坏，建议总参谋长重点核查该单位坐标！")
+
+                            unit['lat'] = new_lat
+                            unit['lng'] = new_lng
+                # ==========================================
+                
+                # 2. 将清洗后的纯净数据写入系统状态
+                st.session_state.war_state = init_state
+                st.session_state.last_war_state = None 
+                st.session_state.turn_count = 0
+                # 🐛 修复：重新开新局时旧复盘与旧对话会残留，导致「张冠李戴」；
+                #         新沙盘必须是一张白纸。
+                st.session_state.review_text = None
+                st.session_state.review_reasoning = None
+                st.session_state.chat_messages = []
+                
+                start_time = st.session_state.war_state.get("current_time", "未知时间")
+                initial_report = st.session_state.war_state.get("situation_report", "各单位已进入战斗位置，战役即将打响。")
+                st.session_state.history = [f"**【T+0 | {start_time}】初始态势评估**：\n{initial_report}"]
+                
+            except Exception as e:
+                st.error(f"初始化失败: {e}")
+
+if btn_next:
+    if not deepseek_api_key or not st.session_state.war_state:
+        st.warning("⚠️ 请先初始化沙盘！")
+    else:
+        current_time_str = st.session_state.war_state.get('current_time', '00:00')
+        next_turn_num = st.session_state.turn_count + 1
+        
+        if use_live_intel:
+            intel_instruction = "【突发变量接入（黑天鹅事件）】：请主动假设并引入一个符合当前时代的突发战场变量（如恶劣天气、后方破坏、第三方介入等），打破目前的战术僵局！"
+        else:
+            intel_instruction = "【封闭沙盘模式】：本回合纯粹依据现有的兵力、地形和物理规则进行硬核军事对抗，切勿凭空捏造外界干预。"
+        
+        step_prompt = f"""
+        当前系统时间：{current_time_str}
+        这是第{next_turn_num} 轮推演。当前回合流逝的时间跨度为：【{time_step}】。
+        当前战场数据：{json.dumps(st.session_state.war_state)}
+        
+       ### 强制任务：
+       {intel_instruction}
+        1. **精准时间推进与历史剧本锚定（最高级命令）**：你必须将系统时间准确向后推进【{time_step}】。推进后，**立即检索你数据库中关于该历史事件的真实时间线**！如果在推进后的新时间点上，历史上发生了标志性事件（例如：第一波攻击机抵达、核心战舰沉没、指挥部遇袭等），你必须在本次的 JSON 数据中完美还原该历史事件，强制单位产生符合史实的位移和战损！
+        2. **物理计算辅助**：在绝对尊重历史时间线的前提下，结合各单位的【移动速度】和【射程】计算合理的走位微调。
+           - 补给低于 20 机动减半；士气低于 30 战力下降。
+           - 🌟 【绝对地理红线】：在计算位移时，必须确保所有海军单位的新坐标依然位于水域中！
+           - 🌟 【锚地静默规则】：如果海军单位当前处于狭窄的内海或港口内，且历史上的此时并未出动，【严禁】微调其坐标，保持原地静默！
+        3. **战报输出**：编写 150字以内的实时战报。
+        
+        【地形强制判定规则】：强制新增一个字段 "current_terrain"，从["深海", "近海海峡", "平原", "丘陵森林", "高山峻岭", "城市地带"]中选择。地形必须严格影响你的战术计算。
+        
+        【最高级 JSON 格式强制警告】：
+        经纬度必须且只能使用 "lat" 和 "lng" 这两个独立的键名！
+
+        请直接返回以下 JSON 结构：
+        {{
+          "updated_state": {{
+            "center": [lat, lng],
+            "current_time": "推进后的新时间",
+            "era": "时代背景",
+            "red_units": [...],
+            "blue_units": [...],
+            "current_terrain": "当前地形",
+            "engagements": [
+               {{
+                 "lat": 目标纬度,
+                 "lng": 目标经度,
+                 "description": "交战描述",
+                 "attacker_pos": [攻击者lat, 攻击者lng], 
+                 "radius": 1500
+               }}
+            ]
+          }},
+          "report": "必须以 '【T+{next_turn_num} | 新时间】' 开头。描述战报..."
+        }}
+        """
+        with st.spinner(f"DeepSeek正在推演未来 {time_step} 的战况..."):
+            try:
+                result = get_ai_response_with_retry(step_prompt, deepseek_api_key, use_search=use_live_intel)
+                
+                updated_data = result.get("updated_state", result)
+                
+                # 🌟🌟🌟 强制洗数据，执行“落水算法” 🌟🌟🌟
+                # （原先此处重复定义了一次 is_naval，现统一使用模块级实现）
+                for team in ['red_units', 'blue_units']:
+                    for unit in updated_data.get(team, []):
+                        unit_type = unit.get('type', unit.get('类型', unit.get('unit_type', unit.get('class', ''))))
+                        if is_naval(unit_type):
+                            lat = unit.get('lat')
+                            lng = unit.get('lng')
+                            
+                            # 调用算法：如果在陆地上，强制获取最近的海水坐标
+                            new_lat, new_lng = force_into_water(lat, lng)
+                            
+                            # 如果坐标被算法纠正过，通过 Toast 提示用户
+                            if (new_lat != lat) or (new_lng != lng):
+                                st.toast(f"⚓ 系统强制干预：检测到 {unit.get('name')} 偏航至陆地，已强制拖入附近海域！", icon="🌊")
+                                unit['lat'] = new_lat
+                                unit['lng'] = new_lng
+                # 🌟🌟🌟 洗数据结束 🌟🌟🌟
+
+                # 继续走原有的渲染和日志更新逻辑
+                report_text = result.get("report")
+                if not report_text and isinstance(updated_data, dict):
+                    report_text = updated_data.get("report", f"【T+{next_turn_num}】系统未能成功生成文字战报，但战场态势已发生改变。")
+                
+                st.session_state.last_war_state = copy.deepcopy(st.session_state.war_state)
+                st.session_state.war_state = updated_data
+                
+                if report_text:
+                    st.session_state.history.insert(0, report_text)
+                    
+                st.session_state.turn_count = next_turn_num
+                
+            except Exception as e:
+                st.error(f"❌ 本回合推演因为 AI 生成数据错误而终止，请重试。错误详情: {e}")
+
+# ==========================================
+# 🦅 R1 参谋长复盘区 (向下延展展示)
+# ==========================================
+# 加一条分割线，将推演区和复盘区分开
+st.divider() 
+
+if btn_review:
+    if not deepseek_api_key:
+        st.error("⚠️ 请在左侧输入 DeepSeek API Key！")
+    elif not st.session_state.war_state or len(st.session_state.history) == 0:
+        st.warning("⚠️ 请先进行至少一轮推演，再呼叫总参谋长复盘！")
+    else:
+        with st.spinner("🧠 参谋长正在盯着沙盘进行深度脑力推演 (V4模型需思考，请耐心等待)..."):
+            try:
+                # 获取报告并直接存入 session_state
+                reasoning, conclusion = get_r1_strategic_review(
+                    st.session_state.history, 
+                    st.session_state.war_state, 
+                    deepseek_api_key
+                )
+                st.session_state.review_reasoning = reasoning
+                st.session_state.review_text = conclusion
+                
+            except Exception as e:
+                st.error(f"总参谋长复盘请求失败: {e}")
+
+# --- 地图展示端 ---
+col1, col2 = st.columns([3, 1])
+
+with col1:
+    if st.session_state.war_state:
+        # 🐛 修复：原代码直接索引 war_state['center']，AI 漏字段时会 KeyError 白屏
+        center = st.session_state.war_state.get('center')
+        if not (isinstance(center, (list, tuple)) and len(center) == 2
+                and to_float(center[0]) is not None and to_float(center[1]) is not None):
+            center = [0.0, 0.0]
+            st.warning("⚠️ AI 未返回有效的战区中心坐标，地图暂以 (0, 0) 显示，请检查战局数据。")
+
+        current_time_display = st.session_state.war_state.get('current_time', '')
+        st.markdown(f"### 🕒 当前战区时间：**{current_time_display}** (第 {st.session_state.turn_count} 回合)")
+        
+        # 1. 基础战区地图
+        # 🐛 修复：原 tiles="选择地图类型" 是无效瓦片模板，会导致底图整片灰白；
+        #         这里交由下方显式声明的两个 TileLayer 承担底图职责。
+        m = folium.Map(
+            location=center, 
+            zoom_start=11, 
+            tiles=None, 
+            attr="GenTactix Tactical Engine | Python History Strategy Lab"
+        )
+        
+        # ==========================================
+        # 1.1 🗺️ 底图图层组（按实测可达性排序）
+        # 🐛 修复：原先默认显示 OpenTopoMap，但实测 tile.openstreetmap.org /
+        #    a.tile.opentopomap.org 在部分网络（尤其国内）**完全不可达**，
+        #    地图会整片灰白 —— 而地图是本应用的核心 UI。
+        #    现改为默认卫星实景，并把所有可用底图都挂进右上角图层控制台，
+        #    用户可随时自行切换。实测：Esri(arcgisonline) 稳定可用、高德可用、
+        #    OSM / OpenTopoMap 不可达。
+        # ==========================================
+        TILE_LAYERS = [
+            dict(name="🛰️ 天眼卫星实景", show=True,
+                 url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+                 attr="Esri World Imagery"),
+            dict(name="🌊 海洋底图", show=False,
+                 url="https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}",
+                 attr="Esri Ocean Base"),
+            dict(name="🏔️ 战术地形图", show=False,
+                 url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
+                 attr="Esri World Topo"),
+            dict(name="🗺️ OpenTopoMap（国内网络通常不可达）", show=False,
+                 url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+                 attr="OpenTopoMap"),
+            # ⚠️ 高德的瓦片是 GCJ-02 坐标系，而本应用所有单位坐标是 WGS-84，
+            #    直接叠加会有数百米偏移，仅作应急备用。
+            dict(name="🇨🇳 高德路网（GCJ-02，点位会有数百米偏移）", show=False,
+                 url="https://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
+                 attr="高德地图"),
+        ]
+        for _cfg in TILE_LAYERS:
+            folium.TileLayer(
+                tiles=_cfg["url"],
+                attr=_cfg["attr"],
+                name=_cfg["name"],
+                overlay=False,   # False = 互斥底图，而不是透明叠加层
+                control=True,
+                show=_cfg["show"]
+            ).add_to(m)
+        
+        # ==========================================
+        # 🌟 核心升级：北约 APP-6 标准军标渲染引擎
+        # ==========================================
+        def get_nato_html(unit, color_theme):
+            unit_type = str(unit.get('type', unit.get('类型', unit.get('unit_type', unit.get('class', ''))))).lower()
+            unit_name = str(unit.get('name', '未知单位'))
+            
+            # 1. 判定内部战术核心符号
+            symbol = "?"
+            font_size = "20px"
+            if any(k in unit_type for k in ['步兵', '陆战', '军团', '师', '旅', 'infantry', 'marine', 'troop', 'army']):
+                symbol = "X" # 交叉带，代表步兵
+                font_size = "20px"
+            elif any(k in unit_type for k in ['坦克', '装甲', '战车', '机动', '骑兵', 'tank', 'armor', 'vehicle', 'cavalry']):
+                # 履带/椭圆，代表装甲与高机动部队
+                symbol = "<div style='width: 14px; height: 6px; border: 2px solid black; border-radius: 50%;'></div>"
+            elif any(k in unit_type for k in ['炮', '防空', '导弹', '火力', 'artillery', 'missile', 'anti-air']):
+                symbol = "●" # 炮弹落点，代表炮兵/远程打击
+                font_size = "20px"
+            elif any(k in unit_type for k in ['机', '轰炸', '航空', '飞行', 'plane', 'fighter', 'bomber', 'air']):
+                symbol = "∞" # 螺旋桨/无限符号，代表航空兵
+                font_size = "20px"
+            elif any(k in unit_type for k in ['舰', '船', '航母', '潜艇', '巡洋', '驱逐', 'ship', 'carrier', 'submarine', 'destroyer', 'cruiser', 'fleet']):
+                symbol = "⚓" # 船锚，通用海军符号
+                font_size = "20px"
+            elif any(k in unit_type for k in ['指挥', '基地', '总部', '阵地', 'hq', 'base', 'command', 'center']):
+                symbol = "★" # 星号，代表各级指挥所
+                font_size = "20px"
+
+            # 2. 判定外部阵营边框 (红方敌军为菱形，蓝方友军为矩形)
+            if color_theme == 'red':
+                # 绘制菱形边框并灌入淡红色底漆
+                frame_html = f"""
+                <div style="position: relative; width: 30px; height: 30px;">
+                    <div style="position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; 
+                                background: rgba(255, 180, 180, 0.85); border: 2px solid #cc0000; 
+                                transform: rotate(45deg); box-shadow: 2px 2px 5px rgba(0,0,0,0.5);"></div>
+                    <div style="position: absolute; top: 0; left: 0; width: 30px; height: 30px; 
+                                display: flex; align-items: center; justify-content: center; 
+                                color: black; font-weight: bold; font-size: {font_size}; font-family: sans-serif; z-index: 10;">
+                        {symbol}
+                    </div>
+                </div>
+                """
+            else:
+                # 绘制矩形边框并灌入淡蓝色底漆
+                frame_html = f"""
+                <div style="width: 36px; height: 22px; 
+                            background: rgba(180, 210, 255, 0.85); border: 2px solid #0044cc; 
+                            box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+                            display: flex; align-items: center; justify-content: center; 
+                            color: black; font-weight: bold; font-size: {font_size}; font-family: sans-serif;">
+                    {symbol}
+                </div>
+                """
+                
+            # 3. 组装：将几何军标与底部的深色半透明铭牌合并
+            return f"""
+            <div style="display: flex; flex-direction: column; align-items: center; width: 120px; margin-left: -60px; margin-top: -15px;">
+                {frame_html}
+                <div style="background: rgba(0,0,0,0.7); color: #fff; font-size: 11px; padding: 2px 5px; border-radius: 3px; margin-top: 3px; font-family: sans-serif; white-space: nowrap; border: 1px solid rgba(255,255,255,0.2);">
+                    {unit_name}
+                </div>
+            </div>
+            """
+
+        def draw_units_and_trails(current_units, color, team_key):
+            for unit in current_units:
+                hp = unit.get('hp', unit.get('HP', unit.get('health', '未知')))
+                # 🐛 修复：原代码只判 None，字符串坐标会被原样塞给 folium，导致标记整体不渲染
+                lat = to_float(unit.get('lat', unit.get('current_lat', unit.get('latitude'))))
+                lng = to_float(unit.get('lng', unit.get('current_lng', unit.get('longitude'))))
+                
+                if lat is None or lng is None: continue
+                curr_pos = [lat, lng]
+                
+                unit_type = unit.get('type', unit.get('类型', unit.get('unit_type', unit.get('class', '未知兵种'))))
+                # 🐛 修复：AI 可能把 morale/supply 写成字符串，原代码直接比较会 TypeError
+                morale = to_float(unit.get('morale', 100))
+                supply = to_float(unit.get('supply', 100))
+                morale = 100.0 if morale is None else morale
+                supply = 100.0 if supply is None else supply
+                
+                morale_icon = "🔥" if morale > 50 else "⚠️"
+                supply_icon = "🔋" if supply > 50 else "🪫"
+                
+                # 鼠标点击后的浮动详细情报
+                popup_text = f"<b>{unit.get('name', '未知单位')}</b><br>类型: {unit_type}<br>HP: ❤️ {hp}<br>士气: {morale_icon} {morale}%<br>补给: {supply_icon} {supply}%"
+                
+                # 🌟 调用纯手工编写的 CSS 北约军标
+                html_icon = get_nato_html(unit, color)
+                
+                # 使用 folium.DivIcon 挂载 HTML 渲染器
+                folium.Marker(
+                    curr_pos, 
+                    popup=folium.Popup(popup_text, max_width=200), 
+                    icon=folium.DivIcon(html=html_icon)
+                ).add_to(m)
+                
+                if st.session_state.last_war_state:
+                    for last_unit in st.session_state.last_war_state.get(team_key, []):
+                        if last_unit.get('name') == unit.get('name'):
+                            # 🐛 修复：上一回合坐标同样需要数值校验，否则行军轨迹线不渲染
+                            last_lat = to_float(last_unit.get('lat'))
+                            last_lng = to_float(last_unit.get('lng'))
+                            if last_lat is None or last_lng is None:
+                                break
+                            last_pos = [last_lat, last_lng]
+                            if last_pos != curr_pos:
+                                movement_line = folium.PolyLine(
+                                    locations=[last_pos, curr_pos], 
+                                    color=color, 
+                                    weight=2, 
+                                    opacity=0.6,
+                                    dash_array='5, 5',
+                                    tooltip=f"{unit.get('name')} 的行军路线"
+                                ).add_to(m)
+                                
+                                plugins.PolyLineTextPath(
+                                    movement_line,
+                                    '  ➤  ',      
+                                    repeat=False, 
+                                    center=True,
+                                    offset=8,     
+                                    attributes={'fill': color, 'font-weight': 'bold', 'font-size': '18'}
+                                ).add_to(m)
+                                
+                                plugins.AntPath(
+                                    locations=[last_pos, curr_pos],
+                                    color=color,
+                                    weight=5,
+                                    opacity=0.3,  
+                                    dash_array=[15, 20],
+                                    delay=800,
+                                ).add_to(m)
+                            break
+        draw_units_and_trails(st.session_state.war_state.get('red_units', []), 'red', 'red_units')
+        draw_units_and_trails(st.session_state.war_state.get('blue_units', []), 'blue', 'blue_units')
+            
+        engagements = st.session_state.war_state.get('engagements') or []
+        if not isinstance(engagements, list):
+            engagements = []
+        for battle in engagements:
+            if not isinstance(battle, dict):
+                continue
+            b_lat, b_lng = battle.get('lat'), battle.get('lng')
+            desc = battle.get('description', '激烈交火区域')
+            
+            # 🐛 修复：原为裸 except，会吞掉 KeyboardInterrupt 等系统级异常
+            try:
+                impact_radius = float(battle.get('radius', 1500))
+            except (TypeError, ValueError):
+                impact_radius = 1500.0
+            if impact_radius <= 0:
+                impact_radius = 1500.0
+            
+            if impact_radius >= 20000: border_color, fill_color, icon_color = 'black', 'purple', 'darkpurple'
+            elif impact_radius >= 5000: border_color, fill_color, icon_color = 'darkred', 'crimson', 'darkred'
+            elif impact_radius <= 500: border_color, fill_color, icon_color = 'darkorange', 'orange', 'orange'
+            else: border_color, fill_color, icon_color = 'crimson', 'red', 'red'
+            
+            # 🐛 修复：坐标可能是字符串，统一做数值校验，避免 folium 收到脏数据
+            b_lat_f, b_lng_f = to_float(b_lat), to_float(b_lng)
+            if b_lat_f is not None and b_lng_f is not None:
+                battle_pos = [b_lat_f, b_lng_f]
+                
+                folium.Marker(battle_pos, icon=folium.Icon(color=icon_color, icon='fire', prefix='fa'), tooltip=f"💥 <b>交战发生 (波及 {impact_radius} 米)</b><br>{desc}").add_to(m)
+                folium.Circle(location=battle_pos, radius=impact_radius, color=border_color, weight=2, fill=True, fill_color=fill_color, fill_opacity=0.4, tooltip=f"杀伤/影响范围: {impact_radius} 米").add_to(m)
+                
+                # 🌟 修复：安全提取 attacker_pos 并绘制火力打击轨迹
+                attacker_pos_raw = battle.get('attacker_pos')
+                if isinstance(attacker_pos_raw, (list, tuple)) and len(attacker_pos_raw) == 2:
+                    a_lat = to_float(attacker_pos_raw[0])
+                    a_lng = to_float(attacker_pos_raw[1])
+                    if a_lat is not None and a_lng is not None:
+                        # 🌟 升级为动态火力打击轨迹
+                        plugins.AntPath(
+                            locations=[[a_lat, a_lng], battle_pos],
+                            color=border_color, 
+                            pulse_color='white',  # 脉冲颜色设为白色，有种曳光弹/激光的视觉效果
+                            weight=2,
+                            dash_array=[5, 20],
+                            delay=400,            # 动画速度极快，模拟火力投射
+                            tooltip="🔥 火力打击方向"
+                        ).add_to(m)
+                # 3. 🌟 核心升级：在所有图层和元素绘制完毕后，添加图层控制台
+        # ==========================================
+        # 🌟 核心升级：战术沙盘全屏展开模块
+        # ==========================================
+        plugins.Fullscreen(
+            position='topleft',       # 全屏按钮的放置位置
+            title='展开全屏战术地图',   # 鼠标悬停时的中文提示
+            title_cancel='退出全屏',   # 全屏状态下的退出提示
+            force_separate_button=True
+        ).add_to(m)
+
+        # 3. 在所有图层和元素绘制完毕后，添加图层控制台
+        # 必须放在所有的 .add_to(m) 的最后面
+        folium.LayerControl(position='topright', collapsed=False).add_to(m)
+                
+        # 渲染最终地图
+        # 🐛 修复：补上固定 key，避免每次 rerun（点按钮/聊一句）都把地图缩放和中心重置
+        st_folium(m, use_container_width=True, height=700, key="gentactix_tactical_map")
+        
+        
+    else:
+        # --- 🌟 启动前的中心 Logo 欢迎界面 ---
+        # 1. 使用换行符制造一些顶部空白，使其垂直方向大致居中
+        st.markdown("<br><br><br>", unsafe_allow_html=True)
+        
+        # 2. 使用嵌套的 3 列布局，把图片夹在中间，实现完美水平居中
+        # 比例 [1, 2, 1] 意味着图片占据中间一半的宽度，您可以根据喜好调整比例，比如 [1, 1.5, 1]
+        spacer_left, img_col, spacer_right = st.columns([1, 2, 1])
+        
+        with img_col:
+            try:
+                # 🐛 修复：原用相对路径 "logo.png"，依赖启动时的 cwd；
+                #         改为基于脚本自身所在目录定位，从任何位置启动都能加载。
+                logo_path = Path(__file__).resolve().parent / "logo.png"
+                if not logo_path.exists():
+                    raise FileNotFoundError(str(logo_path))
+                st.image(str(logo_path), use_container_width=True)
+            except Exception:
+                st.warning("⚠️ 待机 Logo 未找到，请确保已将图片重命名为 logo.png 并放入代码同级目录。")
+            
+            # 添加居中的待机文字提示
+            st.markdown(
+                "<h3 style='text-align: center; color: #888888; font-weight: normal;'>"
+                "系统处于最高物理静默状态"
+                "</h3>", 
+                unsafe_allow_html=True
+            )
+            st.markdown("<br>", unsafe_allow_html=True)
+            # 保留原本的操作提示，并居中显示
+            st.info("👈 统帅，请在左侧配置 DeepSeek API Key 与推演场景，并点击 [🚀 初始化沙盘] 唤醒系统。")
+with col2:
+    # 🌟 核心改造：使用 tabs 将右侧空间一分为二
+    tab_log, tab_review = st.tabs(["📡 动态战报", "🦅 参谋长复盘"])
+    
+    with tab_log:
+        with st.container(height=650):
+            if not st.session_state.history:
+                st.caption("尚无战报。请点击左侧「🚀 初始化沙盘」开始推演。")
+            for log in st.session_state.history:
+                st.markdown(f"**·** {log}")
+                st.divider()
+                
+    with tab_review:
+        # 🐛 修复：review_text / review_reasoning 此前「只计算、不展示」，
+        #         首席参谋长那次 V4 调用等于白花；此处补上结果渲染。
+        if st.session_state.review_text:
+            st.markdown("#### 🦅 战局深度复盘")
+            if st.session_state.review_reasoning:
+                with st.expander("💡 参谋长的推演思维链 (CoT)"):
+                    st.markdown(st.session_state.review_reasoning)
+            st.markdown(st.session_state.review_text)
+            st.divider()
+
+        # 使用固定高度的容器展示对话记录
+        chat_container = st.container(height=580)
+        with chat_container:
+            if not st.session_state.chat_messages:
+                st.caption("沙盘启动后，可在此直接向总参谋长璇玑提问。")
+            for msg in st.session_state.chat_messages:
+                content = msg.get("content") or ""
+                if not content:
+                    continue
+                with st.chat_message(msg.get("role", "assistant")):
+                    st.markdown(content)
+        
+        # 底部聊天输入框
+        if user_query := st.chat_input("向总参谋长璇玑提问（如：帮我评估当前优势在哪方？）"):
+            if not deepseek_api_key:
+                st.error("⚠️ 请在左侧输入 DeepSeek API Key！")
+            elif not st.session_state.war_state:
+                st.warning("⚠️ 请先进行至少一轮推演，让战局数据生成！")
+            else:
+                # 1. 界面立刻显示用户问题
+                st.session_state.chat_messages.append({"role": "user", "content": user_query})
+                with chat_container:
+                    with st.chat_message("user"):
+                        st.markdown(user_query)
+                    
+                    # 2. 调用璇玑进行深度思考
+                    with st.chat_message("assistant"):
+                        with st.spinner("🧠 璇玑正在分析实时战报，请稍候..."):
+                            try:
+                                client = OpenAI(api_key=deepseek_api_key, base_url=DEEPSEEK_BASE_URL) 
+                                
+                                # 将战场环境动态注入到 System Prompt 中
+                                system_prompt = f"""
+                                你是最高统帅部的首席战略推演官璇玑。冷酷、理性，深谙军事战略。
+                                以下是开战至今的全部战报：{json.dumps(st.session_state.history, ensure_ascii=False)}
+                                这是当前最新沙盘状态：{json.dumps(st.session_state.war_state, ensure_ascii=False)}
+                                请直接用专业的中文军事术语回答统帅的问题，不要输出 JSON，不要有多余寒暄。
+                                """
+                                
+                                messages = [{"role": "system", "content": system_prompt}]
+                                # 追加最近的对话历史（保持记忆，最多回带 5 轮，避免上下文无限膨胀）
+                                for m in st.session_state.chat_messages[-5:]:
+                                    messages.append({"role": m["role"], "content": m.get("content") or ""})
+                                
+                                # 调用 DeepSeek R1 思考模型
+                                response = chat_completion(client, MODEL_CHAT, messages)
+                                
+                                # 提取思维链 (CoT) 与最终回复
+                                reasoning = getattr(response.choices[0].message, 'reasoning_content', '') or ''
+                                answer = response.choices[0].message.content or "（璇玑未返回内容，请重试）"
+                                
+                                # 如果有思考过程，用折叠面板展示
+                                if reasoning:
+                                    with st.expander("💡 璇玑的战术推演思维链 (CoT)"):
+                                        st.markdown(reasoning)
+                                        
+                                # 展示并保存回复
+                                st.markdown(answer)
+                                st.session_state.chat_messages.append({"role": "assistant", "content": answer})
+                                # 对话记录限长，防止长时间推演后 session 无限增长
+                                if len(st.session_state.chat_messages) > 40:
+                                    st.session_state.chat_messages = st.session_state.chat_messages[-40:]
+                                
+                            except Exception as e:
+                                st.error(f"⚠️ 指挥部通讯中断: {e}")

@@ -1,0 +1,41 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "gentactix",
+	"main": "src/index.ts",
+	"compatibility_date": "2026-08-01",
+	"compatibility_flags": ["nodejs_compat"],
+
+	"observability": {
+		"enabled": true
+	},
+
+	"containers": [
+		{
+			"class_name": "GentactixContainer",
+			"image": "./Dockerfile",
+			"instance_type": "basic",
+			"max_instances": 1,
+
+		// 构建期变量（等价于 docker build --build-arg）
+		// Dockerfile 默认已用官方 PyPI（pypi.org）。本部署走 GitHub Actions 海外 runner，
+		// 用官方源最快最稳；若改为国内本机 Docker 构建，可加回：
+		//   "image_vars": { "PIP_INDEX_URL": "https://mirrors.aliyun.com/pypi/simple/" }
+		}
+	],
+
+	"durable_objects": {
+		"bindings": [
+			{
+				"name": "GENTACTIX",
+				"class_name": "GentactixContainer"
+			}
+		]
+	},
+
+	"migrations": [
+		{
+			"tag": "v1",
+			"new_sqlite_classes": ["GentactixContainer"]
+		}
+	]
+}
