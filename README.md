@@ -1,5 +1,8 @@
 # GenTactix
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](requirements.txt)
+
 **An AI-driven wargame simulator that turns historical events and hypothetical conflicts into a live, turn-based tactical sandbox on a real map.**
 
 Describe a scenario — *"Pearl Harbor, 1941"*, *"Normandy, 1944"*, or a conflict that never happened — and GenTactix deploys the order of battle onto an interactive map, then advances the battle round by round while a second AI model sits in the command tent as your chief of staff to review every decision.
@@ -176,7 +179,9 @@ To point at a different OpenAI-compatible provider, change `DEEPSEEK_BASE_URL` a
 
 ## License
 
-Not yet specified. Contact the author before redistributing.
+[MIT](LICENSE) © 2026 pystrategylab
+
+Free to use, modify, and redistribute — including commercially — provided the copyright notice and license text are retained. Provided without warranty of any kind.
 
 ---
 

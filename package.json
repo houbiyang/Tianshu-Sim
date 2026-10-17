@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "GenTactix Streamlit 推演系统 —— Cloudflare Containers 部署壳",
+  "description": "GenTactix — AI wargame simulator. Cloudflare Containers deployment shell.",
+  "license": "MIT",
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
