@@ -46,7 +46,11 @@ TILE_LAYERS = [
          attr="OpenTopoMap", max_native_zoom=17),
     # ⚠️ 高德的瓦片是 GCJ-02 坐标系，而本应用所有单位坐标是 WGS-84，
     #    直接叠加会有数百米偏移，仅作应急备用。
-    dict(name="🇨🇳 高德路网（GCJ-02，点位会有数百米偏移）", show=False,
+    # 🚫 已隐藏（enabled=False）：它和「军标落在真实地形上」这个核心卖点直接冲突 ——
+    #    几百米偏移在长平那种几公里纵深的战场上足以把赵军垒摆到丹河对岸。
+    #    代码留着是为了以后真要做 GCJ-02→WGS-84 纠偏时还有瓦片地址可捡；
+    #    想临时放出来，把 enabled 改成 True 即可。
+    dict(name="🇨🇳 高德路网（GCJ-02，点位会有数百米偏移）", show=False, enabled=False,
          url="https://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
          attr="高德地图", max_native_zoom=18),
 ]
@@ -478,6 +482,9 @@ def build_tactical_map(war_state, last_war_state, turn_count):
     )
 
     for _cfg in TILE_LAYERS:
+        # enabled=False 的底图不挂进图层控件，等于从界面上消失（配置仍保留在 TILE_LAYERS 里）
+        if not _cfg.get("enabled", True):
+            continue
         folium.TileLayer(
             tiles=_cfg["url"],
             attr=_cfg["attr"],
