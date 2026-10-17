@@ -69,11 +69,11 @@ with st.sidebar:
             data=json_string,
             file_name=f"GenTactix_推演数据_T{st.session_state.turn_count}.json",
             mime="application/json",
-            use_container_width=True,
+            width="stretch",
             help="将当前所有的底层战场坐标、单位状态与复盘记录导出为结构化 JSON 文件"
         )
     else:
-        st.button("📥 一键导出战局快照 (JSON)", disabled=True, use_container_width=True, help="请先进行沙盘推演再导出数据")
+        st.button("📥 一键导出战局快照 (JSON)", disabled=True, width="stretch", help="请先进行沙盘推演再导出数据")
 
 # ==========================================
 # 🧠 逻辑处理
@@ -183,23 +183,26 @@ with col1:
         current_time_display = st.session_state.war_state.get('current_time', '')
         st.markdown(f"### 🕒 当前战区时间：**{current_time_display}** (第 {st.session_state.turn_count} 回合)")
 
-        # 🚀 会话级地图缓存：war_state 对象身份未变（仅聊天/切换等 rerun）时不重建 folium 地图，
-        #    避免每次交互都全量重绘 marker / 轨迹线 / AntPath。
-        _map_cache_key = (st.session_state.turn_count, id(st.session_state.war_state))
-        if st.session_state.get("_map_cache_key") == _map_cache_key and st.session_state.get("_tactical_map") is not None:
-            m = st.session_state["_tactical_map"]
-        else:
-            m = viz.build_tactical_map(
-                st.session_state.war_state,
-                st.session_state.last_war_state,
-                st.session_state.turn_count,
-            )
-            st.session_state["_tactical_map"] = m
-            st.session_state["_map_cache_key"] = _map_cache_key
+        # 🐛 修复（地图一直闪烁 / 画面反复重置）：
+        #    曾在此处做「会话级地图对象缓存」，把同一个 folium.Map 对象存进 session_state 复用。
+        #    但 streamlit_folium 内部会用 _get_map_string() **改动传入的 folium 结构**
+        #    （实测同一个对象连续渲染，JS 体长 12025 → 12244 → 12416 → 12588 持续增长），
+        #    而组件 key = generate_js_hash(leaflet)：结构一变哈希就变 ⇒ Streamlit 视为
+        #    **全新组件** ⇒ iframe 整个重建（瓦片重新拉取、缩放/中心复位），组件 mount 又回传
+        #    初始值触发 rerun，于是形成自我维持的死循环 —— 表现为地图一直闪烁。
+        #    实测「每次重建一个新对象」哈希恒定（614aed89...），组件不会重挂载，故改为直接重建。
+        #    代价：每回合多花几毫秒构建 folium 对象，远小于一次 iframe 重载。
+        m = viz.build_tactical_map(
+            st.session_state.war_state,
+            st.session_state.last_war_state,
+            st.session_state.turn_count,
+        )
 
         # 渲染最终地图
         # 🐛 修复：补上固定 key，避免每次 rerun（点按钮/聊一句）都把地图缩放和中心重置
-        st_folium(m, use_container_width=True, height=700, key="gentactix_tactical_map")
+        # returned_objects=[]：本应用不消费地图的点击/缩放回传值，
+        # 关掉可减少 payload，并避免组件回传默认值引发多余 rerun。
+        st_folium(m, width=None, height=700, returned_objects=[], key="gentactix_tactical_map")
 
     else:
         # --- 🌟 启动前的中心 Logo 欢迎界面 ---
@@ -216,7 +219,7 @@ with col1:
                 logo_path = Path(__file__).resolve().parent / "logo.png"
                 if not logo_path.exists():
                     raise FileNotFoundError(str(logo_path))
-                st.image(str(logo_path), use_container_width=True)
+                st.image(str(logo_path), width="stretch")
             except Exception:
                 st.warning("⚠️ 待机 Logo 未找到，请确保已将图片重命名为 logo.png 并放入代码同级目录。")
 

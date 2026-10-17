@@ -63,7 +63,7 @@ The coordinate audit is the interesting part. If the model returns a position th
 
 ```
 Gentactix/
-├── app.py                  # Thin entry point: sidebar, button callbacks, map cache
+├── app.py                  # Thin entry point: sidebar, button callbacks, map rendering
 ├── gentactix/
 │   ├── config.py           # Model names, fallback chains, naval-unit helpers
 │   ├── anchors.py          # Curated high-precision coordinate library
