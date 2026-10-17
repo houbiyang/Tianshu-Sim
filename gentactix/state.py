@@ -57,6 +57,50 @@ UNIT_KEY_ALIASES = {
     'lng': ('经度', 'longitude', 'current_lng'),
 }
 
+# 🐛 修复「交战永远画不出来 / 地图上连火图标都没有」：
+#    上一轮只归一化了单位，**engagements 里的对象没归一化**，
+#    而 viz.py 读交战严格只认 lat / lng / attacker_pos / description。
+#    AI 一旦把交战写成 {"纬度":…, "经度":…, "描述":…}（和当初单位键漂移同一个毛病），
+#    to_float(battle.get('lat')) 拿到 None ⇒ 直接 continue 静默丢弃，
+#    结果是既不报错、也没有任何图形 —— 用户看到的就是「这个功能没生效」。
+ENGAGEMENT_KEY_ALIASES = {
+    'lat': ('纬度', 'latitude', 'battle_lat', 'target_lat'),
+    'lng': ('经度', 'longitude', 'battle_lng', 'target_lng'),
+    'description': ('描述', '交战描述', '战况', '说明', 'desc', 'detail'),
+    'attacker': ('攻击者', '攻击方', '发起方', 'attacker_name', 'from'),
+    'attacker_pos': ('攻击者位置', '攻击方坐标', '攻击者坐标', 'attacker_position', 'from_pos'),
+    'radius': ('波及半径', '影响半径', '范围', 'impact_radius'),
+    'intensity': ('强度', '烈度', 'intensity_level'),
+}
+
+
+def normalize_engagement_keys(battle):
+    """把交战对象里的中文/别名键补成标准英文键（幂等，不覆盖已有英文值）。"""
+    if not isinstance(battle, dict):
+        return battle
+    for std_key, aliases in ENGAGEMENT_KEY_ALIASES.items():
+        if battle.get(std_key) not in (None, ''):
+            continue
+        for alias in aliases:
+            if alias in battle and battle[alias] not in (None, ''):
+                battle[std_key] = battle[alias]
+                break
+
+    # 攻击方坐标可能被写成 {"lat":…, "lng":…} 或 "35.1,112.9" 字符串，统一成 [lat, lng]
+    pos = battle.get('attacker_pos')
+    if isinstance(pos, dict):
+        p_lat = to_float(pos.get('lat', pos.get('纬度')))
+        p_lng = to_float(pos.get('lng', pos.get('经度')))
+        if p_lat is not None and p_lng is not None:
+            battle['attacker_pos'] = [p_lat, p_lng]
+    elif isinstance(pos, str):
+        parts = [p.strip() for p in pos.replace('，', ',').split(',')]
+        if len(parts) == 2:
+            p_lat, p_lng = to_float(parts[0]), to_float(parts[1])
+            if p_lat is not None and p_lng is not None:
+                battle['attacker_pos'] = [p_lat, p_lng]
+    return battle
+
 
 def normalize_unit_keys(unit):
     """把单位字典里的中文/别名键补成标准英文键（幂等，且不覆盖已有英文值）。
@@ -77,7 +121,7 @@ def normalize_unit_keys(unit):
 
 
 def normalize_state_units(war_state):
-    """对一整份战局数据（含 updated_state 嵌套层）里的所有单位做键名归一化。"""
+    """对一整份战局数据（含 updated_state 嵌套层）里的所有单位和交战做键名归一化。"""
     if not isinstance(war_state, dict):
         return war_state
     targets = [war_state]
@@ -90,6 +134,11 @@ def normalize_state_units(war_state):
             if isinstance(units, list):
                 for unit in units:
                     normalize_unit_keys(unit)
+        # 🐛 交战对象同样需要归一化：漏这一步会让整场交火静默消失（详见别名表注释）
+        engagements = container.get('engagements')
+        if isinstance(engagements, list):
+            for battle in engagements:
+                normalize_engagement_keys(battle)
     return war_state
 
 

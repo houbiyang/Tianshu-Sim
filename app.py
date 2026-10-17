@@ -75,6 +75,19 @@ with st.sidebar:
     else:
         st.button("📥 一键导出战局快照 (JSON)", disabled=True, width="stretch", help="请先进行沙盘推演再导出数据")
 
+    # ==========================================
+    # 🔧 渲染自检：不必等 AI 打出交战，一键验证扇区链路是否活着
+    # ==========================================
+    with st.expander("🔧 渲染自检"):
+        st.toggle(
+            "叠加 1 个示例交战扇区",
+            key="selftest_sector",
+            help="只在**地图渲染**时临时加一个虚构交战，不写入战局数据，关掉即消失。"
+                 "用来区分「渲染失效」和「本回合确实没交战」。",
+        )
+        st.caption(f"渲染器版本：`{viz.RENDERER_VERSION}` · 交战图形：定向扇区；"
+                   f"AI 未给攻击方位时降级为空心虚线环。")
+
 # ==========================================
 # 🧠 逻辑处理
 # ==========================================
@@ -192,8 +205,13 @@ with col1:
         #    初始值触发 rerun，于是形成自我维持的死循环 —— 表现为地图一直闪烁。
         #    实测「每次重建一个新对象」哈希恒定（614aed89...），组件不会重挂载，故改为直接重建。
         #    代价：每回合多花几毫秒构建 folium 对象，远小于一次 iframe 重载。
+        # 🔧 渲染自检：开启时**只在渲染层**追加一个虚构交战（副本，不改战局）
+        _map_state = st.session_state.war_state
+        if st.session_state.get("selftest_sector"):
+            _map_state = viz.with_demo_engagement(_map_state)
+
         m = viz.build_tactical_map(
-            st.session_state.war_state,
+            _map_state,
             st.session_state.last_war_state,
             st.session_state.turn_count,
         )
@@ -203,6 +221,24 @@ with col1:
         # returned_objects=[]：本应用不消费地图的点击/缩放回传值，
         # 关掉可减少 payload，并避免组件回传默认值引发多余 rerun。
         st_folium(m, width=None, height=700, returned_objects=[], key="gentactix_tactical_map")
+
+        # 🐛 修复「推演过程中从没看到交战扇区」：
+        #    原实现遇到非法/中文键的交战会静默 continue，界面上既不报错也无提示，
+        #    用户无法区分「代码没生效」与「本回合确实没打起来」。这里把数据实况写出来。
+        _eng = viz.summarize_engagements(st.session_state.war_state)
+        if _eng['total'] == 0:
+            st.caption("⚔️ 本回合交战：**0 处** —— AI 未输出 `engagements`（双方尚未接触），"
+                       f"所以地图上没有扇区可画，**不是渲染失效**。可展开侧栏「🔧 渲染自检」一键验证"
+                       f"（当前渲染器 `{viz.RENDERER_VERSION}`）。")
+        else:
+            _parts = [f"定向扇区 {_eng['sector']} 处"]
+            if _eng['ring']:
+                _parts.append(f"降级空心环 {_eng['ring']} 处（AI 未给攻击方位）")
+            _note = ""
+            if _eng['skipped']:
+                _unique = "、".join(dict.fromkeys(_eng['reasons']))
+                _note = f" · ⚠️ 另有 {_eng['skipped']} 处被丢弃：{_unique}"
+            st.caption(f"⚔️ 本回合交战：**{_eng['valid']} 处**（{'；'.join(_parts)}）{_note}")
 
     else:
         # --- 🌟 启动前的中心 Logo 欢迎界面 ---

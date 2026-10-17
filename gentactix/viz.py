@@ -22,6 +22,11 @@ from .state import get_unit_field, extract_lat_lng
 #    用户可随时自行切换。实测：Esri(arcgisonline) 稳定可用、高德可用、
 #    OSM / OpenTopoMap 不可达。
 # ==========================================
+# 渲染器版本标记：界面上直接显示，用来区分「代码没生效」和「本回合确实没有交战」。
+# 排查过一轮「改了代码但看不到效果」，根因是浏览器跑的是旧模块 / 旧 iframe，
+# 有了这个标记就不必再靠猜。
+RENDERER_VERSION = "sector-v2"
+
 TILE_LAYERS = [
     dict(name="🛰️ 天眼卫星实景", show=True,
          url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
@@ -362,6 +367,97 @@ def impact_sector_vertices(origin_lat, origin_lng, target_lat, target_lng,
     return pts
 
 
+def iter_engagement_specs(war_state):
+    """逐条解析交战对象，产出绘制所需的结构化数据（含丢弃原因）。
+
+    单一入口：**地图绘制与界面统计都走这里**，避免「统计说 2 处、地图上 0 个」
+    这类自相矛盾。原先渲染层只认英文键且遇到非法坐标直接 continue，
+    AI 一旦改口径（中文键 / 字符串坐标），整场交火就静默消失、无任何提示。
+    """
+    engagements = war_state.get('engagements') if isinstance(war_state, dict) else None
+    if not isinstance(engagements, list):
+        engagements = []
+
+    for battle in engagements:
+        if not isinstance(battle, dict):
+            yield {'valid': False, 'reason': '条目不是对象'}
+            continue
+
+        b_lat = to_float(get_unit_field(battle, 'lat', '纬度', 'latitude', default=None))
+        b_lng = to_float(get_unit_field(battle, 'lng', '经度', 'longitude', default=None))
+        if b_lat is None or b_lng is None:
+            yield {'valid': False, 'reason': '缺少可用经纬度'}
+            continue
+
+        desc = get_unit_field(battle, 'description', '描述', '交战描述', '战况',
+                              default='激烈交火区域')
+
+        # 半径：按攻击单位射程推导（详见 resolve_engagement_radius 注释）
+        impact_radius, radius_basis = resolve_engagement_radius(battle, war_state, b_lat, b_lng)
+
+        # 🌟 定向扇区：攻击方坐标决定方位角（弧从攻击方指向交战点）
+        attacker_raw = get_unit_field(battle, 'attacker_pos', '攻击者位置', '攻击方坐标',
+                                      default=None)
+        a_lat = a_lng = None
+        if isinstance(attacker_raw, (list, tuple)) and len(attacker_raw) == 2:
+            a_lat, a_lng = to_float(attacker_raw[0]), to_float(attacker_raw[1])
+
+        # 攻击方缺失 / 非法 / 与交战点重合（方位角无意义）⇒ 降级为空心虚线环。
+        # ⚠️ 绝不能「猜一个方向」硬画：指向错误的扇区比不表达方向更有害。
+        same_as_target = (a_lat is not None and a_lng is not None
+                          and abs(a_lat - b_lat) < 1e-9 and abs(a_lng - b_lng) < 1e-9)
+        use_sector = (a_lat is not None and a_lng is not None and not same_as_target)
+
+        yield {
+            'valid': True,
+            'lat': b_lat, 'lng': b_lng,
+            'desc': desc,
+            'radius': impact_radius,
+            'basis': radius_basis,
+            'use_sector': use_sector,
+            'attacker': (a_lat, a_lng),
+        }
+
+
+def summarize_engagements(war_state):
+    """统计本回合交战：总数 / 可绘制 / 被丢弃 / 扇区数 / 降级环数。"""
+    stats = {'total': 0, 'valid': 0, 'skipped': 0, 'sector': 0, 'ring': 0, 'reasons': []}
+    for spec in iter_engagement_specs(war_state):
+        stats['total'] += 1
+        if not spec['valid']:
+            stats['skipped'] += 1
+            stats['reasons'].append(spec['reason'])
+            continue
+        stats['valid'] += 1
+        stats['sector' if spec['use_sector'] else 'ring'] += 1
+    return stats
+
+
+def with_demo_engagement(war_state):
+    """返回一份**副本**，在战区中心附近追加一个示例交战（仅供渲染自检，不改战局数据）。
+
+    用途：不必等 AI 真的打出交战（长平那种开局距接战还有几十小时的情况），
+    一眼就能确认扇区渲染链路是否活着。
+    """
+    state_copy = dict(war_state or {})
+    center = state_copy.get('center')
+    try:
+        c_lat, c_lng = float(center[0]), float(center[1])
+    except (TypeError, ValueError, IndexError, KeyError):
+        c_lat, c_lng = 35.70, 112.93
+
+    demo = {
+        'lat': c_lat,
+        'lng': c_lng + 0.012,
+        'description': '🧪 渲染自检示例（虚构交战，不写入战局）',
+        'attacker': '自检攻击方',
+        'attacker_pos': [c_lat - 0.010, c_lng - 0.004],
+        'radius': 2500,
+    }
+    state_copy['engagements'] = list(state_copy.get('engagements') or []) + [demo]
+    return state_copy
+
+
 def build_tactical_map(war_state, last_war_state, turn_count):
     """根据当前战局构建 folium 战术地图对象。纯函数：相同入参产出相同地图。"""
     # 🐛 修复：原代码直接索引 war_state['center']，AI 漏字段时会 KeyError 白屏
@@ -397,26 +493,15 @@ def build_tactical_map(war_state, last_war_state, turn_count):
     draw_units_and_trails(m, war_state.get('red_units', []), 'red', 'red_units', last_war_state)
     draw_units_and_trails(m, war_state.get('blue_units', []), 'blue', 'blue_units', last_war_state)
 
-    engagements = war_state.get('engagements') or []
-    if not isinstance(engagements, list):
-        engagements = []
-    for battle in engagements:
-        if not isinstance(battle, dict):
+    for spec in iter_engagement_specs(war_state):
+        if not spec['valid']:
             continue
-        b_lat, b_lng = battle.get('lat'), battle.get('lng')
-        desc = battle.get('description', '激烈交火区域')
-
-        # 🐛 修复：坐标可能是字符串，统一做数值校验，避免 folium 收到脏数据；
-        #    先转数值再推导半径（就近匹配攻击单位要用浮点坐标）。
-        b_lat_f, b_lng_f = to_float(b_lat), to_float(b_lng)
-        if b_lat_f is None or b_lng_f is None:
-            continue
+        b_lat_f, b_lng_f = spec['lat'], spec['lng']
         battle_pos = [b_lat_f, b_lng_f]
-
-        # 🐛 修复：原先直接读 battle['radius'] 并默认 1500，而 prompt 示例里正是
-        #    "radius": 1500 ⇒ AI 照抄 ⇒ 所有交战半径一模一样。现按攻击单位射程推导。
-        impact_radius, radius_basis = resolve_engagement_radius(
-            battle, war_state, b_lat_f, b_lng_f)
+        desc = spec['desc']
+        impact_radius = spec['radius']
+        radius_basis = spec['basis']
+        use_sector = spec['use_sector']
 
         if impact_radius >= 20000:
             border_color, fill_color, icon_color = 'black', 'purple', 'darkpurple'
@@ -427,19 +512,6 @@ def build_tactical_map(war_state, last_war_state, turn_count):
         else:
             border_color, fill_color, icon_color = 'crimson', 'red', 'red'
 
-        # 🌟 定向扇区：攻击方坐标决定方位角（arc 从攻击方指向交战点）
-        attacker_pos_raw = battle.get('attacker_pos')
-        a_lat = a_lng = None
-        if isinstance(attacker_pos_raw, (list, tuple)) and len(attacker_pos_raw) == 2:
-            a_lat = to_float(attacker_pos_raw[0])
-            a_lng = to_float(attacker_pos_raw[1])
-
-        # 攻击方缺失 / 非法 / 与交战点重合（方位角无意义）⇒ 降级为空心虚线环。
-        # ⚠️ 绝不能「猜一个方向」硬画：指向错误的扇区比不表达方向更有害。
-        same_as_target = (a_lat is not None and a_lng is not None
-                          and abs(a_lat - b_lat_f) < 1e-9 and abs(a_lng - b_lng_f) < 1e-9)
-        use_sector = (a_lat is not None and a_lng is not None and not same_as_target)
-
         # 形状自身的 tooltip 必须带上交战描述：
         # 原实现把描述放在 marker 上，而 marker 被整片圆盖住，hover 命中的永远是圆，
         # 于是「谁打谁」这条最关键的信息在界面上等于不存在。
@@ -448,6 +520,7 @@ def build_tactical_map(war_state, last_war_state, turn_count):
                          + ("" if use_sector else "<br>（未提供攻击方位，仅显示范围）"))
 
         if use_sector:
+            a_lat, a_lng = spec['attacker']
             folium.Polygon(
                 locations=impact_sector_vertices(a_lat, a_lng, b_lat_f, b_lng_f, impact_radius),
                 color=border_color, weight=1.5,
@@ -465,6 +538,7 @@ def build_tactical_map(war_state, last_war_state, turn_count):
 
         # 火力打击轨迹：扇区已经表达了方向，这里的动画只负责指向落点，故压细压淡
         if use_sector:
+            a_lat, a_lng = spec['attacker']
             plugins.AntPath(
                 locations=[[a_lat, a_lng], battle_pos],
                 color=border_color,

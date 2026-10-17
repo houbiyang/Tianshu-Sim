@@ -97,6 +97,13 @@ def build_step_prompt(war_state, next_turn_num, time_step, use_live_intel):
         你必须为每场交战给出 "attacker"（发起攻击的单位名称，必须与 red_units/blue_units 的 name 完全一致）
         与 "attacker_pos"（该单位坐标），否则系统只能按兵种估算，范围会失真。
 
+        【engagements 硬性规则】
+        1. 该键**每回合都必须出现**：本回合无接触就输出空数组 []，不要省略该键；
+        2. 交战对象内部**同样只允许英文键**：lat / lng / description / attacker / attacker_pos，
+           严禁 "纬度"、"经度"、"描述"、"攻击者" 这类中文键（系统会直接丢弃该条交战）；
+        3. 只要双方最近单位距离 ≤ 3 公里，或任一方发起攻击/伏击/追击，就必须输出至少 1 条交战；
+           确实尚未接触时，请在 report 里明确写出「双方仍在对峙/机动，尚未接战」。
+
         请直接返回以下 JSON 结构：
         {{
           "updated_state": {{
