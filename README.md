@@ -7,7 +7,7 @@
 
 Describe a scenario — *"Pearl Harbor, 1941"*, *"Normandy, 1944"*, or a conflict that never happened — and GenTactix deploys the order of battle onto an interactive map, then advances the battle round by round while a second AI model sits in the command tent as your chief of staff to review every decision.
 
-Built with Streamlit, Folium, and DeepSeek, and deployed as a container on Cloudflare.
+Built with Streamlit, Folium, and DeepSeek, and packaged for deployment as a container on Cloudflare.
 
 ---
 
@@ -17,7 +17,7 @@ Built with Streamlit, Folium, and DeepSeek, and deployed as a container on Cloud
 |---|---|
 | **Tri-model reasoning** | A fast engine model generates each turn as structured JSON; a deeper strategist model writes the after-action review; a reasoning model answers follow-up questions in the sidebar. Each role has an automatic fallback chain so a missing model never kills a session. |
 | **Real geography, validated** | Unit positions are checked against a land/sea mask *and* SRTM elevation data. A capital ship inland is not a cosmetic bug — the engine forces it back into water before the map is drawn. |
-| **NATO-standard map symbology** | Blue/red force markers, movement trails, engagement rings, and range circles rendered as Folium overlays with a selectable basemap (satellite by default). |
+| **NATO-standard map symbology** | Blue/red force markers, movement trails, and directional engagement sectors rendered as Folium overlays with a selectable basemap (satellite by default). |
 | **Curated anchor library** | Well-known battles ship with hand-placed high-precision coordinates (e.g. Battleship Row, Ford Island). When a scenario matches, the AI is handed real anchor points instead of hallucinating latitude/longitude. |
 | **Full state export** | Every turn — coordinates, unit status, narrative log, staff review — can be exported as structured JSON for post-analysis. |
 | **Bring your own key** | No server-side secrets. You paste your own DeepSeek API key into the sidebar; it never leaves the session. |
@@ -71,7 +71,7 @@ Gentactix/
 │   ├── engine.py           # DeepSeek client (cached), completion + retry, review, chat
 │   ├── prompts.py          # Initialization and per-turn prompt builders
 │   ├── state.py            # Session defaults, field extraction, JSON export
-│   └── viz.py              # Folium map, NATO marker HTML, trails, engagement rings
+│   └── viz.py              # Folium map, NATO marker HTML, trails, engagement sectors
 ├── src/index.ts            # Cloudflare Worker wrapper for the container
 ├── Dockerfile              # Container image for Cloudflare Containers
 ├── wrangler.jsonc          # Cloudflare deployment config (JSONC)
@@ -172,7 +172,7 @@ To point at a different OpenAI-compatible provider, change `DEEPSEEK_BASE_URL` a
 ## Design notes
 
 - **The scenario is a closed sandbox.** The engine is explicitly instructed not to invent capabilities outside what the scenario establishes, and there is no live web access — DeepSeek's API offers no native browsing. The "live intel" toggle only biases the model toward injecting unexpected events.
-- **Streamlit's rerun model is respected.** Map construction is gated on a state fingerprint so that pressing a button does not rebuild every marker and polyline from scratch.
+- **The map is rebuilt on every rerun, on purpose.** Folium mutates its own layer tree when the map is serialized, so a cached map object produces a different component hash on each run; Streamlit then tears down and rebuilds the iframe, which reads as a flickering map. Rebuilding from state keeps the hash stable, and the rebuild is cheap next to the map paint.
 - **Field names are normalized in one place.** Units arrive from the model with either English or Chinese keys; `state.get_unit_field` is the single resolution point, so tolerance for alias drift never has to be re-implemented.
 
 ---
