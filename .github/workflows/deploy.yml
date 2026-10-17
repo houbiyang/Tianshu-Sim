@@ -43,10 +43,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # wrangler 4.x 要求 Node >= 22，用 20 会在 deploy 步骤直接报错
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Install Worker-side dependencies
         run: npm ci --no-audit --no-fund
