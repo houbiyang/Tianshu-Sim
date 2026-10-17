@@ -19,7 +19,7 @@ Built with Streamlit, Folium, and DeepSeek, and packaged for deployment as a con
 | **Real geography, validated** | Unit positions are checked against a land/sea mask *and* SRTM elevation data. A capital ship inland is not a cosmetic bug — the engine forces it back into water before the map is drawn. |
 | **NATO-standard map symbology** | Blue/red force markers, movement trails, and directional engagement sectors rendered as Folium overlays with a selectable basemap (satellite by default). |
 | **Optional source grounding (RAG)** | A local BM25 index over Markdown battle cards in `corpus/`. When enabled, retrieved passages are injected as *authoritative* context: numbers, dates and names from the sources override the model's memory. Fully offline — no embedding API, no extra key, no cost. |
-| **Curated anchor library** | Well-known battles ship with hand-placed high-precision coordinates (e.g. Battleship Row, Ford Island). When a scenario matches, the AI is handed real anchor points instead of hallucinating latitude/longitude. |
+| **Curated anchor library** | Well-known battles ship with hand-placed high-precision coordinates — Pearl Harbor, Malacca, Midway, the Persian Gulf, and the Battle of Changping (Changping Pass, Dan River valley, Daliang Mountain, Hanwang Mountain, Kongcang Ridge). When a scenario matches, the AI is handed real anchor points instead of hallucinating latitude/longitude. |
 | **Full state export** | Every turn — coordinates, unit status, narrative log, staff review — can be exported as structured JSON for post-analysis. |
 | **Bring your own key** | No server-side secrets. You paste your own DeepSeek API key into the sidebar; it never leaves the session. |
 
