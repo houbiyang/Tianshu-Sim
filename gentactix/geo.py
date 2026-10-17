@@ -132,6 +132,10 @@ def force_into_water(lat, lng, max_radius_deg=0.2, step_deg=0.005):
 def match_anchor(unit_name, available_nodes):
     """在已解锁的高精锚点库中按核心短名匹配单位，命中返回 (anchor_name, coords)。"""
     unit_name = unit_name or ''
+    # ⚠️ 必须排除空名：`"" in 任意字符串` 恒为 True，否则所有缺名字的单位都会被
+    #    吸到字典里第一个锚点上，十几支部队叠成一个点，还看不出是 bug。
+    if not unit_name:
+        return None, None
     for anchor_name, coords in available_nodes.items():
         # 提取核心短键名（如 "福特岛-战列舰大街-亚利桑那号" → "亚利桑那号"）
         core_name = anchor_name.split('-')[-1]
