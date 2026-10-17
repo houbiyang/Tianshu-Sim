@@ -18,6 +18,9 @@ venv/
 *.key
 .secrets
 CLOUDFLARE_API_TOKEN
+# Streamlit 的密钥文件：本地一旦创建，`git add -A` 就会带上去，必须先忽略
+.streamlit/secrets.toml
+.streamlit/secrets.*.toml
 
 # ---- 备份与临时产物 ----
 *.orig_backup
