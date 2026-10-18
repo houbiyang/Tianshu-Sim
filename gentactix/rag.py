@@ -77,9 +77,20 @@ def _parse_markdown(path: Path):
     except (OSError, UnicodeDecodeError):
         return None, []
 
+    lines = raw.splitlines()
+
+    # 剥掉可选的 frontmatter（裁决器参数表）：`---` 包起来的是键值对，不是史料正文。
+    # 不剥的话它会变成「概述」chunk 的开头一段 `contact_km: 3.0` —— 既是噪声，
+    # 又会让「概述」这个块在检索时凭一串无意义 token 拿到不该有的分数。
+    if lines and lines[0].strip() == "---":
+        for idx in range(1, len(lines)):
+            if lines[idx].strip() == "---":
+                lines = lines[idx + 1:]
+                break
+
     doc_title = path.stem
     body = []
-    for line in raw.splitlines():
+    for line in lines:
         # 只认第一个一级标题作为来源名；`## ` 不会被 `# ` 误匹配（第二个字符是 '#'）
         if line.startswith("# ") and doc_title == path.stem:
             doc_title = line[2:].strip() or doc_title

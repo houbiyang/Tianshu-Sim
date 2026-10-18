@@ -23,6 +23,8 @@ DEFAULT_SESSION_STATE = {
     "chat_messages": [],   # 璇玑对话记录
     "scenario_input": "",  # 初始化时的场景描述，供后续回合检索史料（用户改输入框不影响已开战局）
     "rag_last": None,      # 最近一次史料检索的元信息（供界面核对「这局到底有没有史料约束」）
+    "adj_last": None,      # 最近一次确定性裁决结果（供界面显示四个离散状态字段）
+    "adj_violations": [],  # 上一回合 AI 实际位移超出裁决上限的记录（只报告，不修正）
     "roster_last": None,   # 上一回合单位名单核对报告（漏返回回填 / 确认歼灭）
     "numeric_flags": [],   # 上一回合数值守恒标记（hp 上涨、归零未移除、负数）
 }

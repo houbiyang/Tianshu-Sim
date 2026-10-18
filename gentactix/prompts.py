@@ -131,14 +131,40 @@ def build_init_prompt(scenario_input, available_nodes, briefing=""):
         """
 
 
-def build_step_prompt(war_state, next_turn_num, time_step, use_live_intel, briefing=""):
-    """⏩ 单回合推演：返回含史料锚定与物理约束的 Prompt。"""
+def build_step_prompt(war_state, next_turn_num, time_step, use_live_intel, briefing="",
+                      adjudication=None):
+    """⏩ 单回合推演：返回含史料锚定与物理约束的 Prompt。
+
+    `adjudication` 为 adjudicator.adjudicate() 的结果（可选）。传入时把几何裁决
+    作为**不可改写的硬边界**注入 —— 模型从「即兴推演」降级为「在边界内叙述」。
+    不传则完全退回原来的叙事沙盘行为。
+    """
     if use_live_intel:
         intel_instruction = "【突发变量接入（黑天鹅事件）】：请主动假设并引入一个符合当前时代的突发战场变量（如恶劣天气、后方破坏、第三方介入等），打破目前的战术僵局！"
     else:
         intel_instruction = "【封闭沙盘模式】：本回合纯粹依据现有的兵力、地形和物理规则进行硬核军事对抗，切勿凭空捏造外界干预。"
 
     briefing_block = f"\n{briefing}\n" if briefing else ""
+
+    # ⚖️ 裁决块：放在史料之后、任务之前。位置有讲究 —— 放在任务后面，
+    #    模型会当成「参考资料」；放在任务前面，才会被当成「前提条件」。
+    adjudication_block = ""
+    if adjudication and adjudication.get("digest"):
+        adjudication_block = "\n" + adjudication["digest"] + "\n"
+
+    if adjudication:
+        physics_cmd = (
+            "2. **物理边界（已由系统裁决，不可改写）**：各单位本回合的位移上限见上方"
+            "【确定性裁决 · 机动上限】，你必须在该上限内安排走位；被判为「够不着」的单位"
+            "本回合不得交战。\n"
+            "           - 补给低于 20 机动减半；士气低于 30 战力下降。"
+        )
+    else:
+        physics_cmd = (
+            "2. **物理计算辅助**：在绝对尊重历史时间线的前提下，结合各单位的"
+            "【移动速度】和【射程】计算合理的走位微调。\n"
+            "           - 补给低于 20 机动减半；士气低于 30 战力下降。"
+        )
 
     # 🐛 原文写的是「立即检索你数据库中关于该历史事件的真实时间线」——
     #    项目并没有任何数据库或联网检索，这句话只是在诱导模型「编得像查过」。
@@ -166,12 +192,11 @@ def build_step_prompt(war_state, next_turn_num, time_step, use_live_intel, brief
         当前系统时间：{war_state.get('current_time', '00:00')}
         这是第{next_turn_num} 轮推演。当前回合流逝的时间跨度为：【{time_step}】。
         当前战场数据：{json.dumps(war_state, ensure_ascii=False)}
-{briefing_block}
+{briefing_block}{adjudication_block}
        ### 强制任务：
        {intel_instruction}
         {timeline_cmd}
-        2. **物理计算辅助**：在绝对尊重历史时间线的前提下，结合各单位的【移动速度】和【射程】计算合理的走位微调。
-           - 补给低于 20 机动减半；士气低于 30 战力下降。
+        {physics_cmd}
            - 🌟 【绝对地理红线】：在计算位移时，必须确保所有海军单位的新坐标依然位于水域中！
            - 🌟 【锚地静默规则】：如果海军单位当前处于狭窄的内海或港口内，且历史上的此时并未出动，【严禁】微调其坐标，保持原地静默！
         3. **战报输出**：编写一段 150—200 字的实时战报（讲解体），

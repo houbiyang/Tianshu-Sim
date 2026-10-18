@@ -26,6 +26,8 @@ CLOUDFLARE_API_TOKEN
 *.orig_backup
 *.bak
 .pytest_cache/
+# 实测探针的存档：含模型整段输出，属于一次性的运行产物，不进版本库
+probe_result.json
 
 # ---- 编辑器 / 系统 ----
 .vscode/
