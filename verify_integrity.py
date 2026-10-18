@@ -238,9 +238,14 @@ check("integrity.py 不依赖 folium", not any("folium" in (i or "") for i in im
 app_src = Path("app.py").read_text(encoding="utf-8")
 check("app.py 已接入 reconcile_roster", "integrity.reconcile_roster" in app_src)
 check("app.py 已接入 check_numeric_integrity", "integrity.check_numeric_integrity" in app_src)
-check("app.py 引入 integrity 模块",
-      "integrity" in app_src.split("from gentactix import")[1].split("\n")[0],
-      app_src.split("from gentactix import")[1].split("\n")[0])
+# 用 AST 取 import 名字集合，而不是切文本的某一行 ——
+# app.py 的 `from gentactix import (...)` 现在跨了两行，切第一行会漏掉 integrity。
+_gentactix_imports = set()
+for _node in ast.walk(ast.parse(app_src)):
+    if isinstance(_node, ast.ImportFrom) and _node.module == "gentactix":
+        _gentactix_imports |= {_alias.name for _alias in _node.names}
+check("app.py 引入 integrity 模块", "integrity" in _gentactix_imports,
+      sorted(_gentactix_imports))
 
 prompt_src = Path("gentactix/prompts.py").read_text(encoding="utf-8")
 check("prompt 已加入名单守恒规则（用唯一标记，避免「一个都不能少」这类误命中）",

@@ -113,13 +113,21 @@ cap = "\n".join(c.value for c in at.caption)
 check("面板标题出现", "确定性裁决" in md, md[:200])
 check("摘要行出现", "粮道被断" in cap, cap[:200])
 check("表格已渲染", len(at.dataframe) >= 1, len(at.dataframe))
-if at.dataframe:
-    df = at.dataframe[0].value
+# 按列名找单位表，而不是取第 0 张 —— 面板以后再加别的表（例如「几何尺度明细」），
+# 取索引会张冠李戴，而且失败信息会指向错误的地方。
+_unit_tables = [d.value for d in at.dataframe if "单位" in list(d.value.columns)]
+check("单位表已渲染", bool(_unit_tables), [list(d.value.columns) for d in at.dataframe])
+if _unit_tables:
+    df = _unit_tables[0]
     check("表格行数 = 3（三支部队）", len(df) == 3, len(df))
     check("表格含补给列", "补给" in list(df.columns), list(df.columns))
     check("赵军主力粮道标为已切断",
           df[df["单位"] == "赵军主力"]["补给"].iloc[0] == "已切断",
           df[df["单位"] == "赵军主力"]["补给"].iloc[0])
+check("面板显示本次生效的裁决参数来源", "参数：" in cap, cap[-300:])
+check("侧栏出现「战场裁决库」选择器",
+      any("战场裁决库" in getattr(s, "label", "") for s in at.sidebar.selectbox),
+      [getattr(s, "label", "") for s in at.sidebar.selectbox])
 check("裁决口径折叠面板存在", any("裁决口径" in e.label for e in at.expander),
       [e.label for e in at.expander])
 

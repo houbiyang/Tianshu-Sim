@@ -258,13 +258,20 @@ with tempfile.TemporaryDirectory() as tmp:
         "---\ncontact_km: 5.0   # 骑兵侦察范围更大\nencircle_radius_km: 15\nunknown_key: 99\n---\n"
         "# 长平之战\n\n## 概述\n测试语料。\n",
         encoding="utf-8")
-    loaded = adj.load_scenario_params(tmp, "推演长平之战")
+    # 用空的 library_dir 隔离：默认会优先读项目里的 adjudication/长平之战.md，
+    # 而这一段要验证的是「旧位置（corpus frontmatter）仍然读得到」。
+    _isolated_lib = Path(tmp) / "_no_library"
+    loaded = adj.load_scenario_params(tmp, "推演长平之战", library_dir=_isolated_lib)
     check("读到 contact_km 覆盖", loaded.get("contact_km") == 5.0, loaded)
     check("读到 encircle_radius_km 覆盖", loaded.get("encircle_radius_km") == 15.0)
     check("未知键被丢弃", "unknown_key" not in loaded, loaded)
     merged = adj.adjudicate(changping, "30分钟", params=loaded)
     check("覆盖值实际生效", merged["contact_km"] == 5.0, merged["contact_km"])
-    check("未命中场景时也能加载", adj.load_scenario_params(tmp, "诺曼底") != {})
+    # ⚠️ 语义在 2026-10-18 引入裁决库时反转：旧实现遍历目录里所有 md 依次合并，
+    #    于是「场景没命中」也会拿到别的战役的参数 —— 那正是多战役串味的根源。
+    #    现在没命中就是空，宁可回落默认几何，也不借用别人的尺度。
+    check("未命中场景时不借用别的战役参数",
+          adj.load_scenario_params(tmp, "诺曼底", library_dir=_isolated_lib) == {})
 
 print()
 print("=" * 60)
