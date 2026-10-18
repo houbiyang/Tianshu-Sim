@@ -116,10 +116,11 @@ before the session gives up on that unit.
 ## Project structure
 
 ```
-Gentactix-Judge/
+Gentactix/
 ├── app.py                     # Thin entry point: sidebar, button callbacks, map rendering
 ├── gentactix/
 │   ├── adjudicator.py         # Deterministic kernel: movement, supply, encirclement
+│   ├── adjudication_lib.py    # Per-battle scale library: discovery, matching, validation
 │   ├── config.py              # Model names, fallback chains, naval-unit helpers
 │   ├── anchors.py             # Curated high-precision coordinate library
 │   ├── geo.py                 # Land/sea mask + SRTM audit, water enforcement, sanitizers
@@ -129,8 +130,10 @@ Gentactix-Judge/
 │   ├── rag.py                 # Local BM25 retrieval over corpus/*.md
 │   ├── state.py               # Session defaults, field extraction, JSON export
 │   └── viz.py                 # Folium map, NATO marker HTML, trails, engagement sectors
-├── corpus/                    # Battle cards (Markdown); optional frontmatter holds kernel params
+├── adjudication/              # One file per battle: the geometry scales (data, not code)
+├── corpus/                    # Battle cards (Markdown): sources, numbers, disputes
 ├── verify_adjudicator.py      # Offline guard: geometry, reproducibility, prompt injection
+├── verify_adjudication_lib.py # Offline guard: no bleed between battles, validation, round-trip
 ├── verify_app_integration.py  # Streamlit runtime check: panel renders, toggle actually bites
 ├── verify_anchors.py          # Anchor-library regression
 ├── verify_integrity.py        # Offline guard: roster restore, kill channel, numeric flags
@@ -140,7 +143,7 @@ Gentactix-Judge/
 └── requirements.txt           # Python dependencies (pinned with rationale)
 ```
 
-`app.py` is deliberately thin. All logic lives in the `gentactix` package so it can be tested without a Streamlit runtime. `adjudicator.py` imports nothing but the standard library — no Streamlit, no Folium, no network — so its verdicts can be reproduced in a bare Python shell.
+`app.py` is deliberately thin. All logic lives in the `gentactix` package so it can be tested without a Streamlit runtime. `adjudicator.py` and `adjudication_lib.py` import nothing but the standard library — no Streamlit, no Folium, no network — so verdicts can be reproduced in a bare Python shell.
 
 ---
 
@@ -165,8 +168,9 @@ Then open http://localhost:8501, paste a DeepSeek API key in the sidebar, and en
 **Verify without spending a token.** All of these run offline and need no API key:
 
 ```bash
-python verify_adjudicator.py        # 68 checks: geometry, supply cut, encirclement, reproducibility
-python verify_app_integration.py    # 19 checks: kernel stays opt-in, panel renders when on, toggle bites
+python verify_adjudicator.py        # 67 checks: geometry, supply cut, encirclement, reproducibility
+python verify_adjudication_lib.py   # 59 checks: no bleed between battles, validation, round-trip
+python verify_app_integration.py    # 22 checks: kernel stays opt-in, panel renders when on, toggle bites
 python verify_anchors.py            # 74 checks: anchor library regression
 python verify_integrity.py          # 43 checks: roster restore, kill channel, numeric flags
 python verify_integrity_panel.py    # 16 checks: panel appears on trouble, stays silent otherwise
@@ -176,6 +180,11 @@ python measure_turn_degradation.py  #  6 checks: prompt growth vs turn count, ro
 python live_adjudication_probe.py --dry-run   # detector self-test: feed it a known-bad response
 python live_adjudication_probe.py             # needs DEEPSEEK_API_KEY: does the model obey?
 ```
+
+`verify_adjudication_lib.py` is the one worth reading if you plan to add a battle: it builds two
+temporary battles that override *different* keys and asserts neither can see the other's values.
+The same file reproduces the old last-write-wins merge and asserts it produces a blend that
+neither battle ever specified — so the isolation assertion cannot pass vacuously.
 
 ---
 
@@ -192,6 +201,11 @@ python live_adjudication_probe.py             # needs DEEPSEEK_API_KEY: does the
 The `⚖️ 启用确定性裁决` toggle in the sidebar switches the kernel on. **It is off by default**, so a
 fresh clone behaves exactly like the plain narrative sandbox; turn it on when you want two runs to be
 comparable. Off means free narrative: faster to watch, impossible to compare two runs.
+
+Under the toggle, `🎯 战场裁决库` picks which battle's scales to use. It defaults to *auto-match*
+(name appears in the scenario text) and lists every file in `adjudication/`. Choose a battle
+explicitly when the scenario mentions two of them — *"what if Changping had been fought the Normandy
+way"* would otherwise bind Changping's geometry to a question about Normandy's.
 
 ---
 
@@ -269,21 +283,45 @@ labelled as narration.
 
 ### Tuning per campaign
 
-Parameters live in the battle card's frontmatter, not in code. A historian can change them without
-touching Python:
+Geometry scales are **data, not code**. One file per battle, under `adjudication/`:
+
+```text
+adjudication/
+├── README.md           # how to add a battle (Chinese)
+├── _template.md        # copy → rename → fill in
+└── 长平之战.md          # Changping: contact 3 km, encirclement 12 km
+```
 
 ```markdown
 ---
-contact_km: 3.0              # ≤ this distance counts as contact
-control_radius_km: 3.0       # floor for enemy area control (longer range wins)
-encircle_radius_km: 12.0     # how far out to look for a sealed perimeter
-sealed_ratio_encircled: 0.85 # ≥ share of bearings sealed ⇒ encircled
-sealed_ratio_partial: 0.50   # ≥ ⇒ partially encircled
+battle_name: 长平之战
+era: 战国
+contact_km: 3.0               # ≤ this distance counts as contact
+control_radius_km: 3.0        # floor for enemy area control (longer range wins)
+encircle_radius_km: 12.0      # how far out to look for a sealed perimeter
+sealed_ratio_encircled: 0.85  # ≥ share of bearings sealed ⇒ encircled
+sealed_ratio_partial: 0.50    # ≥ ⇒ partially encircled
 ---
 ```
 
-Only keys that exist in `adjudicator.DEFAULT_PARAMS` are accepted — a typo is ignored rather than
-silently taking effect.
+Drop a file in and it takes effect on the next turn — no registration, no restart, no code change.
+A file may list only the keys it wants to differ from the defaults; unlisted keys are **not** copied
+into the file, so changing a default later actually reaches every battle that never overrode it.
+
+Resolution order: explicit choice in the sidebar → exact scenario-name match → longest contained
+name → `corpus/<battle>.md` frontmatter (legacy location) → defaults. **Once a file is chosen, only
+its values are used.** Earlier versions merged every matching file with last-write-wins, which meant
+adding a second battle silently rewrote the first one's scales and could produce a blend (Changping's
+contact line with Normandy's encirclement radius) that no battle ever specified.
+
+Only the first two keys matter in practice. `contact_km` and `control_radius_km` differ by an order
+of magnitude between a crossbow battle (≈0.9 km effective range) and a mechanised one (20 km+
+artillery), and a single value across eras does not fail loudly — it quietly reports *no contact*
+for formations that were in fact fighting.
+
+Mistakes are reported rather than swallowed: an unknown key, a non-numeric value or an out-of-range
+number is listed in the panel and ignored, while the valid keys still apply. A typo leaves a visible
+warning instead of a parameter that silently never takes effect.
 
 ### Reproducibility, and how to check it
 
