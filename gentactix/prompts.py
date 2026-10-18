@@ -165,7 +165,7 @@ def build_step_prompt(war_state, next_turn_num, time_step, use_live_intel, brief
     return f"""
         当前系统时间：{war_state.get('current_time', '00:00')}
         这是第{next_turn_num} 轮推演。当前回合流逝的时间跨度为：【{time_step}】。
-        当前战场数据：{json.dumps(war_state)}
+        当前战场数据：{json.dumps(war_state, ensure_ascii=False)}
 {briefing_block}
        ### 强制任务：
        {intel_instruction}
@@ -195,6 +195,17 @@ def build_step_prompt(war_state, next_turn_num, time_step, use_live_intel, brief
            严禁 "纬度"、"经度"、"描述"、"攻击者" 这类中文键（系统会直接丢弃该条交战）；
         3. 只要双方最近单位距离 ≤ 3 公里，或任一方发起攻击/伏击/追击，就必须输出至少 1 条交战；
            确实尚未接触时，请在 report 里明确写出「双方仍在对峙/机动，尚未接战」。
+
+        【单位名单守恒规则】（系统会逐回合核对，违反的部分会被自动回填或标记）
+        1. 上一回合还活着的单位，本回合**一个都不许省略** —— 名字与坐标必须原样带出。
+           系统发现「既没阵亡、也没声明」的单位凭空消失，会按上一回合快照把它补回来，
+           你这一回合对它做的任何安排都会失效。
+        2. 确实被歼灭的单位：从 red_units / blue_units 里移除，**并把名字写进
+           updated_state 内的 "eliminated" 数组**（写在 updated_state 外层也认，但别两处都写）。
+           没有声明的移除一律视为漏返回，会被回填。
+        3. 兵力只能减少。只有「援军抵达 / 就地整补」这类事件可以让 hp 增加，
+           且必须在 report 里写明理由；否则会被标记为兵力异常。
+        4. 单位已失去战斗力但仍保留在列表里时，把 hp 写成 0，不要留一个满编数字。
 {REPORT_STYLE_RULES}{TIME_FORMAT_RULE}
         请直接返回以下 JSON 结构：
         {{
@@ -213,7 +224,8 @@ def build_step_prompt(war_state, next_turn_num, time_step, use_live_intel, brief
                  "attacker": "发起攻击的单位名称",
                  "attacker_pos": [攻击者lat, 攻击者lng]
                }}
-            ]
+            ],
+            "eliminated": ["本回合被歼灭的单位名称；没有就给空数组 []"]
           }},
           "report": "必须以 '【T+{next_turn_num} | 新时间】' 开头。战报正文（讲解体，150—200 字）...",
           "source_note": "考据注（30—60 字，交代数字出处与争议；无史料则说明系推演）..."

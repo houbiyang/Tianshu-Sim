@@ -10,7 +10,7 @@ from pathlib import Path
 import streamlit as st
 from streamlit_folium import st_folium
 
-from gentactix import anchors, engine, geo, prompts, rag, state, viz
+from gentactix import anchors, engine, geo, integrity, prompts, rag, state, viz
 
 
 def _retrieve_briefing(query, enabled, top_k, max_chars, phase):
@@ -196,6 +196,9 @@ if btn_init:
                 st.session_state.war_state = init_state
                 st.session_state.last_war_state = None
                 st.session_state.turn_count = 0
+                # 🧱 新局必须清空上一局的守恒报告，否则面板会展示另一场仗的告警。
+                st.session_state.roster_last = None
+                st.session_state.numeric_flags = []
                 # 📚 保存场景原文：后续回合的史料检索要用「这一局是什么仗」，
                 #    而不是用户此刻在输入框里改成的别的内容。
                 st.session_state.scenario_input = scenario_input
@@ -225,6 +228,8 @@ if btn_next:
     else:
         current_time_str = st.session_state.war_state.get('current_time', '00:00')
         next_turn_num = st.session_state.turn_count + 1
+        # 本回合的「上一回合态势」快照引用：赋值前它就是最新的真实状态。
+        _prev_state = st.session_state.war_state
 
         # 📚 史料检索：单回合只取 4 段。查询拼上「哪场战役 + 当前时间 + 当前地形」，
         #    让排名偏向与本回合时段相关的小节，而不是每回合把整张卡片重复灌一遍。
@@ -241,7 +246,7 @@ if btn_next:
             try:
                 result = engine.get_ai_response_with_retry(
                     prompts.build_step_prompt(
-                        st.session_state.war_state, next_turn_num, time_step,
+                        _prev_state, next_turn_num, time_step,
                         use_live_intel, briefing),
                     deepseek_api_key,
                 )
@@ -251,12 +256,26 @@ if btn_next:
                 # 🌟🌟🌟 强制洗数据，执行“落水算法” 🌟🌟🌟
                 geo.sanitize_step_units(updated_data)
 
+                # 🧱 名单守恒：`war_state = updated_data` 是整体替换，模型漏返回一个单位，
+                #    下一回合的 prompt 里就没有这个名字 —— 它永远补不回来。
+                #    所以必须在赋值之前核对，无理由消失的按上一回合快照回填。
+                #    eliminated 可能被模型写在 updated_state 外层，两层都认。
+                if isinstance(updated_data, dict) and isinstance(result, dict):
+                    _declared = result.get("eliminated")
+                    if isinstance(_declared, list) and _declared \
+                            and not updated_data.get("eliminated"):
+                        updated_data["eliminated"] = _declared
+                updated_data, _roster = integrity.reconcile_roster(_prev_state, updated_data)
+                st.session_state.roster_last = _roster
+                st.session_state.numeric_flags = integrity.check_numeric_integrity(
+                    _prev_state, updated_data)
+
                 # 继续走原有的渲染和日志更新逻辑
                 report_text = result.get("report")
                 if not report_text and isinstance(updated_data, dict):
                     report_text = updated_data.get("report", f"【T+{next_turn_num}】系统未能成功生成文字战报，但战场态势已发生改变。")
 
-                st.session_state.last_war_state = copy.deepcopy(st.session_state.war_state)
+                st.session_state.last_war_state = copy.deepcopy(_prev_state)
                 st.session_state.war_state = updated_data
 
                 if report_text:
@@ -362,6 +381,56 @@ with col1:
             else:
                 st.caption(f"📚 本回合**无史料注入**：{_rag_meta.get('note', '')}"
                            f" —— 数字与时间线不可追溯，仅作推演参考。")
+
+        # 🧱 名单与数值守恒：回合数越多越容易失真的两个地方。
+        #    没有异常时保持安静 —— 每回合都弹一句「一切正常」只会让人把面板关掉。
+        _roster = st.session_state.get("roster_last") or {}
+        _nflags = st.session_state.get("numeric_flags") or []
+
+        if _roster.get("recovered") or _roster.get("structure_missing"):
+            _detail = "、".join(
+                (f"{e['name']}（hp {e['hp']:g}）" if isinstance(e.get("hp"), (int, float))
+                 else e["name"])
+                for e in _roster.get("recovered", [])
+            )
+            _miss = "；".join(_roster.get("structure_missing", []))
+            st.warning(
+                f"🔁 上回合有 **{len(_roster.get('recovered', []))}** 个单位的返回里凭空消失，"
+                f"已按上一回合快照回填：{_detail}。"
+                + (f"\n\n结构层面：{_miss}。" if _miss else "")
+                + "\n\n战局状态是**整体替换**的，漏返回的单位下一回合连名字都不会出现在 "
+                  "prompt 里 —— 它永远补不回来，所以这里必须补。若这支部队确实已被歼灭，"
+                  "应写进 `eliminated` 声明；没有声明的消失一律当作漏返回。"
+            )
+
+        if _roster.get("eliminated"):
+            _names = "、".join(f"{e['name']}（{e['why']}）" for e in _roster["eliminated"])
+            st.caption(f"☠️ 本回合确认歼灭 **{len(_roster['eliminated'])}** 个：{_names}")
+
+        if _roster.get("suspected"):
+            _names = "、".join(
+                f"{e['name']}（上回合 hp {e['hp']:g}）" for e in _roster["suspected"])
+            st.caption(
+                f"☑️ 这些单位的消失已被回填，但上一回合 hp 已经很低，也可能确实被歼灭：{_names}。"
+                "下一回合若确认歼灭，请让模型写进 `eliminated`。"
+            )
+
+        if _nflags:
+            _lines = []
+            for _f in _nflags:
+                if _f["kind"] == "hp_gain":
+                    _lines.append(
+                        f"**{_f['name']}** hp {_f['prev']:g} → {_f['new']:g}"
+                        f"（+{_f['delta']:g}）")
+                elif _f["kind"] == "hp_zero_alive":
+                    _lines.append(f"**{_f['name']}** hp 已归零但仍在编制里（地图会留一个满编军标）")
+                elif _f["kind"] == "hp_negative":
+                    _lines.append(f"**{_f['name']}** hp 为负（{_f['new']:g}）")
+            st.warning(
+                "📉 数值守恒提示：" + "；".join(_lines) + "。\n\n"
+                "**没有自动改** —— 兵力上涨可能是援军抵达或就地整补（合法），"
+                "也可能是模型漏减（误差）。系统不替你判断，只把可疑处摆出来。"
+            )
 
     else:
         # --- 🌟 启动前的中心 Logo 欢迎界面 ---
