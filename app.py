@@ -15,8 +15,8 @@ from pathlib import Path
 import streamlit as st
 from streamlit_folium import st_folium
 
-from gentactix import (adjudicator, anchors, engine, geo, integrity, prompts, rag,
-                       state, viz)
+from gentactix import (adjudication_lib, adjudicator, anchors, engine, geo,
+                       integrity, prompts, rag, state, viz)
 
 
 def _safe_adjudicate(state_data, time_step, turn, params, phase):
@@ -151,11 +151,29 @@ with st.sidebar:
              "同一战局同一回合必然给出同一答案（附录指纹可核对）。"
              "关闭后模型完全自由发挥，两次运行结果不同 —— 这是默认行为。",
     )
+    _battle_choice = None
     if use_adjudicator:
         st.caption(
             f"内核 `{adjudicator.ADJUDICATOR_VERSION}` · 只裁决**机动 / 补给 / 包围**，"
             "不裁决伤亡数字（那仍由模型叙述）。"
         )
+        # 🎯 战役裁决库：一场战役一个文件（adjudication/<战役名>.md）。
+        #    默认「自动匹配」按场景描述里的战役名命中；也可以显式指定 ——
+        #    输入里同时提到两场仗（「如果长平之战按诺曼底的打法」）时，自动匹配会选错。
+        _library = adjudication_lib.list_battles()
+        if _library:
+            _picked = st.selectbox(
+                "🎯 战场裁决库",
+                ["自动匹配（按场景描述）"] + _library,
+                index=0,
+                help="每场战役的几何尺度（多近算接触、包围圈多深）单独一份，"
+                     "放在 adjudication/ 目录，加新战役不必改代码。"
+                     "选「自动匹配」时场景描述里出现战役名即命中；"
+                     "同时提到两场仗时请显式选一场。",
+            )
+            _battle_choice = None if _picked.startswith("自动匹配") else _picked
+        else:
+            st.caption("裁决库为空：`adjudication/` 下还没有战役文件，将使用默认几何。")
     else:
         st.caption("已关闭：模型自行推演走位与胜负，**同一想定两次运行结果不同**。")
 
@@ -245,10 +263,18 @@ if btn_init:
                 # ⚖️ T+0 也裁一次：开局就能看到哪条粮道是脆的、哪支部队被半包围，
                 #    不用等打起来。此时不注入 prompt，只用于面板显示。
                 st.session_state.adj_violations = []
-                st.session_state.adj_last = (
-                    _safe_adjudicate(init_state, time_step, 0, {}, "初始化")
-                    if use_adjudicator else None
-                )
+                # ⚖️ T+0 用的是**这场战役标定过**的尺度，不是硬编码默认值 ——
+                #    否则换一场仗时，第一屏面板（最直观的那一屏）就已经算错了。
+                if use_adjudicator:
+                    st.session_state.adj_spec = adjudicator.load_battle_spec(
+                        scenario_text=scenario_input, battle=_battle_choice)
+                    st.session_state.adj_last = _safe_adjudicate(
+                        init_state, time_step, 0,
+                        dict(st.session_state.adj_spec.explicit), "初始化")
+                else:
+                    st.session_state.adj_spec = None
+                    st.session_state.adj_last = None
+
                 # 📚 保存场景原文：后续回合的史料检索要用「这一局是什么仗」，
                 #    而不是用户此刻在输入框里改成的别的内容。
                 st.session_state.scenario_input = scenario_input
@@ -297,8 +323,12 @@ if btn_next:
         _adj_params = {}
         pre_adj = None
         if use_adjudicator:
-            _adj_params = adjudicator.load_scenario_params(
-                scenario_text=st.session_state.get("scenario_input", ""))
+            # 用「这一局是什么仗」（开局时存下的 scenario_input），而不是输入框
+            # 此刻写着什么 —— 中途改输入框不该让已经开打的战役换一套几何尺度。
+            st.session_state.adj_spec = adjudicator.load_battle_spec(
+                scenario_text=st.session_state.get("scenario_input", ""),
+                battle=_battle_choice)
+            _adj_params = dict(st.session_state.adj_spec.explicit)
             pre_adj = _safe_adjudicate(
                 _prev_state, time_step, next_turn_num, _adj_params, "推演前")
 
@@ -459,17 +489,34 @@ with col1:
         # 为什么放在地图正下方：战报是叙述，可以写得很漂亮；这四个字段是算出来的，
         # 读者想核对「战报有没有在编」时，眼睛往下扫一眼就有答案。
         _adj = st.session_state.get("adj_last")
+        _spec = st.session_state.get("adj_spec")
+        if use_adjudicator and _spec is None:
+            _spec = adjudicator.load_battle_spec(
+                scenario_text=st.session_state.get("scenario_input", ""),
+                battle=_battle_choice)
+            st.session_state.adj_spec = _spec
         # 🐛 兜底：从旧会话恢复、或中途打开开关时，adj_last 可能为空。
         #    这里当场补算一次，避免「开关开着却一块面板都没有」这种看起来像没生效的状态。
+        #    补算必须用当前战役的尺度 —— 用默认值补算会得到一块和后续回合对不上的面板。
         if use_adjudicator and not _adj:
             _adj = _safe_adjudicate(
                 st.session_state.war_state, time_step,
-                st.session_state.turn_count, {}, "面板补算")
+                st.session_state.turn_count,
+                dict(_spec.explicit) if _spec else {}, "面板补算")
             st.session_state.adj_last = _adj
         if use_adjudicator and _adj:
             _s = _adj["summary"]
             st.markdown(
                 f"#### ⚖️ 确定性裁决 `{_adj['version']}` · 指纹 `{_adj['fingerprint']}`")
+            # 🎯 把「这局用的是哪套尺度」摆在结论上方：几何参数换一份，结论就全变了，
+            #    读者核对结论前必须先知道它是在什么尺度下算出来的。
+            if _spec is not None:
+                st.caption("参数：" + _spec.summary_line())
+                for _w in _spec.warnings:
+                    st.caption(f"ℹ️ {_w}")
+                if _spec.errors:
+                    st.error("裁决参数有误（出错项已忽略，其余照常生效）："
+                             + "；".join(_spec.errors))
             st.caption(
                 f"单位 **{_s['units']}** · 本回合可接触 **{_s['can_contact']}** · "
                 f"粮道被断 **{_s['supply_cut']}** · 被围 **{_s['encircled']}**"
@@ -505,6 +552,17 @@ with col1:
             ]
             if _panel:
                 st.dataframe(_panel, hide_index=True, width="stretch")
+
+            # 📐 尺度明细放在结论表**之后**：先看「这局算出了什么」，再看「按什么尺度算的」。
+            #    放前面会把真正的结论挤到下面，而且会改变「第一张表」的顺序语义。
+            if _spec is not None:
+                with st.expander("📐 本局几何尺度明细"):
+                    st.dataframe(adjudication_lib.param_table(_spec),
+                                 hide_index=True, width="stretch")
+                    if _spec.source is not None:
+                        st.caption(f"来源：`{_spec.source}`")
+                    else:
+                        st.caption("来源：默认几何（`adjudication/` 下没有这场战役的文件）")
 
             # 🚨 位移越界：只报告，不修正。这条提示是「模型有没有守规矩」的直接证据。
             _violations = st.session_state.get("adj_violations") or []

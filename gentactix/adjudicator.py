@@ -35,7 +35,8 @@ from __future__ import annotations
 import hashlib
 import json
 import math
-from pathlib import Path
+
+from . import adjudication_lib
 
 # 版本标记：界面上显示，用来区分「内核改了」和「这局确实没变化」
 ADJUDICATOR_VERSION = "geo-1"
@@ -46,23 +47,12 @@ _KM_PER_DEG_LNG = 111.32
 
 
 # ==========================================
-# ⚙️ 默认参数（可被 corpus frontmatter 覆盖）
+# ⚙️ 默认参数
 # ==========================================
-DEFAULT_PARAMS = {
-    # 「接触」的判定距离：与 step prompt 里的「≤3 公里必须输出交战」保持同一口径
-    "contact_km": 3.0,
-    # 敌方区域控制半径下限：射程 0.9 km 的弓弩不可能封锁 5 km 宽的河谷，
-    # 所以控制半径取 max(该值, 攻击射程 × 1.2)。3 km 与接触线一致，便于解释。
-    "control_radius_km": 3.0,
-    # 包围判定向外搜索的最大半径
-    "encircle_radius_km": 12.0,
-    # 退路判定向外搜索的最大半径
-    "retreat_check_km": 12.0,
-    # 敌方围住多少个方向算「被围」（0—1）
-    "sealed_ratio_encircled": 0.85,
-    # 围住多少个方向算「半包围」
-    "sealed_ratio_partial": 0.50,
-}
+# 参数定义（默认值 / 允许范围 / 含义）在 adjudication_lib.PARAM_SCHEMA ——
+# 那里是单一真相源。本模块只负责拿参数算几何，不负责决定「3 km 算不算接触」。
+# 每场战役的覆盖值放在 adjudication/<战役名>.md，由 load_scenario_params 读入。
+DEFAULT_PARAMS = adjudication_lib.default_params()
 
 
 # ==========================================
@@ -760,53 +750,35 @@ def check_movement(prev_state, new_state, adjudication, tolerance=1.15):
 
 
 # ==========================================
-# 📇 战役参数表（corpus frontmatter 覆盖）
+# 📇 战役参数表（adjudication/ 裁决库）
 # ==========================================
-def _parse_frontmatter(path):
-    """读取 Markdown 顶部 `--- ... ---` 里的 key: value。失败返回空字典。"""
-    try:
-        raw = path.read_text(encoding="utf-8")
-    except (OSError, UnicodeDecodeError):
-        return {}
-    lines = raw.splitlines()
-    if not lines or lines[0].strip() != "---":
-        return {}
-    data = {}
-    for line in lines[1:]:
-        if line.strip() == "---":
-            break
-        if ":" not in line:
-            continue
-        key, _, value = line.partition(":")
-        key = key.strip()
-        value = value.split("#", 1)[0].strip()
-        if not key or not value:
-            continue
-        try:
-            data[key] = float(value)
-        except ValueError:
-            data[key] = value
-    return data
+def load_scenario_params(corpus_dir=None, scenario_text="", battle=None,
+                         library_dir=None):
+    """返回本回合要覆盖默认值的参数（只含本战役**显式写下**的键）。
 
+    读取逻辑全部在 `adjudication_lib.resolve()` —— 发现文件、按名字匹配、
+    校验范围、报错都在那儿。这里只把 BattleSpec.explicit 交出去：
+    `adjudicate()` 自己会 `dict(DEFAULT_PARAMS)` 再 update，不需要完整字典。
 
-def load_scenario_params(corpus_dir=None, scenario_text=""):
-    """从 corpus/*.md 的 frontmatter 里取参数，与默认值合并。
-
-    只接受 DEFAULT_PARAMS 里已存在的键 —— 防止拼错的键静默生效或静默失效。
-    文件名与场景描述有交集时优先（例如场景含「长平」就优先 corpus/长平之战.md），
-    多个文件都命中时按文件名顺序合并，后者覆盖前者。
+    ⚠️ 与旧版语义相反的地方：旧版会把目录里**所有** `*.md` 的 frontmatter
+    依次合并（后者覆盖前者），场景没命中也会借用别的战役的参数。现在
+    **没命中就是没命中**，返回 `{}` —— 战役之间互不串味，才敢往库里加第二场。
     """
-    root = Path(corpus_dir) if corpus_dir else Path(__file__).resolve().parent.parent / "corpus"
-    if not root.exists() or not root.is_dir():
-        return {}
+    spec = adjudication_lib.resolve(
+        scenario_text=scenario_text,
+        battle=battle,
+        corpus_dir=corpus_dir,
+        library_dir=library_dir,
+    )
+    return dict(spec.explicit)
 
-    files = sorted(root.glob("*.md"))
-    preferred = [p for p in files if p.stem and p.stem in str(scenario_text or "")]
-    others = [p for p in files if p not in preferred]
 
-    merged = {}
-    for path in preferred + others:
-        for key, value in _parse_frontmatter(path).items():
-            if key in DEFAULT_PARAMS and isinstance(value, (int, float)):
-                merged[key] = float(value)
-    return merged
+def load_battle_spec(scenario_text="", battle=None, corpus_dir=None, library_dir=None):
+    """同上，但返回完整 BattleSpec —— 界面要用它显示「用了哪个文件、写错了什么」。"""
+    return adjudication_lib.resolve(
+        scenario_text=scenario_text,
+        battle=battle,
+        corpus_dir=corpus_dir,
+        library_dir=library_dir,
+    )
+
