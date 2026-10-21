@@ -4,10 +4,14 @@ Run with the Python environment containing requirements.txt, requirements-dsh.tx
 and PyInstaller. No local .env, model key or session cache is packaged.
 """
 from pathlib import Path
+import os
 import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parent.parent
+env = os.environ.copy()
+# ROS/system PYTHONPATH can leak unrelated packages into a frozen application.
+env.pop('PYTHONPATH', None)
 command = [sys.executable, '-m', 'PyInstaller', '--noconfirm', '--clean', '--onedir',
            '--name', 'gentactix-backend', '--distpath', str(ROOT / 'dist-backend'),
            '--workpath', str(ROOT / 'build-backend'), '--specpath', str(ROOT / 'build-backend'),
@@ -22,5 +26,5 @@ for name in ('corpus', 'adjudication', 'plugins'):
 for name in ('unit_types.json', 'korean_anchors.json'):
     command += ['--add-data', f'{ROOT / "gentactix" / name}:gentactix']
 command += [str(ROOT / 'tools' / 'desktop_backend.py')]
-subprocess.run(command, cwd=ROOT, check=True)
-subprocess.run(['npm', 'run', 'dist:linux'], cwd=ROOT / 'frontend', check=True)
+subprocess.run(command, cwd=ROOT, env=env, check=True)
+subprocess.run(['npm', 'run', 'dist:linux'], cwd=ROOT / 'frontend', env=env, check=True)

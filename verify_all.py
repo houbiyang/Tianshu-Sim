@@ -10,6 +10,7 @@ live model calls are made. Python dependencies must already be installed.
 import argparse
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -46,7 +47,12 @@ def main():
             code, error = 1, str(exc)
             with path.open("a", encoding="utf-8") as log:
                 log.write(f"\n{error}\n")
+        output = path.read_text(encoding='utf-8', errors='replace')
+        count = re.search(r'Ran (\d+) tests?', output)
+        skipped = re.search(r'OK \(skipped=(\d+)\)', output)
         results.append({"name": name, "exit_code": code,
+                        "unittest_cases": int(count[1]) if count else None,
+                        "unittest_skipped": int(skipped[1]) if skipped else 0,
                         "seconds": round(time.monotonic() - started, 2),
                         "log": str(path.relative_to(ROOT)), "error": error})
         print(f"{'PASS' if code == 0 else 'FAIL'} {name} ({results[-1]['seconds']}s)", flush=True)

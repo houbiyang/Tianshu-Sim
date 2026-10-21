@@ -23,9 +23,10 @@ const sessionId = ref<string>("");
 const recentSessions = ref<{ session_id: string; turn_count: number; scenario: string }[]>([]);
 const screen = ref<'launch' | 'workspace'>('launch');
 const settingsDialog = ref<HTMLDialogElement | null>(null);
+const settingsPanel = ref<InstanceType<typeof LlmSettings> | null>(null);
 const dockCollapsed = ref(false);
 let unsubscribeMenu: (() => void) | undefined;
-function openSettings() { settingsDialog.value?.showModal(); }
+function openSettings() { settingsDialog.value?.showModal(); void settingsPanel.value?.reload(); }
 async function resumeSession(id: string) {
   if (await run('正在恢复战局…', () => api.get(id))) {
     sessionId.value = id; localStorage.setItem('gentactix-session', id); screen.value = 'workspace';
@@ -172,13 +173,23 @@ async function sendChat() {
   const q = chatInput.value.trim();
   if (!q || !sessionId.value) return;
   chatInput.value = "";
-  // 旧 Streamlit 是提问即刻上屏、回答随后到达；先乐观追加，快照回来会整体替换
+  const previousMessages = snap.value?.chat_messages.slice() ?? [];
   if (snap.value) snap.value.chat_messages.push({ role: "user", content: q });
-  await run("璇玑思考中…", () => api.chat(sessionId.value, q));
+  if (!await run("璇玑思考中…", () => api.chat(sessionId.value, q))) {
+    if (snap.value) snap.value.chat_messages = previousMessages;
+    chatInput.value = q;
+  }
 }
 
-function exportJson() {
-  if (sessionId.value) window.location.href = api.exportUrl(sessionId.value);
+async function exportJson() {
+  if (!sessionId.value) return;
+  try {
+    const value = await api.exportSession(sessionId.value);
+    const url = URL.createObjectURL(new Blob([JSON.stringify(value, null, 2)], { type: 'application/json' }));
+    const link = document.createElement('a');
+    link.href = url; link.download = `GenTactix_T${value.turn_count}.json`;
+    link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+  } catch (e) { error.value = `导出失败：${e}`; }
 }
 
 const hasState = () => !!snap.value?.war_state;
@@ -439,7 +450,7 @@ function flagLine(f: NumericFlag): string {
   </template>
   <dialog ref="settingsDialog" class="settings-dialog tactical-window" aria-labelledby="settings-title">
     <header class="window-heading"><span class="window-index">RUNTIME</span><h2 id="settings-title">DSH · LLM配置</h2><button @click="settingsDialog?.close()" aria-label="关闭模型配置">×</button></header>
-    <LlmSettings embedded :disabled="!!busy" @changed="async () => { health = await api.health(); }" @busy="label => busy = label" />
+    <LlmSettings ref="settingsPanel" embedded :disabled="!!busy" @changed="async () => { health = await api.health(); }" @busy="label => busy = label" />
     <footer class="window-footer"><span>配置保存在本机 · 密钥不回显</span><button @click="settingsDialog?.close()">完成</button></footer>
   </dialog>
   </div>

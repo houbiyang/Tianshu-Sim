@@ -51,4 +51,5 @@ export const api = {
     request<CounterfactualResult>("POST", `/api/sessions/${sid}/counterfactual`, payload),
   trace: (sid: string, turn: number) => request<{ persistence: { session_id: string; status: string; found_events?: number; expected_events?: number }[] }>("GET", `/api/sessions/${sid}/traces/${turn}`),
   exportUrl: (sid: string) => `${BASE}/api/sessions/${sid}/export`,
+  exportSession: (sid: string) => request<Record<string, unknown>>('GET', `/api/sessions/${sid}/export`),
 };

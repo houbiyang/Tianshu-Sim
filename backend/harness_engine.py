@@ -79,12 +79,15 @@ _run_policies = {}
 
 
 def role_policy(role="engine", *, tools=False):
-    defaults = {"engine": LLM_MAX_TOKENS, "strategist": 8192, "chat": 2048, 'connection-test': 512, 'planner': 4096,
-                "causal": 4096, "counterfactual": LLM_MAX_TOKENS}
+    # Reasoning tokens share the output budget on vLLM. A 2048-token chat
+    # default exhausted a real four-unit battle query before any final answer.
+    defaults = {"engine": LLM_MAX_TOKENS, "strategist": 8192, "chat": 8192, 'connection-test': 512, 'planner': 4096,
+                "causal": 8192, "counterfactual": LLM_MAX_TOKENS}
     prefix = "GENTACTIX_" + role.upper()
     saved = ROLE_POLICIES.get(role, {})
+    default_effort = 'low' if role in ('chat', 'strategist', 'causal') else None
     return {"role": role, "max_tokens": min(LLM_MAX_TOKENS, saved.get('max_tokens', int(os.environ.get(prefix + "_MAX_TOKENS", defaults.get(role, LLM_MAX_TOKENS))))),
-            "reasoning_effort": saved.get('reasoning_effort', os.environ.get(prefix + "_REASONING_EFFORT") or None),
+            "reasoning_effort": saved.get('reasoning_effort', os.environ.get(prefix + "_REASONING_EFFORT") or default_effort),
             "max_steps": RUNTIME_MAX_STEPS,
             "max_tool_calls": RUNTIME_MAX_TOOL_CALLS,
             "allowed_tools": ["get_observation", "retrieve_history", "evaluate_action", "inspect_trajectory", "evaluate_counterfactual"] if tools else []}
@@ -427,6 +430,12 @@ def fork_run(parent, prompt, observer, *, role='counterfactual', context=None):
     harness = get_harness()
     if not NATIVE_RUNTIME or not RUNTIME_STATUS.get('connected'):
         raise RuntimeError('原生分支插件未连接；不能将独立会话冒充DSH fork')
+    parent_id = parent['session_id']
+    if parent_id not in _role_sessions:
+        # A restored battle retains event references, but the runtime registry is
+        # empty after restart. Resume the exact parent; never replace missing
+        # history with a newly created session as get_role_session may do.
+        _role_sessions[parent_id] = harness.resume_session(parent_id)
     sid = f'gentactix-cf-{uuid.uuid4().hex}'
     observer.active_sessions.add(sid)
     if context is not None:

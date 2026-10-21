@@ -16,12 +16,15 @@ const message = ref('');
 const error = ref('');
 
 async function load() {
+  if (working.value) return;
+  error.value = ''; message.value = '';
   try {
     current.value = await api.llmConfig();
     Object.assign(form, { ...current.value, api_key: '' });
     preset.value = current.value.provider;
-  } catch { error.value = '当前后端不支持配置接口，请启动新版后端。'; }
+  } catch (e) { error.value = `无法读取模型配置，请确认后端就绪后重试：${e}`; }
 }
+defineExpose({ reload: load });
 onMounted(load);
 function choosePreset() {
   const item = current.value?.presets.find(p => p.id === preset.value);

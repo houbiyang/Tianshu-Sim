@@ -1,6 +1,6 @@
 {
   "name": "gentactix-desktop",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "private": true,
   "description": "GenTactix · dsh harness 版桌面前端（Vue3 + Electron）",
   "type": "module",
@@ -20,7 +20,7 @@
     "@types/leaflet": "^1.9.15",
     "@vitejs/plugin-vue": "^5.2.1",
     "concurrently": "^9.1.0",
-    "electron": "^33.2.0",
+    "electron": "45.0.0",
     "electron-builder": "^26.15.3",
     "typescript": "~5.7.2",
     "vite": "^6.0.5",

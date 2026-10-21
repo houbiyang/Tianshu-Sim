@@ -22,8 +22,8 @@ from urllib.parse import quote
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import Response
-from pydantic import BaseModel
+from fastapi.responses import Response, JSONResponse
+from pydantic import BaseModel, Field
 
 from gentactix import (adjudication_lib, adjudicator, anchors, battlefield, causal, geo, integrity,
                        prompts, rag, state, sim_clock)
@@ -46,15 +46,30 @@ async def lifespan(_app):
     harness_engine.close_harness()
 
 
-app = FastAPI(title="GenTactix dsh backend", version="3.1.0", lifespan=lifespan)
+app = FastAPI(title="GenTactix dsh backend", version="3.1.1", lifespan=lifespan)
 
 # Electron 渲染进程（dev: vite 端口 / prod: file://）都要能访问本机后端
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["null"],  # Packaged file:// renderer; never serve remote pages.
+    allow_origin_regex=r"https?://(localhost|127\.0\.0\.1|\[::1\])(:[0-9]+)?",
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware('http')
+async def local_browser_boundary(request: Request, call_next):
+    """CORS alone cannot stop cross-site POSTs; reject them before dispatch."""
+    origin = request.headers.get('origin')
+    import re
+    if origin and origin != 'null' and not re.fullmatch(
+            r'https?://(localhost|127\.0\.0\.1|\[::1\])(:[0-9]+)?', origin):
+        return JSONResponse({'detail': '本地推演服务不接受外部网站访问'}, status_code=403)
+    # Reject DNS rebinding even when Origin is absent. TestClient uses testserver.
+    if request.url.hostname not in ('localhost', '127.0.0.1', '::1', 'testserver'):
+        return JSONResponse({'detail': '推演服务仅支持本机地址'}, status_code=403)
+    return await call_next(request)
 
 # ==========================================
 # 🗃️ 会话存储（取代 st.session_state，键名口径与 state.DEFAULT_SESSION_STATE 一致）
@@ -69,7 +84,9 @@ _OP_LOCK = threading.Lock()
 def _serialized(fn):
     @functools.wraps(fn)
     def wrapper(*args, **kwargs):
-        with _OP_LOCK:
+        if not _OP_LOCK.acquire(blocking=False):
+            raise HTTPException(status_code=409, detail='模型正在工作，请完成或取消当前操作后重试')
+        try:
             result = fn(*args, **kwargs)
             for session in list(_SESSIONS.values()):
                 try:
@@ -77,6 +94,8 @@ def _serialized(fn):
                 except (OSError, ValueError, TypeError):
                     harness_engine.ENGINE_NOTICES.append({'level': 'warning', 'message': '战局检查点写入失败，请立即导出战局；当前内存态势保留'})
             return result
+        finally:
+            _OP_LOCK.release()
     return wrapper
 
 
@@ -308,7 +327,7 @@ def _snapshot(session: dict) -> dict:
 # 🔌 接口
 # ==========================================
 class CreateSessionRequest(BaseModel):
-    scenario: str
+    scenario: str = Field(min_length=1, max_length=16000)
     time_step: str = "30分钟"
     use_adjudicator: bool = False
     battle: str | None = None
@@ -320,7 +339,7 @@ class CreateSessionRequest(BaseModel):
 
 
 class ChatRequest(BaseModel):
-    message: str
+    message: str = Field(min_length=1, max_length=16000)
 
 
 @app.get("/api/health")
@@ -415,12 +434,16 @@ def checkpoint_sessions():
 def import_session(payload: dict):
     """Restore a full export or a legacy export accompanied by its API snapshot."""
     document = payload.get('export', payload)
+    if not isinstance(document, dict):
+        raise HTTPException(status_code=422, detail='导出文件必须是JSON对象')
     if document.get('format') == 'gentactix-session-v1':
         data = document.get('session')
     else:
         snapshot = payload.get('snapshot') or {}
-        if not snapshot.get('session_id') or not snapshot.get('scenario'):
+        if not isinstance(snapshot, dict) or not snapshot.get('session_id') or not snapshot.get('scenario') or not snapshot.get('time_step'):
             raise HTTPException(status_code=422, detail='旧版导出还需要原会话快照，不能猜测场景与规则配置')
+        if any(not isinstance(snapshot.get(key, {}), dict) for key in ('adjudication', 'rag')) or not isinstance(document.get('review', {}), dict):
+            raise HTTPException(status_code=422, detail='旧版快照的裁决、检索与复盘字段必须是对象')
         data = _new_session(snapshot['scenario'], snapshot['time_step'],
             snapshot.get('adjudication', {}).get('enabled', False),
             snapshot.get('adjudication', {}).get('battle_choice'),
@@ -448,6 +471,10 @@ def import_session(payload: dict):
         data.get('use_live_intel', False))
     restored.update(copy.deepcopy(data))
     restored.update(adj_spec=None, active_observer=None, progress=None, cancel_requested=False)
+    try:
+        session_store.validate(restored)
+    except (ValueError, TypeError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
     session_store.save(restored)
     _SESSIONS[restored['id']] = restored
     return {'session_id': restored['id'], 'turn_count': restored['turn_count']}

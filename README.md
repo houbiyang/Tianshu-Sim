@@ -26,7 +26,7 @@ vLLM 使用实际 `served-model-name`；DeepSeek 推荐 `deepseek-flash`，也�
 
 Linux 用户可从 [Releases](https://github.com/snow-wind-001/Gentactix-DSH/releases) 下载 AppImage 或便携压缩包，无需另装 Python/Conda。源码打包与加密配置迁移见[桌面使用说明](docs/桌面启动与配置.md)。
 
-当前回归与真实调用证据见 [TESTING.md](TESTING.md) 和[本轮验收报告](docs/桌面与配置验收-2026-10-22.md)，插件和分析边界见[架构说明](docs/因果分析与DSH插件架构.md)。以下保留上游功能说明与历史记录。
+当前回归与真实调用证据见 [TESTING.md](TESTING.md) 和[3.1.1发布验收报告](docs/发布验收-3.1.1.md)，插件和分析边界见[架构说明](docs/因果分析与DSH插件架构.md)。以下保留上游功能说明与历史记录。
 
 ![启动与战役选择](docs/screenshots/launch.png)
 

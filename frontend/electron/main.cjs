@@ -48,7 +48,14 @@ function installMenu() {
   ]));
 }
 async function startBackend() {
-  try { const res = await fetch(`${BACKEND_URL}/api/health`); if (res.ok) return; } catch { /* Start local backend. */ }
+  let response;
+  try { response = await fetch(`${BACKEND_URL}/api/health`, { signal: AbortSignal.timeout(1500) }); } catch { /* Start local backend. */ }
+  if (response) {
+    let value;
+    try { value = await response.json(); } catch { /* A different service may own this port. */ }
+    if (response.ok && value?.engine === 'deepseek-harness' && value?.status === 'ok') return;
+    throw new Error(`端口 ${PORT} 已被其他服务占用，请关闭冲突服务或通过 GENTACTIX_PORT 指定其他端口。`);
+  }
   const args = ['-m', 'uvicorn', 'backend.main:app', '--host', '127.0.0.1', '--port', PORT];
   let executable, commandArgs, cwd = ROOT, env = { ...process.env, GENTACTIX_PORT: PORT, GENTACTIX_PROJECT_ROOT: projectRoot() };
   if (app.isPackaged) {
@@ -70,7 +77,11 @@ async function startBackend() {
 }
 async function waitForBackend() {
   for (let attempt = 0; attempt < 120; attempt++) {
-    try { if ((await fetch(`${BACKEND_URL}/api/health`)).ok) return true; } catch { /* Wait for local startup. */ }
+    if (backend && backend.exitCode !== null) return false;
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/health`, { signal: AbortSignal.timeout(1500) });
+      if (response.ok && (await response.json()).engine === 'deepseek-harness') return true;
+    } catch { /* Wait for local startup. */ }
     await new Promise(resolve => setTimeout(resolve, 500));
   }
   return false;
@@ -104,7 +115,7 @@ else {
     installMenu(); await startBackend();
     if (!await waitForBackend()) console.error('Local backend is unavailable; the interface will show connection guidance.');
     createWindow();
-  });
+  }).catch(error => { dialog.showErrorBox('GenTactix-DSH 启动失败', String(error.message || error)); app.quit(); });
 }
 app.on('window-all-closed', () => app.quit());
 app.on('before-quit', () => { if (backend) backend.kill('SIGTERM'); });
