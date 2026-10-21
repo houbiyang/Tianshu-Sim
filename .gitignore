@@ -16,7 +16,7 @@ venv/
 # ---- 密钥与本地凭据（务必不要提交）----
 *.pem
 *.key
-.gentactix-llm.enc*
+.gentactix-llm.*
 .secrets
 CLOUDFLARE_API_TOKEN
 # Streamlit 的密钥文件：本地一旦创建，`git add -A` 就会带上去，必须先忽略

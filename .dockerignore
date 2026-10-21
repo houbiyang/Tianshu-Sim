@@ -37,7 +37,7 @@ venv
 .playwright-cli
 .env
 .env.*
-.gentactix-llm.enc*
+.gentactix-llm.*
 *.key
 .packaging-venv
 .dsh-wargame-home
