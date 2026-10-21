@@ -24,7 +24,7 @@ def main():
     source = args.appimage.resolve(strict=True)
     if source.suffix != '.AppImage':
         parser.error('Expected a built .AppImage file')
-    data = Path(os.environ.get('XDG_DATA_HOME', Path.home() / '.local/share'))
+    data = Path(os.environ.get('XDG_DATA_HOME', Path.home() / '.local/share')).resolve()
     install = data / 'GenTactix-DSH'
     install.mkdir(parents=True, exist_ok=True)
     executable = install / 'GenTactix-DSH.AppImage'
@@ -35,6 +35,13 @@ def main():
     icon = data / 'icons/hicolor/512x512/apps/gentactix-dsh.png'
     icon.parent.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(ROOT / 'frontend/public/icons/linux/512x512.png', icon)
+    # A pre-existing hicolor cache can omit newly copied icons. Refresh it for
+    # name-based lookups; the desktop entry also uses an absolute icon path so
+    # launching does not depend on the user's current icon theme or its cache.
+    cache_tool = shutil.which('gtk-update-icon-cache')
+    if cache_tool:
+        subprocess.run([cache_tool, '--force', '--ignore-theme-index', str(data / 'icons/hicolor')],
+                       check=True)
     wrapper = install / 'launch.sh'
     lines = ['#!/bin/sh', 'export APPIMAGE_EXTRACT_AND_RUN=1']
     if args.project_root:
@@ -45,7 +52,7 @@ def main():
     entry = '\n'.join([
         '[Desktop Entry]', 'Version=1.0', 'Type=Application', 'Name=GenTactix-DSH',
         'Name[zh_CN]=GenTactix 战役推演', 'Comment=历史战役推演 · 沈阳理工大学装备工程学院深度学习实验室',
-        'Exec=' + desktop_quote(wrapper), 'Icon=gentactix-dsh', 'Terminal=false',
+        'Exec=' + desktop_quote(wrapper), 'Icon=' + str(icon), 'Terminal=false',
         'Categories=Education;', 'StartupWMClass=gentactix-dsh', 'StartupNotify=true', '',
     ])
     menu = data / 'applications/gentactix-dsh.desktop'
