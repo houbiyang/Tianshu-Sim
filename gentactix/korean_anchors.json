@@ -1,0 +1,533 @@
+{
+  "checked": "2026-10-21",
+  "display_crs": "WGS84",
+  "precision_note": "uncertainty_km为保守工作范围，不是统计置信区间或测绘精度认证。参考点不构成战时部署、工事、补给站和道路数据库。",
+  "sources": {
+    "geonames-kp": {
+      "title": "GeoNames KP country extract",
+      "url": "https://download.geonames.org/export/dump/KP.zip",
+      "license": "CC BY 4.0",
+      "readme": "https://download.geonames.org/export/dump/readme.txt"
+    },
+    "geonames-kr": {
+      "title": "GeoNames KR country extract",
+      "url": "https://download.geonames.org/export/dump/KR.zip",
+      "license": "CC BY 4.0",
+      "readme": "https://download.geonames.org/export/dump/readme.txt"
+    },
+    "kwe-grid": {
+      "title": "Korean War Educator: Martin Markley outpost grid conversions",
+      "url": "https://thekwe.org/topics/outpost_wars/outpost_wars_korea.htm",
+      "note": "只录地名、格网与坐标事实；网页未说明大地基准。"
+    }
+  },
+  "identity_references": [
+    {
+      "title": "US Army: South to the Naktong, North to the Yalu, chapter34 (Unsan)",
+      "url": "https://webdoc.sub.gwdg.de/ebook/p/2005/CMH_2/www.army.mil/cmh-pg/books/korea/20-2-1/sn34.htm"
+    },
+    {
+      "title": "US Army: Truce Tent and Fighting Front, map VI (Triangle Hill complex)",
+      "url": "https://webdoc.sub.gwdg.de/ebook/p/2005/CMH_2/www.army.mil/cmh-pg/books/korea/truce/map6.gif"
+    },
+    {
+      "title": "US Army: Truce Tent and Fighting Front, chapterXXII (Kumsong)",
+      "url": "https://webdoc.sub.gwdg.de/ebook/p/2005/CMH_2/www.army.mil/cmh-pg/books/korea/truce/ch22.htm"
+    },
+    {
+      "title": "Australian War Memorial: Battle for Maryang San",
+      "url": "https://www.awm.gov.au/articles/encyclopedia/korea/maryang_san"
+    }
+  ],
+  "points": {
+    "onjong": {
+      "name": "抗美援朝-西线-温井",
+      "coordinates": [
+        40.11083,
+        125.89694
+      ],
+      "kind": "地名参考点",
+      "source": "geonames-kp",
+      "geoname_id": 2039520,
+      "source_url": "https://www.geonames.org/2039520/",
+      "source_name": "Unsan",
+      "feature_code": "PPL",
+      "uncertainty_km": 2,
+      "note": "1950年温井（Onjong）；GeoNames现名Unsan，含Onjong旧名。不得与1950年云山混用。"
+    },
+    "unsan": {
+      "name": "抗美援朝-西线-云山旧城",
+      "coordinates": [
+        39.97278,
+        125.80528
+      ],
+      "kind": "地名参考点",
+      "source": "geonames-kp",
+      "geoname_id": 6270237,
+      "source_url": "https://www.geonames.org/6270237/",
+      "source_name": "Unsan",
+      "feature_code": "PPL",
+      "uncertainty_km": 2,
+      "note": "1950年云山地域参考；与东北约17公里处今云山（旧温井）分列。"
+    },
+    "huichon": {
+      "name": "抗美援朝-西线-熙川车站参考",
+      "coordinates": [
+        40.17176,
+        126.28295
+      ],
+      "kind": "地形参考点",
+      "source": "geonames-kp",
+      "geoname_id": 2044015,
+      "source_url": "https://www.geonames.org/2044015/",
+      "source_name": "Hŭich’ŏnch’ŏngnyŏn-yŏk",
+      "feature_code": "RSTN",
+      "uncertainty_km": 2,
+      "note": "现车站定位参考，不冒称1950年城心、军部或补给站。"
+    },
+    "hwangcho": {
+      "name": "抗美援朝-东线-黄草岭",
+      "coordinates": [
+        40.25104,
+        127.2849
+      ],
+      "kind": "地形参考点",
+      "source": "geonames-kp",
+      "geoname_id": 2043922,
+      "source_url": "https://www.geonames.org/2043922/",
+      "source_name": "Hwangch’o-ryŏng",
+      "feature_code": "PASS",
+      "uncertainty_km": 2,
+      "note": "山口参考，不代表整条岭线或具体营连阵地。"
+    },
+    "tokchon": {
+      "name": "抗美援朝-西线-德川",
+      "coordinates": [
+        39.75261,
+        126.25798
+      ],
+      "kind": "地名参考点",
+      "source": "geonames-kp",
+      "geoname_id": 1868144,
+      "source_url": "https://www.geonames.org/1868144/",
+      "source_name": "Tŏkch’ŏn",
+      "feature_code": "PPL",
+      "uncertainty_km": 2,
+      "note": "现存地名位置参考，不代表战时部队部署或工事边界。"
+    },
+    "kaechon": {
+      "name": "抗美援朝-西线-价川",
+      "coordinates": [
+        39.70056,
+        125.89333
+      ],
+      "kind": "地名参考点",
+      "source": "geonames-kp",
+      "geoname_id": 1876401,
+      "source_url": "https://www.geonames.org/1876401/",
+      "source_name": "Kaech’ŏn",
+      "feature_code": "PPL",
+      "uncertainty_km": 2,
+      "note": "现存地名位置参考，不代表战时部队部署或工事边界。"
+    },
+    "sunchon": {
+      "name": "抗美援朝-西线-顺川",
+      "coordinates": [
+        39.43167,
+        125.93278
+      ],
+      "kind": "地名参考点",
+      "source": "geonames-kp",
+      "geoname_id": 1869012,
+      "source_url": "https://www.geonames.org/1869012/",
+      "source_name": "Sunch’ŏn",
+      "feature_code": "PPLA3",
+      "uncertainty_km": 2,
+      "note": "现存地名位置参考，不代表战时部队部署或工事边界。"
+    },
+    "hagaru": {
+      "name": "抗美援朝-东线-下碣隅里",
+      "coordinates": [
+        40.38602,
+        127.25253
+      ],
+      "kind": "地名参考点",
+      "source": "geonames-kp",
+      "geoname_id": 2044294,
+      "source_url": "https://www.geonames.org/2044294/",
+      "source_name": "Hagaru-ri",
+      "feature_code": "PPL",
+      "uncertainty_km": 2,
+      "note": "长津湖以南村落参考；湖岸已受水位与地名变化影响，不作湖中陆军部署点。"
+    },
+    "yudam": {
+      "name": "抗美援朝-东线-柳潭里",
+      "coordinates": [
+        40.48235,
+        127.11331
+      ],
+      "kind": "地名参考点",
+      "source": "geonames-kp",
+      "geoname_id": 2044460,
+      "source_url": "https://www.geonames.org/2044460/",
+      "source_name": "Yudam-ni",
+      "feature_code": "PPL",
+      "uncertainty_km": 2,
+      "note": "现存地名位置参考，不代表战时部队部署或工事边界。"
+    },
+    "hungnam": {
+      "name": "抗美援朝-东线-兴南",
+      "coordinates": [
+        39.84198,
+        127.63206
+      ],
+      "kind": "地名参考点",
+      "source": "geonames-kp",
+      "geoname_id": 1877030,
+      "source_url": "https://www.geonames.org/1877030/",
+      "source_name": "Hŭngnam",
+      "feature_code": "PPL",
+      "uncertainty_km": 2,
+      "note": "城镇位置参考，非舰船锚地或港池航道；舰艇仍必须接受海陆检查。"
+    },
+    "seoul": {
+      "name": "抗美援朝-西线-汉城",
+      "coordinates": [
+        37.566,
+        126.9784
+      ],
+      "kind": "地名参考点",
+      "source": "geonames-kr",
+      "geoname_id": 1835848,
+      "source_url": "https://www.geonames.org/1835848/",
+      "source_name": "Seoul",
+      "feature_code": "PPLC",
+      "uncertainty_km": 2,
+      "note": "今首尔市中心参考，不代表1951年全市控制区。"
+    },
+    "uijeongbu": {
+      "name": "抗美援朝-西线-议政府",
+      "coordinates": [
+        37.7415,
+        127.0474
+      ],
+      "kind": "地名参考点",
+      "source": "geonames-kr",
+      "geoname_id": 1833788,
+      "source_url": "https://www.geonames.org/1833788/",
+      "source_name": "Uijeongbu-si",
+      "feature_code": "PPL",
+      "uncertainty_km": 2,
+      "note": "现存地名位置参考，不代表战时部队部署或工事边界。"
+    },
+    "suwon": {
+      "name": "抗美援朝-西线-水原",
+      "coordinates": [
+        37.29111,
+        127.00889
+      ],
+      "kind": "地名参考点",
+      "source": "geonames-kr",
+      "geoname_id": 1835553,
+      "source_url": "https://www.geonames.org/1835553/",
+      "source_name": "Suwon",
+      "feature_code": "PPLA",
+      "uncertainty_km": 2,
+      "note": "现存地名位置参考，不代表战时部队部署或工事边界。"
+    },
+    "hoengsong": {
+      "name": "抗美援朝-中线-横城",
+      "coordinates": [
+        37.48972,
+        127.9875
+      ],
+      "kind": "地名参考点",
+      "source": "geonames-kr",
+      "geoname_id": 1844240,
+      "source_url": "https://www.geonames.org/1844240/",
+      "source_name": "Hoengsŏng",
+      "feature_code": "PPL",
+      "uncertainty_km": 2,
+      "note": "现存地名位置参考，不代表战时部队部署或工事边界。"
+    },
+    "chipyong": {
+      "name": "抗美援朝-中线-砥平里",
+      "coordinates": [
+        37.47361,
+        127.63806
+      ],
+      "kind": "地名参考点",
+      "source": "geonames-kr",
+      "geoname_id": 1845998,
+      "source_url": "https://www.geonames.org/1845998/",
+      "source_name": "Shiheiri",
+      "feature_code": "PPL",
+      "uncertainty_km": 2,
+      "note": "现存地名位置参考，不代表战时部队部署或工事边界。"
+    },
+    "chuncheon": {
+      "name": "抗美援朝-中线-春川",
+      "coordinates": [
+        37.87472,
+        127.73417
+      ],
+      "kind": "地名参考点",
+      "source": "geonames-kr",
+      "geoname_id": 1845136,
+      "source_url": "https://www.geonames.org/1845136/",
+      "source_name": "Chuncheon",
+      "feature_code": "PPLA",
+      "uncertainty_km": 2,
+      "note": "现存地名位置参考，不代表战时部队部署或工事边界。"
+    },
+    "yeoncheon": {
+      "name": "抗美援朝-西线-涟川",
+      "coordinates": [
+        38.10113,
+        127.07727
+      ],
+      "kind": "地名参考点",
+      "source": "geonames-kr",
+      "geoname_id": 1832699,
+      "source_url": "https://www.geonames.org/1832699/",
+      "source_name": "Yeoncheon",
+      "feature_code": "PPLA2",
+      "uncertainty_km": 2,
+      "note": "现存地名位置参考，不代表战时部队部署或工事边界。"
+    },
+    "hyonni": {
+      "name": "抗美援朝-东线-县里",
+      "coordinates": [
+        37.9544,
+        128.3185
+      ],
+      "kind": "地名参考点",
+      "source": "geonames-kr",
+      "geoname_id": 1843737,
+      "source_url": "https://www.geonames.org/1843737/",
+      "source_name": "Ken-ri",
+      "feature_code": "PPL",
+      "uncertainty_km": 2,
+      "note": "麟蹄东南的县里（Hyon-ni），不采用加平等地同名村落。"
+    },
+    "inje": {
+      "name": "抗美援朝-东线-麟蹄",
+      "coordinates": [
+        38.06556,
+        128.17306
+      ],
+      "kind": "地名参考点",
+      "source": "geonames-kr",
+      "geoname_id": 1843542,
+      "source_url": "https://www.geonames.org/1843542/",
+      "source_name": "Inje",
+      "feature_code": "PPL",
+      "uncertainty_km": 2,
+      "note": "现存地名位置参考，不代表战时部队部署或工事边界。"
+    },
+    "mundung": {
+      "name": "抗美援朝-东线-文登里",
+      "coordinates": [
+        38.34083,
+        127.97528
+      ],
+      "kind": "地名参考点",
+      "source": "geonames-kp",
+      "geoname_id": 1874215,
+      "source_url": "https://www.geonames.org/1874215/",
+      "source_name": "Mundŭng-ni",
+      "feature_code": "PPL",
+      "uncertainty_km": 2,
+      "note": "现存地名位置参考，不代表战时部队部署或工事边界。"
+    },
+    "maryang": {
+      "name": "抗美援朝-西线-马良山",
+      "coordinates": [
+        38.13419,
+        126.9207
+      ],
+      "kind": "地形参考点",
+      "source": "geonames-kp",
+      "geoname_id": 13570455,
+      "source_url": "https://www.geonames.org/13570455/",
+      "source_name": "Maryang-san",
+      "feature_code": "MT",
+      "uncertainty_km": 1,
+      "note": "地名库山体参考；AWM战史确认Maryang San为317高地。不是测绘核定的工事坐标。"
+    },
+    "kumsong": {
+      "name": "抗美援朝-中线-金城旧城参考",
+      "coordinates": [
+        38.42,
+        127.61167
+      ],
+      "kind": "地名参考点",
+      "source": "geonames-kp",
+      "geoname_id": 1875979,
+      "source_url": "https://www.geonames.org/1875979/",
+      "source_name": "Kimhwa",
+      "feature_code": "PPL",
+      "uncertainty_km": 2,
+      "note": "1953年金城（Kumsong）参考，GeoNames现名Kimhwa；不得作为三角形山南侧1952年金化旧城坐标。"
+    },
+    "triangle": {
+      "name": "抗美援朝-中线-597.9高地",
+      "coordinates": [
+        38.319008,
+        127.465808
+      ],
+      "kind": "战史格网换算参考",
+      "source": "kwe-grid",
+      "source_url": "https://thekwe.org/topics/outpost_wars/outpost_wars_korea.htm",
+      "source_grid": "CT 659419",
+      "source_dms": "N38 19 8.43 E127 27 56.91",
+      "uncertainty_km": 1,
+      "note": "Martin Markley换算表；原网页未交代大地基准，按约1公里工作不确定度使用，非工事级测绘。"
+    },
+    "sniper": {
+      "name": "抗美援朝-中线-537.7高地北山",
+      "coordinates": [
+        38.325583,
+        127.486264
+      ],
+      "kind": "战史格网换算参考",
+      "source": "kwe-grid",
+      "source_url": "https://thekwe.org/topics/outpost_wars/outpost_wars_korea.htm",
+      "source_grid": "CT 677426",
+      "source_dms": "N38 19 32.10 E127 29 10.55",
+      "uncertainty_km": 1,
+      "note": "原表纬度排为19’32’10，按32.10秒读；基准未说明，采用1公里工作不确定度，非已核定峰顶。"
+    },
+    "sandy": {
+      "name": "抗美援朝-中线-Sandy Ridge",
+      "coordinates": [
+        38.313736,
+        127.476214
+      ],
+      "kind": "战史格网换算参考",
+      "source": "kwe-grid",
+      "source_url": "https://thekwe.org/topics/outpost_wars/outpost_wars_korea.htm",
+      "source_grid": "CT 668413",
+      "source_dms": "N38 18 49.45 E127 28 34.37",
+      "uncertainty_km": 1,
+      "note": "Martin Markley换算表；原网页未交代大地基准，按约1公里工作不确定度使用，非工事级测绘。"
+    },
+    "whitehorse": {
+      "name": "抗美援朝-中线-白马山",
+      "coordinates": [
+        38.2964,
+        127.148356
+      ],
+      "kind": "战史格网换算参考",
+      "source": "kwe-grid",
+      "source_url": "https://thekwe.org/topics/outpost_wars/outpost_wars_korea.htm",
+      "source_grid": "CT 381399",
+      "source_dms": "N38 17 47.04 E127 8 54.08",
+      "uncertainty_km": 1,
+      "note": "Martin Markley换算表；原网页未交代大地基准，按约1公里工作不确定度使用，非工事级测绘。"
+    },
+    "heartbreak": {
+      "name": "抗美援朝-中线-伤心岭",
+      "coordinates": [
+        38.310517,
+        128.018489
+      ],
+      "kind": "战史格网换算参考",
+      "source": "kwe-grid",
+      "source_url": "https://thekwe.org/topics/outpost_wars/outpost_wars_korea.htm",
+      "source_grid": "DT 142403",
+      "source_dms": "N38 18 37.86 E128 1 6.56",
+      "uncertainty_km": 1,
+      "note": "Martin Markley换算表；原网页未交代大地基准，按约1公里工作不确定度使用，非工事级测绘。"
+    },
+    "capitol": {
+      "name": "抗美援朝-中线-首都山地域参考",
+      "coordinates": [
+        38.389036,
+        127.745853
+      ],
+      "kind": "战史格网换算参考",
+      "source": "kwe-grid",
+      "source_url": "https://thekwe.org/topics/outpost_wars/outpost_wars_korea.htm",
+      "source_grid": "CT 905493",
+      "source_dms": "N38 23 20.53 E127 44 45.07",
+      "uncertainty_km": 1,
+      "note": "Martin Markley换算表；原网页未交代大地基准，按约1公里工作不确定度使用，非工事级测绘。"
+    }
+  },
+  "campaigns": {
+    "抗美援朝-第一次战役-1950.10.25至1950.11.05": {
+      "points": [
+        "onjong",
+        "unsan",
+        "huichon",
+        "hwangcho"
+      ]
+    },
+    "抗美援朝-第二次战役-1950.11.07至1950.12.24": {
+      "points": [
+        "tokchon",
+        "kaechon",
+        "sunchon",
+        "yudam",
+        "hagaru",
+        "hwangcho",
+        "hungnam"
+      ]
+    },
+    "抗美援朝-第三次战役-1950.12.31至1951.01.08": {
+      "points": [
+        "seoul",
+        "uijeongbu",
+        "suwon"
+      ]
+    },
+    "抗美援朝-第四次战役-1951.01.25至1951.04.21": {
+      "points": [
+        "seoul",
+        "hoengsong",
+        "chipyong",
+        "chuncheon"
+      ]
+    },
+    "抗美援朝-第五次战役-1951.04.22至1951.06.10": {
+      "points": [
+        "yeoncheon",
+        "chuncheon",
+        "hyonni",
+        "inje",
+        "whitehorse"
+      ]
+    },
+    "抗美援朝-夏秋季防御战役-1951.08.18至1951.10.22": {
+      "points": [
+        "maryang",
+        "mundung",
+        "heartbreak"
+      ]
+    },
+    "抗美援朝-秋季战术反击作战-1952.09.18至1952.10.31": {
+      "points": [
+        "maryang",
+        "whitehorse",
+        "triangle",
+        "sniper",
+        "capitol"
+      ]
+    },
+    "抗美援朝-上甘岭战役-1952.10.14至1952.11.25": {
+      "points": [
+        "triangle",
+        "sniper",
+        "sandy"
+      ]
+    },
+    "抗美援朝-夏季反击战役含金城战役-1953.05.13至1953.07.27": {
+      "points": [
+        "kumsong",
+        "capitol",
+        "chuncheon"
+      ]
+    }
+  }
+}

@@ -10,6 +10,8 @@ MODEL_ENGINE = "deepseek-v4-flash"      # 引擎 A：快速 JSON 战局推演
 MODEL_STRATEGIST = "deepseek-v4-pro"    # 引擎 B：深度战略复盘
 MODEL_CHAT = "deepseek-reasoner"        # 侧栏璇玑实时问答
 MAX_API_RETRIES = 3                     # 坐标修正反思循环上限
+MAX_AGENT_STEPS = 4                     # 智能体回合：每回合至多几次模型往返（默认关，时延×N）
+MAX_TOOL_CALLS_PER_STEP = 4             # 智能体回合：单步至多几条领域工具调用
 
 # 🛡️ 模型回退链：若 MODEL_* 常量在你的账号下不存在（API 返回 400 model not exist），
 #    系统会自动降级到下列稳定模型名，而不是让整条推演链直接崩掉。
@@ -32,7 +34,9 @@ def to_float(value):
 
 
 # 海军单位判定关键词（原先在 3 处重复实现，口径易漂移）
-NAVAL_KEYWORDS = ['舰', '船', '航母', '潜艇', 'ship', 'carrier',
+# 「海军」「水军」必须显式在列：模型最常写的兵种标签就是这两个词，
+# 只靠「舰/船」子串会把 type="海军" 的单位整个漏出海陆审计（历史缺陷）。
+NAVAL_KEYWORDS = ['舰', '船', '航母', '潜艇', '海军', '水军', 'ship', 'carrier',
                   'submarine', 'cruiser', 'destroyer', 'fleet']
 
 

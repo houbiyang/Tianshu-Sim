@@ -1,0 +1,12 @@
+# Per-launch overlay only. Never modifies ~/.dsh or the generated profile.
+- id: persistent-bash
+  disabled: true
+- id: persistent-pwsh
+  disabled: true
+- id: tool-fs
+  disabled: true
+- id: tool-working-directory
+  disabled: true
+- insert:
+    - id: gentactix-runtime
+      name: __GENTACTIX_NATIVE_PLUGIN__

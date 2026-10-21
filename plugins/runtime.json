@@ -1,0 +1,5 @@
+{
+  "version": 1,
+  "plugins": ["trajectory", "clock-audit", "causal-attribution"],
+  "description": "Trusted application plugins; native Cordis tools and control are mounted by dsh-gentactix."
+}

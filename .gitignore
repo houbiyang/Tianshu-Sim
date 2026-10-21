@@ -16,6 +16,7 @@ venv/
 # ---- 密钥与本地凭据（务必不要提交）----
 *.pem
 *.key
+.gentactix-llm.enc*
 .secrets
 CLOUDFLARE_API_TOKEN
 # Streamlit 的密钥文件：本地一旦创建，`git add -A` 就会带上去，必须先忽略
@@ -38,3 +39,14 @@ desktop.ini
 
 # ---- 本地 SRTM 高程瓦片缓存 ----
 .cache/
+.playwright-cli/
+.firecrawl/
+release/
+dist-backend/
+build-backend/
+.packaging-venv/
+*.spec
+
+# ---- dsh harness 版推演：独立 home / workspace（绝不与 ~/.dsh 混用）----
+.dsh-wargame-home/
+.dsh-wargame-workspace/

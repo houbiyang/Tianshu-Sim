@@ -12,6 +12,9 @@ from folium import plugins
 
 from .config import to_float, is_naval
 from .state import get_unit_field, extract_lat_lng
+from .unit_types import classify_unit, unit_symbol
+from .battlefield import build_battlefield_view
+from .battlefield_viz import draw_overlays
 
 # ==========================================
 # 1.1 🗺️ 底图图层组（按实测可达性排序）
@@ -25,7 +28,7 @@ from .state import get_unit_field, extract_lat_lng
 # 渲染器版本标记：界面上直接显示，用来区分「代码没生效」和「本回合确实没有交战」。
 # 排查过一轮「改了代码但看不到效果」，根因是浏览器跑的是旧模块 / 旧 iframe，
 # 有了这个标记就不必再靠猜。
-RENDERER_VERSION = "sector-v2"
+RENDERER_VERSION = "sector-v3"
 
 TILE_LAYERS = [
     dict(name="🛰️ 天眼卫星实景", show=True,
@@ -69,7 +72,9 @@ def get_nato_html(unit, color_theme):
     # 1. 判定内部战术核心符号
     symbol = "?"
     font_size = "20px"
-    if any(k in unit_type for k in ['步兵', '陆战', '军团', '师', '旅', 'infantry', 'marine', 'troop', 'army']):
+    if unit_symbol(unit_type) is not None:
+        symbol = unit_symbol(unit_type)
+    elif any(k in unit_type for k in ['步兵', '陆战', '军团', '师', '旅', 'infantry', 'marine', 'troop', 'army']):
         symbol = "X"  # 交叉带，代表步兵
         font_size = "20px"
     elif any(k in unit_type for k in ['坦克', '装甲', '战车', '机动', '骑兵', 'tank', 'armor', 'vehicle', 'cavalry']):
@@ -249,6 +254,9 @@ def unit_type_default_range(unit_type):
     text = str(unit_type or '').strip().lower()
     if not text:
         return None
+    profile = classify_unit(text)
+    if profile:
+        return profile["range_hint_m"]
     for keyword, default_range in UNIT_TYPE_RANGE_HINTS:
         if keyword in text:
             return default_range
@@ -462,7 +470,7 @@ def with_demo_engagement(war_state):
     return state_copy
 
 
-def build_tactical_map(war_state, last_war_state, turn_count):
+def build_tactical_map(war_state, last_war_state, turn_count, battlefield_view=None):
     """根据当前战局构建 folium 战术地图对象。纯函数：相同入参产出相同地图。"""
     # 🐛 修复：原代码直接索引 war_state['center']，AI 漏字段时会 KeyError 白屏
     center = war_state.get('center')
@@ -497,6 +505,7 @@ def build_tactical_map(war_state, last_war_state, turn_count):
             max_native_zoom=_cfg.get("max_native_zoom"),
         ).add_to(m)
 
+    draw_overlays(m, battlefield_view or build_battlefield_view(war_state))
     draw_units_and_trails(m, war_state.get('red_units', []), 'red', 'red_units', last_war_state)
     draw_units_and_trails(m, war_state.get('blue_units', []), 'blue', 'blue_units', last_war_state)
 
@@ -522,7 +531,7 @@ def build_tactical_map(war_state, last_war_state, turn_count):
         # 形状自身的 tooltip 必须带上交战描述：
         # 原实现把描述放在 marker 上，而 marker 被整片圆盖住，hover 命中的永远是圆，
         # 于是「谁打谁」这条最关键的信息在界面上等于不存在。
-        shape_tooltip = (f"💥 <b>{desc}</b><br>波及范围 ≈ {impact_radius:.0f} 米"
+        shape_tooltip = (f"💥 <b>{desc}</b><br>交战示意范围 ≈ {impact_radius:.0f} 米（非杀伤半径）"
                          f"<br><span style='color:#8a8a8a'>依据：{radius_basis}</span>"
                          + ("" if use_sector else "<br>（未提供攻击方位，仅显示范围）"))
 
@@ -541,7 +550,7 @@ def build_tactical_map(war_state, last_war_state, turn_count):
             ).add_to(m)
 
         folium.Marker(battle_pos, icon=folium.Icon(color=icon_color, icon='fire', prefix='fa'),
-                      tooltip=f"💥 <b>交战发生 (波及 {impact_radius:.0f} 米)</b><br>{desc}").add_to(m)
+                      tooltip=f"💥 <b>交战发生 (示意 {impact_radius:.0f} 米，非杀伤半径)</b><br>{desc}").add_to(m)
 
         # 火力打击轨迹：扇区已经表达了方向，这里的动画只负责指向落点，故压细压淡
         if use_sector:

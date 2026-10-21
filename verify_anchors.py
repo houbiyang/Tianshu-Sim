@@ -7,7 +7,9 @@
 import math
 import sys
 
-from gentactix import anchors, geo
+from unittest.mock import patch
+
+from gentactix import anchors, geo, prompts
 
 PASS = FAIL = 0
 FAILS = []
@@ -155,10 +157,71 @@ check("珍珠港锚点仍可命中",
       geo.match_anchor("亚利桑那号战列舰", anchors.collect_available_nodes("珍珠港事件"))[0]
       == "福特岛-战列舰大街-亚利桑那号")
 
+# 朝鲜战争：九场独立解锁、参数选择/别名一致、可追溯坐标与显式锚定。
+catalog = anchors.KOREAN_ANCHORS
+check("抗美援朝包含九场", len(catalog["campaigns"]) == 9)
+for battle, entry in catalog["campaigns"].items():
+    selected = anchors.collect_available_nodes("只需开局", battle=battle)
+    check(f"{battle} 显式选择解锁", len(selected) == len(entry["points"]) >= 3)
+    check(f"{battle} 全名匹配", anchors.collect_available_nodes(battle) == selected)
+    alias = battle.split("-")[1]
+    check(f"{alias} 别名匹配", anchors.collect_available_nodes(alias) == selected)
+    check(f"{battle} 不混入其他战役", set(selected) == {
+        catalog["points"][key]["name"] for key in entry["points"]})
+
+check("泛称抗美援朝不混入九场", anchors.collect_available_nodes("抗美援朝战争") == {})
+shang = anchors.collect_available_nodes("上甘岭")
+check("显式选择优先于场景中的另一战役", anchors.collect_available_nodes(
+    "研究上甘岭", battle="第一次战役") == anchors.collect_available_nodes("第一次战役"))
+check("选定朝鲜战役不夹带旧战区", anchors.collect_available_nodes(
+    "与珍珠港比较", battle="上甘岭") == shang)
+for name, coords in shang.items():
+    point = anchors.node_metadata(name)
+    prompt = prompts.build_node_instruction(shang)
+    check(f"{name} 坐标进入提示", str(coords[0]) in prompt and str(coords[1]) in prompt)
+    check(f"{name} 精度与来源进入提示", point["source_url"] in prompt and "uncertainty_km" in prompt)
+for key, point in catalog["points"].items():
+    check(f"{key} 来源可追溯", point["source"] in catalog["sources"] and
+          point["source_url"].startswith("https://") and point["uncertainty_km"] > 0)
+    check(f"{key} 地域合法", 37 <= point["coordinates"][0] <= 41 and
+          125 <= point["coordinates"][1] <= 129)
+triangle = catalog["points"]["triangle"]
+sniper = catalog["points"]["sniper"]
+check("597.9原始DMS换算", abs(triangle["coordinates"][0] - (38 + 19/60 + 8.43/3600)) < 1e-6)
+check("两处高地分列", 1.5 < km(triangle["coordinates"], sniper["coordinates"]) < 2.5 and
+      sniper["coordinates"][1] > triangle["coordinates"][1])
+check("温井与云山旧城分列", 15 < km(catalog["points"]["onjong"]["coordinates"],
+                                  catalog["points"]["unsan"]["coordinates"]) < 20)
+second = anchors.collect_available_nodes("第二次战役")
+check("东西两线空间分离", km(catalog["points"]["kaechon"]["coordinates"],
+                             catalog["points"]["hagaru"]["coordinates"]) > 100 and
+      catalog["points"]["kaechon"]["name"] in second and
+      catalog["points"]["hagaru"]["name"] in second)
+selected_name = triangle["name"]
+declared = {"name": "高地守备连", "type": "步兵", "lat": 38.1, "lng": 127.2,
+            "node_name": selected_name}
+attacker = {"name": "进攻597.9高地的美军连", "type": "步兵", "lat": 38.30, "lng": 127.46}
+out_of_scope = {"name": "机动营", "type": "步兵", "lat": 38.31, "lng": 127.47,
+                "node_name": catalog["points"]["seoul"]["name"]}
+state = {"red_units": [declared], "blue_units": [attacker, out_of_scope]}
+with patch.object(geo, "_notify"):
+    geo.sanitize_init_units(state, shang)
+check("显式node_name实际吸附", [declared["lat"], declared["lng"]] == triangle["coordinates"])
+check("名称提到进攻目标不吸附", [attacker["lat"], attacker["lng"]] == [38.30, 127.46])
+check("别场锚点不生效", [out_of_scope["lat"], out_of_scope["lng"]] == [38.31, 127.47])
+ship = {"name": "舰艇支援", "type": "驱逐舰", "lat": 38.1, "lng": 127.2,
+        "node_name": selected_name}
+with patch.object(geo, "force_into_water", return_value=(39.0, 129.0)) as water, \
+     patch.object(geo, "_notify"):
+    geo.sanitize_init_units({"red_units": [ship]}, shang)
+    check("陆上锚点不能让舰艇跳过海陆审计", water.call_count == 1 and ship["lng"] == 129.0)
+shang[selected_name][0] = 0
+check("收集结果不能回写源库", anchors.collect_available_nodes("上甘岭")[selected_name][0] != 0)
+
 print(f"\n{'=' * 46}")
 print(f"PASS {PASS} / FAIL {FAIL}")
 if FAILS:
     for f in FAILS:
         print("  ✗", f)
     sys.exit(1)
-print("长平锚点库校验全部通过")
+print("战役锚点库校验全部通过")

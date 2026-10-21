@@ -23,6 +23,8 @@ on:
     paths:
       - 'app.py'
       - 'gentactix/**'
+      - 'corpus/**'
+      - 'adjudication/**'
       - 'Dockerfile'
       - 'wrangler.jsonc'
       - 'src/**'
@@ -44,6 +46,7 @@ concurrency:
 
 jobs:
   deploy:
+    if: github.repository == 'pystrategylab/Gentactix' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:

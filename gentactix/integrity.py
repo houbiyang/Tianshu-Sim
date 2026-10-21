@@ -21,6 +21,11 @@
   - 上一回合该单位 hp 已经 <= 0（防御性放行）。
 其余一律视为漏返回，回填并报告。
 
+**3. 同名单位漏字段 → 按上一回合补全，只填不覆。** 模型有时只回
+name+坐标，hp/type/morale/supply 被静默抹掉。补回的字段是上一回合
+**已经存在**的信息（与整条回填同理，不编造新状态）；模型写过的键
+一律保留 —— 那是这一回合的叙事决定，守卫没有资格改写。
+
 数值则**只报告不修正**：hp 上涨可能是合法增援，也可能是模型漏减，
 系统没有资格替用户判断哪一种。
 """
@@ -79,6 +84,22 @@ def _declared_eliminated(new_state):
     return names
 
 
+def _merge_missing_fields(prev_unit, new_unit):
+    """同名单位只回部分字段时，把上一回合已有、这次漏写的键补回。
+
+    只填不覆：模型写过的键（哪怕值是 0）一律保留；补回的只是上一回合
+    已经存在的信息，与整条回填同理，不编造新状态。返回补上的键列表。
+    """
+    filled = []
+    for key, value in prev_unit.items():
+        if key in _NAME_KEYS:
+            continue
+        if new_unit.get(key) in (None, ''):
+            new_unit[key] = copy.deepcopy(value)
+            filled.append(key)
+    return filled
+
+
 def reconcile_roster(prev_state, new_state):
     """核对单位名单，把「无理由消失」的单位从上一回合快照回填。
 
@@ -91,6 +112,7 @@ def reconcile_roster(prev_state, new_state):
         'suspected': [],      # 消失且上一回合 hp 很低，提示人眼复核
         'unnamed': 0,         # 空名单位数（无法参与核对）
         'duplicate': [],      # 同一方重名
+        'merged': [],         # 同名单位漏字段 → 按上一回合补全
         'prev_total': 0,
         'new_total': 0,
         'structure_missing': [],  # 整条 red_units / blue_units 缺失
@@ -133,6 +155,11 @@ def reconcile_roster(prev_state, new_state):
                 continue
             report['prev_total'] += 1
             if name in present:
+                # 同名在场但可能只回了部分字段：补缺失、不覆已写
+                filled = _merge_missing_fields(prev_unit, present[name])
+                if filled:
+                    report['merged'].append(
+                        {'team': team, 'name': name, 'fields': filled})
                 continue
 
             prev_hp = unit_hp(prev_unit)
@@ -235,6 +262,8 @@ def summarize(report, flags):
             parts.append(f"结构缺失 {len(report['structure_missing'])} 处")
         if report['duplicate']:
             parts.append(f"重名 {len(report['duplicate'])} 个")
+        if report['merged']:
+            parts.append(f"补全字段 {len(report['merged'])} 个单位")
     if flags:
         gains = [f for f in flags if f['kind'] == 'hp_gain']
         zeros = [f for f in flags if f['kind'] == 'hp_zero_alive']

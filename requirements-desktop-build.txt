@@ -1,0 +1,5 @@
+-r requirements-dsh.txt
+global_land_mask==1.0.0
+numpy==2.2.6
+SRTM.py==0.3.7
+pyinstaller==6.22.3

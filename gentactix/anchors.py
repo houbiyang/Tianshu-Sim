@@ -1,8 +1,13 @@
-"""🗄️ PHSL 绝密战略数据库：高精坐标锚点。
+"""已收录战役的地理参考锚点。
 
 原先硬编码在 Gentactix.py 顶部的 STRATEGIC_NODES，现独立成模块，
 供 prompts（解锁提示）与 geo（锚点吸附清洗）共用，避免口径漂移。
 """
+
+import json
+from pathlib import Path
+
+from . import adjudication_lib
 
 # 🗄️ PHSL 绝密战略数据库：高精坐标锚点
 # ==========================================
@@ -58,10 +63,34 @@ STRATEGIC_NODES = {
 }
 
 
-def collect_available_nodes(scenario_input):
-    """扫描用户输入是否命中高精锚点战区，命中则展开该战区的全部锚点坐标。"""
+KOREAN_ANCHORS = json.loads(
+    Path(__file__).with_name("korean_anchors.json").read_text(encoding="utf-8"))
+NODE_METADATA = {point["name"]: point for point in KOREAN_ANCHORS["points"].values()}
+for _battle, _entry in KOREAN_ANCHORS["campaigns"].items():
+    STRATEGIC_NODES[_battle] = {
+        KOREAN_ANCHORS["points"][key]["name"]:
+        KOREAN_ANCHORS["points"][key]["coordinates"]
+        for key in _entry["points"]
+    }
+
+
+def node_metadata(name):
+    """无资料时返回空；不把旧库未注明的精度伪装成已核定数据。"""
+    return NODE_METADATA.get(name, {})
+
+
+def collect_available_nodes(scenario_input, battle=None):
+    """按同一战役解析器选择九场朝鲜战争锚点；其余沿用旧战区匹配。
+
+    显式选择优先、别名取最长，不因泛称“抗美援朝”混入全部九场。
+    返回独立坐标列表，调用方无法修改源库。
+    """
+    text = str(scenario_input or "")
+    selected = adjudication_lib.resolve(text, battle=battle).name
+    if selected in KOREAN_ANCHORS["campaigns"]:
+        return {name: list(coords) for name, coords in STRATEGIC_NODES[selected].items()}
     available_nodes = {}
     for key, nodes in STRATEGIC_NODES.items():
-        if key in scenario_input:
-            available_nodes.update(nodes)
+        if key not in KOREAN_ANCHORS["campaigns"] and key in text:
+            available_nodes.update({name: list(coords) for name, coords in nodes.items()})
     return available_nodes

@@ -1,0 +1,344 @@
+# 本地复现与功能验收
+
+## 当前结果（2026-10-22，桌面与加密配置）
+
+本节为当前汇总，后续各轮记录保留当轮范围与历史数量。
+
+| 检查 | 当前结果 |
+|---|---|
+| `.venv/bin/python verify_all.py --with-worker` | 25/25离线任务通过；含Worker类型检查与本地打包，不调用模型 |
+| `verify_battlefield.py` | .venv 16/16；wargame 15通过、1项缺Streamlit跳过 |
+| wargame桌面后端 / Harness / 领域工具 | 25/25、27/27、12/12 |
+| 九场战役 / 地理锚点 | 9/9；240项断言通过 |
+| 因果模块 / wargame插件与分析API | 9/9、13/13 |
+| 配置、密文与角色预算 / 程序时钟 / 实际重启恢复 | 15/15、10/10、1/1 |
+| 实际模型 | DSH/Qwen原生工具、在途取消、完整战局与成对原生分支实测；详见新架构报告 |
+
+本轮实际DSH/Qwen初始化与推进保留22单位，时间严格04:00→04:15（900秒）；使用加密配置与用户新Key再次连接成功。8700旧进程已保存原战局并重启，态势、历史、回合数、轨迹一致。浏览器固定响应验收覆盖资料库、问答草案、配置保存、推进、因果面板和390像素布局。详细范围见[本轮验收报告](docs/桌面与配置验收-2026-10-22.md)。
+
+最新结论及未通过的语义项见[功能验收报告](docs/功能验收报告-2026-10-21.md)，
+地理来源与边界见[锚点说明](docs/抗美援朝地理锚点.md)。这些结果不代表九场战役都完成了真实模型多回合验证。
+新增运行时与反事实的最新结果见[因果分析与DSH插件架构](docs/因果分析与DSH插件架构.md)。
+
+## 安装与启动
+
+在仓库根目录执行；Python 依赖安装到 `.venv/`，Node 依赖安装到 `node_modules/`。
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt --index-url https://pypi.org/simple
+npm ci --no-audit --no-fund
+.venv/bin/streamlit run app.py --server.address 127.0.0.1 --server.port 8501
+```
+
+打开 <http://127.0.0.1:8501>，在侧栏填写自己的 DeepSeek API Key 和场景。
+Windows 可使用 `.venv\Scripts\python.exe` 和 `.venv\Scripts\streamlit.exe`。
+
+## 一键验收
+
+```bash
+# Python 功能回归，无需密钥
+.venv/bin/python verify_all.py
+
+# 同时检查 Worker 构建和容器内的运行数据；需要 Node.js 22 和已启动的 Docker
+.venv/bin/python verify_all.py --with-worker --with-container
+```
+
+失败时返回非零退出码。逐项日志在 `.cache/qa/*.log`，汇总在
+`.cache/qa/results.json`。脚本不发布应用，不调用真实模型。
+运行器会排除继承的 `PYTHONPATH`，避免本机 ROS 等环境污染依赖检查。
+
+真实 DeepSeek 联调需要可用密钥，并产生 API 用量；它不包含在默认离线验收中：
+
+```bash
+.venv/bin/python live_workflow_probe.py
+```
+
+脚本从 `DEEPSEEK_API_KEY` 或终端隐藏输入读取密钥，不保存密钥；验证鉴权、模型列表、
+初始化、推进、复盘、问答和 JSON 导出。结果位于 `.cache/qa/live-workflow-results.json`，
+战局快照位于 `.cache/qa/live-battle.json`。
+
+API 客户端按 `HTTPS_PROXY` / `NO_PROXY` 选择本次请求的路由，不再解析无关的
+`ALL_PROXY=socks://…`。因此不必删除或全局修改本机代理配置。
+如需让 DeepSeek 直连，可在现有 `NO_PROXY` 中追加 `api.deepseek.com` 后启动应用。
+
+## 2026-10-21 验收结果
+
+环境：Linux、Python 3.11.11、Node.js 22.20.0、Streamlit 1.49.1、
+OpenAI SDK 3.35.1；Docker 镜像使用 Python 3.13。
+
+**17/17 个验收任务通过**。原有脚本的 302 项检查与新增的 24 个测试用例全部通过。
+
+| 范围 | 验证内容 |
+| --- | --- |
+| 几何与数据 | 机动、补给、包围、指纹复现、战役参数隔离、坐标锚点、名单及数值守恒 |
+| 模型调用层 | JSON 提取、模型回退及后续回合、鉴权错误、坐标纠错上限、复盘和问答 |
+| 史料与地图 | BM25 命中及无关查询、缓存更新、来源注入、军标、轨迹、扇区、降级空心环 |
+| 应用完整流程 | 初始化→推进→复盘→问答→导出→重新开局；API 失败保留原战局 |
+| 会话与导出 | 不同会话的列表隔离、最新回合及复盘/对话即时进入 JSON、渲染自检不修改战局 |
+| 构建 | TypeScript 类型检查、Wrangler 本地打包、Docker 构建、镜像内史料和裁决参数加载 |
+
+另外使用浏览器实际检查了输入校验、卫星瓦片和双方军标加载、缩放、底图切换、
+全屏、示例交战自检、推进、复盘、问答及文件下载；下载 JSON 包含最新回合、
+两条战报、复盘和两条对话。
+浏览器流程中的 DeepSeek HTTP 响应使用固定测试数据，应用及 SDK 流程实际执行。
+截图和下载文件位于 `.cache/qa/`，属于本地验收产物。
+容器启动后的 `/_stcore/health` 返回 `ok`。
+实际 SRTM 查询 `(39.9, 116.4)` 返回高程 55 米，海陆判定为陆地。
+
+## 本次修复
+
+- 模型回退后记住可用模型，后续回合继续调用。
+- 各会话独立复制默认列表，防止战报与聊天共享引用。
+- 所有状态更新完成后生成导出，消除快照滞后一轮的问题。
+- Docker 包含 `adjudication/` 的 Markdown 数据；史料和裁决数据修改可触发部署工作流。
+- SRTM 无高程数据时保留海陆面具结论，避免将内陆判为水域。
+- 按目标地址选择代理，设置连接超时 10 秒、读取超时 180 秒，由 SDK 最多重试 2 次。
+- 连接重试耗尽后仅清除该密钥的客户端缓存，下一次操作使用新的连接池。
+- 连接、超时、鉴权和限流分别显示对应提示，网络故障不再误报为 AI 生成数据错误。
+  断线失败时保持原战局与回合数，再次点击可继续推进；已加入运行时回归测试。
+
+## 真实 DeepSeek 联调结果（2026-10-21）
+
+用户提供密钥后，实际 DeepSeek 联调 **6/6 阶段通过**。密钥仅通过隐藏终端输入
+提供给测试进程，没有写入仓库、结果文件或战局快照。
+
+| 阶段 | 实测结果 |
+| --- | --- |
+| 鉴权与模型列表 | 请求成功，返回 `deepseek-flash`、`deepseek-v4-pro` |
+| 初始化 | 生成秦赵双方共 22 个单位，史料检索与几何裁决正常 |
+| 首轮推进 | 保留 22 个单位，形成两条战报；位移越界 0、兵力数值异常 0 |
+| 战略复盘 | 返回 753 字复盘及推理字段 |
+| 上下文问答 | 返回 633 字回答，会话包含用户提问和助手回答 |
+| JSON 导出 | 包含最新回合、双方单位、两条战报、复盘和两条对话 |
+
+上述流程通过真实应用回调及 OpenAI SDK 执行，模型 HTTP 响应没有打桩。
+这是一次场景与一轮推进的功能联调，生成内容的历史准确性仍需结合史料核对。
+详细耗时、模型及用量记录在 `.cache/qa/live-workflow-results.json`。
+
+### 8503 连接异常修复后的复测
+
+使用 8503 相同的预览脚本与真实第 1 回合快照，并直接调用应用自身的客户端工厂，
+连续成功推进至第 2、3 回合，分别耗时 20.45 秒、15.21 秒，均保留 22 个单位。
+未出现连接错误或兵力数值异常。第 3 回合产生 2 条位移越界提示，几何裁决正常报告，
+这是模型内容告警，不属于网络或数据解析失败。
+结果记录在 `.cache/qa/connection-recovery-live.json`，
+推进后的快照在 `.cache/qa/connection-recovery-battle.json`。
+
+## dsh harness + Vue3/Electron 桌面版（2026-10-21）
+
+环境：conda `wargame`（Python 3.10.19，无 Streamlit）、DeepSeek Harness Python SDK
+（`sdk-minimal` profile）、局域网 vLLM `qwen3.8-flash-next-iq3_s`（OpenAI 兼容端点）、
+Electron 33 + Vite 6 + Vue 3.5。连接参数在 `.env.wargame`（gitignore），
+harness 使用项目内 `.dsh-wargame-home/`，**未读写 `~/.dsh`**。
+
+| 范围 | 验证内容 | 结果 |
+| --- | --- | --- |
+| 离线回归 | `verify_harness_engine.py`：JSON 抽取（裸/围栏/散文包裹/坏 JSON）、坐标反思重试与强制放行、键名归一化先于坐标校验、`dsh_home` 隔离断言、复盘/问答上下文、提示排空 | 11/11 通过（wargame 环境）；`.venv` 无 SDK 时自动跳过 |
+| 全量套件 | `verify_all.py`（`.venv`，含 Streamlit 旧链路）：确认 `geo.py`/`state.py` 的 streamlit-可选重构无回归 | 14/14 通过 |
+| 真实联调 | curl 驱动 uvicorn 后端：创建会话→初始化（22 单位、5 处锚点吸附、RAG 注入 7 段、指纹）→推进（第 1 回合，名单 22→22，位移越界 0、数值异常 0）→复盘（1436 字）→问答→JSON 导出 | 全部通过，模型经 dsh harness → 局域网 vLLM，未打桩 |
+| 桌面 UI | Electron 生产构建 + CDP 驱动：勾选裁决→点初始化→第 0 回合就位；战报正文渲染、裁决面板指纹、单位表、越界 0 | 通过，截图 `.cache/qa/desktop-adjudication.png` |
+| 地图与功能对齐 | 按 `viz.py` 原设计重写前端地图（`frontend/src/tactical.ts` + `MapView.vue`）：北约军标（红菱形/蓝矩形+兵种核心符号+铭牌）、行军轨迹（虚线+➤ 箭头+蚂蚁线动画）、交战半径按攻击方射程推导（×1.2，兵种查表兜底）、定向扇区（±30°）/降级空心环、半径分级配色、底图组含 Esri 海洋/地形（高德因 GCJ-02 保持隐藏）、图层控制台右上展开、全屏按钮左上 | CDP 实测：23 军标、自检扇区+火力蚂蚁线、第 1 回合 6 条轨迹箭头 |
+| 分析层对齐 | 补齐旧 Streamlit 的全部分析显示：⚔️ 交战统计 caption（0 处解释/扇区/空心环/丢弃原因）、📚 史料注入 caption 与侧栏注入明细（段数/来源/预览/约束提醒）、🧱 名单守恒与 ☠️ 歼灭/☑️ 可疑/📉 数值异常（按 kind 格式化）、⚖️ 裁决汇总统计行/无接战距离解释/兵种列与最近敌军名/📐 几何尺度明细表/⚖️ 裁决口径说明/越界明细（实走/上限/超出 km）、🔧 渲染自检开关+渲染器版本标记、待机欢迎界面 | 第 0/1 回合实测文案与旧版口径一致，截图 `.cache/qa/desktop-full-v2.png` |
+
+前端另有 `npm run typecheck`（vue-tsc 严格模式）与 `npm run build` 通过。
+`gentactix/geo.py`、`gentactix/state.py` 改为 streamlit 缺失时可导入（提示改走
+`GEO_NOTICES`，由后端转交前端 toast），旧 Streamlit 链路行为不变。
+
+## 桌面端缺陷排查与补全（2026-10-21 第二轮）
+
+新增 `verify_desktop_backend.py`：只打桩 `harness_engine.complete`（模型出口），
+锚点吸附、坐标审计、名单守恒、裁决内核、快照与导出全部真实执行，无需密钥。
+12 项覆盖：前置守卫（404/409/422）、初始化快照契约（T+0 裁决指纹、RAG 关闭
+可见说明）、名单守恒回填与位移越界「只报告不拉回」、面板补算兜底、复盘/问答、
+对话限长 40 条、导出双文件名、会话隔离、坏 JSON 502 且原战局保留、
+重新开局白纸保证、模型操作串行化。wargame 环境 **12/12 通过**；
+`.venv` 缺 fastapi/SDK 时自动跳过，`verify_all.py` 升至 **15/15**。
+
+比对 app.py 后修复的桌面端缺陷：
+
+| 缺陷 | 修复 |
+| --- | --- |
+| 裁决面板来源 caption 引用了不存在的 `source_kind==="file"` | 快照透出 `spec.source` 路径，caption 与旧版同口径（实测显示 `adjudication/长平之战.md`） |
+| 后端缺 app.py 的「面板补算」兜底（开关开着但无裁决结果时面板空白） | `_snapshot` 按当前战局补算并持久化，回归测试覆盖 |
+| harness 单子进程，并发模型调用会 JSON-RPC 串包 | init/next/review/chat 一律经 `_OP_LOCK` 串行 |
+| 开局前侧栏不显示史料库索引统计 | 挂载时拉取 `/api/corpus`（实测「已索引 1 个文件 / 7 个片段」） |
+| 侧栏缺内核版本 caption | `/api/health` 暴露 `adjudicator_version`，实测显示 `geo-1` |
+| 地图下方缺旧版裁决汇总行与位移越界警告 | 数据实况条补齐（实测指纹 `c5d4f2c3fd29` 与上一轮一致，可复现性成立） |
+| 问答提问要等回答返回才上屏（旧版即刻上屏） | 前端乐观追加用户消息，快照回来整体替换 |
+| RAG 默认值与旧版不一致（旧默认关） | 恢复默认关闭 |
+| 战报/复盘/问答里的 Markdown（`**`、`##`）裸露成纯文本 | 新增 `frontend/src/markdown.ts` 最小安全子集（先转义 HTML 再渲染），node 单测通过 |
+
+CDP 实测（真实局域网 vLLM，未打桩）：待机界面→三开关→初始化（23 单位、
+RAG 注入 7 段、T+0 裁决指纹）→自检扇区随开关 1→0→裁决面板（来源路径、
+无接战距离解释、9 列单位表）→复盘（长文生成）→问答（提问即刻上屏、回答到达）。
+截图 `.cache/qa/desktop-final.png`。
+
+已知边界（非缺陷）：Electron 刷新后前端不自动恢复后端会话（旧 Streamlit 的
+session_state 会）；行军轨迹按单位名匹配、改名丢轨迹，与 viz.py 同口径；
+本轮 vLLM 生成 23 单位初始 JSON 耗时约 10 分钟，属外部推理性能。
+
+## 地形标定与回合节奏（2026-10-21 第三轮）
+
+针对「部队移动是否合理、地形是否被考虑、要不要高程数据」的分析结论落地两项修改，
+并全部重测。高程数据**没有**进入裁决内核：内核必须保持纯标准库、可离线复现，
+在线 SRTM 会同时破坏这两点（`geo.py` 的海陆复核仍用 SRTM，职责不同）。
+
+| 修改 | 机制 |
+| --- | --- |
+| 战役标定 `terrain_factor` | `adjudication/<战役>.md` 写下该键的瞬间**覆盖**模型自报的 `current_terrain` 标签（模型把丹河河谷丘陵标成平原 ×1.0 是实测错误）；未写下则维持按标签查表。裁决结果新增 `terrain_source`（模型地形标签 / 战役参数库标定），面板与摘要行明示哪个在生效；指纹包含该来源，标定前后指纹不同但仍可复现 |
+| 建议回合跨度 `time_step` | 新增元信息键（不参与几何计算），`/api/battles` 透出 `{name, time_step}`；Vue 端选择战役时自动预填「单回合时间跨度」并显示提醒（30 分钟回合下古代军队每回合只能挪 1–4 km，两军永远接触不上）；Streamlit 端显示同口径 caption |
+| 长平之战标定 | `terrain_factor: 1.4`（丹河河谷丘陵）、`time_step: 6小时`；`_template.md` 补注释示例 |
+
+离线回归（全部新增断言可失败）：
+
+| 脚本 | 新增内容 | 结果 |
+| --- | --- | --- |
+| `verify_adjudicator.py` | terrain_factor 覆盖标签：来源切换、机动距离 ×0.8（2.0/1.6）、指纹变化、摘要行含「战役参数库标定」、`params={}` 仍走标签查表 | 75/0 |
+| `verify_adjudication_lib.py` | 长平 explicit 含 1.4；`time_step` 不报未知参数；`time_step_hint=="6小时"`；`list_battle_details` 透出；参数表标「本战役标定」；越界值（0.5）报错且不生效 | 65/0 |
+| `verify_desktop_backend.py` | `/api/battles` 带 6小时；init 快照 `terrain_factor==1.4`、`terrain_source=="战役参数库标定"`、`time_step_hint` | 13/13（wargame） |
+| `verify_all.py` | 全量套件（自动发现上述新增脚本） | 15/15（.venv） |
+
+前端 `npm run typecheck` + `npm run build` 通过。
+
+CDP 实测（真实局域网 vLLM，未打桩）：选择「长平之战」→ 回合跨度自动预填
+「6小时」并出现提醒 caption → 初始化完成（第 0 回合）。地图下方裁决汇总行：
+`⚖️ 裁决 geo-1 · 指纹 b33de1ae12ff：单位 22 · 本回合可接触 3 · 粮道被断 0 ·
+被围 0（半包围 0）· 退路已断 0 · 士气崩溃 0 / 动摇 0` —— **可接触 0 → 3**，
+两军从「永远接触不上」变为可交战。裁决面板显示「已标定 7 项」，机动规则行
+`…×1.4，来源：战役参数库标定——战役文件已写下 terrain_factor，模型自报标签被覆盖`；
+单位表样例「秦军前军统帅部·王龁 可机动 10.29 km」。截图
+`.cache/qa/desktop-terrain-fix.png`。
+
+## DSH 智能体四步整改（2026-10-21 第四轮）
+
+用户提交的 DSH 接入审计确认三个可复现可靠性缺陷（同名单位字段丢失、
+`next_turn` 非原子提交、`finish_reason` 不检查）、一个观测缺口（思维链与
+事件流被丢弃）且智能体闭环未形成。按批准计划四个提交一次做完，每个提交
+各自带可失败的回归断言。
+
+| 提交 | 内容 | 锚定测试 |
+| --- | --- | --- |
+| 1 状态可靠 + 观测透传 | `integrity._merge_missing_fields`：同名单位只回部分字段时按上一回合快照**只填不覆**补回（补回的是已存在的信息，不是编造状态），报告新增 `merged`；`init`/`next` 全部算成局部候选后**一次性直线写回**，任何异常 502 且会话逐项原样；`_gate` 白名单 `finish_reason=="completed"`，error/max-tokens/None + 非空文本一律拒收（半截 JSON 比可见失败更危险）；`extract_reasoning` 从 `assistant/message` 事件取思维块，复盘/问答返回真实 reasoning（旧硬编码 `""` 必挂），前端问答补「💡 璇玑思维链」折叠块 | `verify_integrity`（补回/不覆盖/幂等/`merged` 文案）、`verify_desktop_backend`（`check_movement` 抛错 → 502 且 war_state/turn_count/history 逐项相等）、`verify_harness_engine`（三种坏结束原因 + 真实 reasoning） |
+| 2 持续角色会话 | 每战局每角色一条 DSH 会话 `gentactix-{id}e{epoch}-{engine|strategist|chat}`；进程内复用 → 磁盘 `resume_session` → 失败则新建 + **可见警告** + `decision_log`（每回合摘要，上限 30）重注入，失忆绝不静默；DSH 无清会话 API → 重新初始化只 bump epoch；env `GENTACTIX_PERSIST_ROLES` 默认关，旧单发路径原样 | `verify_harness_engine`（复用只 resume 一次/跨战局隔离/resume 失败回落+notice 只消费一次/热会话只发问题不带全量战报）、`verify_desktop_backend`（epoch 0→1、决策日志清空、失忆前缀注入一次） |
+| 3 领域工具协议 | SDK 无自定义工具注册 → 应用层 JSON 协议：模型每步回 `{"tool_calls":[…]}`（≤4 条）或 `{"action":"submit_orders",…}`，后端执行后**同会话回喂**。三工具全只读/dry-run：`get_observation`（白名单字段视图）、`retrieve_history`（RAG 关 → `ok:false` 可见）、`evaluate_action`（deepcopy 后挪单位，走与事后审计**同一** `geo`/`check_movement` 函数）；坐标违规同会话反弹（复用「坐标物理规则冲突」文案）；≤4 步耗尽 → 502 状态不动；开关默认关，label 注明时延。顺带修复历史缺陷：`NAVAL_KEYWORDS` 缺字面「海军/水军」，模型最常写的标签判不出海军 | `verify_agent_tools`（12 项：协议文本/白名单不外泄 speed/干跑全等/反弹文案/耗尽抛错且状态不动/步间取消）、`verify_desktop_backend`（agent 端到端 tool_calls→回喂→提交；耗尽 502 状态全等） |
+| 4 观测、预算、取消 | `RunObserver`：`turn/start`→「模型开始思考」、`step/start` 每 5 步节流、`usage.totalTokens` 越过 70% 上下文（262144）→ 一次性「截断」警告；快照透出 `engine_meta`（finish_reason/轮/步/tok/用时），地图下 caption 一行；`request_timeout_seconds=900`（实测大生成 ~10 分钟）；协作式取消 `POST …/cancel`：只在入口与步界消费，**在途调用不可中断**（endpoint 与 notice 写明），原子提交保证取消后状态不动 | `verify_harness_engine`（节流 7 步 2 条/token 警告只一次/meta 形状/900s 断言）、`verify_desktop_backend`（快照含 engine_meta；取消 → 409 状态不动 → 再推演正常） |
+
+离线回归：wargame 环境 `verify_harness_engine` 26/26、`verify_agent_tools` 12/12、
+`verify_desktop_backend` 22/22；`.venv` 全量 `verify_all.py` **16/16**（含旧门
+`verify_workflow`/`verify_app_integration` 在 NAVAL_KEYWORDS 修复后仍绿）。
+前端 `npm run typecheck` + `npm run build` 通过。
+
+## 外部能力边界
+
+命令行裁决探针还可运行 `python live_adjudication_probe.py`，密钥由
+`DEEPSEEK_API_KEY` 环境变量读取；该探针记录模型违规情况，需要人工查看结果。
+
+“实时情报搜集”目前仅在提示词中加入模拟突发事件，没有实现联网搜索。
+底图与 SRTM 瓦片仍依赖外部网络。本次完成本地构建与容器启动，未执行 Cloudflare 云端部署。
+
+## 抗美援朝战役入库验收（2026-10-21）
+
+新增9份同名配对的史料卡与裁决参数、1份共用统计口径资料及20类近现代兵种。
+九份档案约1.84万字，含39条出处链接；日期、统计范围和报告方分别记录。
+几何参数、速度和缺字段射程均为工作估计，不作为历史测量值或武器性能表。
+
+| 检查 | 结果 |
+| --- | --- |
+| `.venv/bin/python verify_all.py` | 17/17任务通过，含退化测量和离线探针；SDK相关测试在此环境跳过，另在wargame实跑 |
+| wargame：`python verify_korean_campaigns.py` | 9/9：配对档案、参数、全部简称、跨战役检索隔离、领域工具检索、兵种、地面控制与历史提示词 |
+| wargame：Harness / 桌面后端 / 领域工具回归 | 分别26/26、22/22、12/12，无跳过 |
+| `frontend/`：`npm run typecheck`、`npm run build` | 均通过 |
+| Python / TypeScript共用兵种表 | 20类的分类、符号和缺字段射程一致，显式射程优先、旧骑兵与战车行为保留 |
+
+浏览器使用独立8721后端和8781构建预览，不触碰既有服务与会话。模型出口为
+**明确标注的固定响应**，没有调用真实模型。实测九场可选、建议回合预填、所选史料
+注入、T+0至T+1、裁决来源与兵种符号；12个军标实际位于地图可视区域。
+修复Vue地图始终定位长平的问题：开局与换会话按战局中心定位；新会话中心从
+`38.333,127.484`改到`40.55,125.2`仍显示全部军标，同局下一回合与自检保留平移。
+页面未出现错误，截图和日志位于忽略目录`.cache/qa/korea-research/`。
+
+本轮不据固定响应声称真实模型推演质量已验证，也没有实现严寒减员、坑道双层控制、
+自动停战、口径切换或跨战役继承。各档案明确将这些列为建模约束与后续能力。
+
+## 地形、射界、补给与人员装备展示（2026-10-21）
+
+新增纯标准库`gentactix/battlefield.py`，由Vue快照与Streamlit地图共用：
+地形点线面、球面扇形射界与最小射程、火力射程、补给节点/记录路线/几何估计、
+人员与装备分别计数。退场单位最后记录跨回合保留，可用人数只计当前编组。
+
+- `.venv/bin/python verify_all.py`：18/18任务通过，含退化测量；SDK测试另在wargame执行。
+- `verify_battlefield.py`：最新复验.venv下16/16通过，覆盖未知值、零分母、非法计数、装备分类、加权比例、
+  球面射界、坐标拒收、补给优先级、嵌套更新、退场/返回、只读性与Folium实际图层；
+  wargame下15项通过，1项Streamlit渲染因该环境未安装Streamlit而跳过。
+- wargame桌面后端最新25/25通过，覆盖初始化→部分计数更新→退场→导出、累计投入倒退拒收及显式战役锚点；
+  Harness 27/27、领域工具12/12仍通过。
+- `frontend/`类型检查与生产构建均通过。
+
+独立固定响应后端8723、生产构建预览8783的Playwright实测：地形3、射程6、
+最小射程2、射界3、补给路线8、补给点2；四类图层开关全部在开/关/恢复后计数正确。
+地形底图按钮状态与Leaflet事件同步；下一回合人员比例从11.3%更新为14.7%。
+1440×1000与390×844均验收，窄屏文档宽度390、表格在自身容器横向滚动，页面无错误。
+截图和日志位于`.cache/qa/battlefield/`，全量日志为`.cache/qa/battlefield-full-suite.log`。
+
+上述展示轮的位置与数字均为固定响应验收夹具；后续真实模型复验见下一节。未重启或修改既有运行会话。
+本次增加展示与计数保留，没有新增确定性战损、道路寻径或DEM视线遮挡算法。
+
+## 真实模型与有效性复验（2026-10-21）
+
+完整结论见[功能验收报告](docs/功能验收报告-2026-10-21.md)。本轮18/18离线任务通过，
+wargame中Harness 27/27、桌面后端25/25、领域工具12/12、战役9/9通过；
+战场展示在.venv下16/16通过。新增重复记录、退场状态、累计投入倒退与装备单位遗漏回归，
+累计分母倒退的回合被拒收且原战局不变。问答observer透传与能力/公式说明一并修正。
+
+DSH连接实际配置的Qwen模型，短JSON、初始化、下一回合、问答、复盘、导出6个调用阶段成功；
+另一次真实智能体执行观察与位移试算后提交，原战局不变。真实初始化202.20秒、
+下一回合230.46秒，12个单位均保留，9个单位的人员计数完整。九场只做了离线资料与检索覆盖，
+不将上甘岭一个真实样本泛化为全部战役的推理质量。
+
+补入九场28个地理参考点后，再以新源码独立进程真实调用DSH/Qwen：初始化47.77秒、
+下一回合67.03秒，两处高地的`node_name`声明均正确落位，12个编组保留且兵种均可识别。
+受控近距离部署下，地形系数2.2、15分钟回合可判定接触；明确钟点`04:00→04:15`正确。
+这并不构成九场多回合验收，也没有修复模型自由生成模糊时间的能力缺口。
+
+**语义验收仍未通过：** 15分钟回合的模型时间从“拂晓前两小时”变成“拂晓前一刻”，
+按字面推进105分钟，内核却仍按15分钟计算。当前没有程序级时钟校验；这项失败独立记录在
+`.cache/qa/acceptance-20261021/live-timeline-check.json`，不能被回归脚本全绿掩盖。
+地形图形和记录路线受阻标记也尚未进入完整的地形/运输结算。
+
+## DSH原生插件与因果分析验收（2026-10-21）
+
+新启用项目级Cordis插件，保留`sdk-minimal`，使用Native领域工具而非PTC；应用层JSON协议仍可选。
+取消进入原生`Agent.cancel`，角色预算进入`agent/request`；轨迹持久化、时钟审计和几何归因经过应用插件钩子。
+
+真实Qwen应用链条：开局68.22秒、原生工具回合83.44秒、归因解读33.22秒、成对原生分支160.83秒。
+有6条公开决策声明、5个位移归因、1个状态转折候选；模型分支运行前后主态势、回合和战报完全相同。
+独立在途取消测试约0.005秒结束为aborted；另外验证原生分支的实时事件订阅与精确父序号13。
+主API真实取消约0.013秒返回200，生成请求409且主战局和消息不变；两臂精确继承父前缀，新增事件分别24/24与30/30落盘。
+
+即时日志核验20/23、刷盘后同一轨迹23/23，partial与verified明确区分。
+补充中文时分解析后，同一真实反事实响应的两臂钟点均复核为15分钟；这是离线复核，不是额外模型重复试验。
+没有新增确定性时钟、伤亡或胜负因果模型；模糊时间、服务端随机性和历史结局先验仍是限制。
+浏览器固定响应验收覆盖新页面、只读试算、归因、分支、失败恢复、取消与390像素窄屏；与真实调用证据分开保存。
+
+命令：`.venv/bin/python verify_causal.py`，`conda run -n wargame python verify_runtime_plugins.py`。
+完整协议、安装版本、未启用能力与证据见[新架构报告](docs/因果分析与DSH插件架构.md)。
+
+## 抗美援朝第一次战役实时链路与输出预算复核（2026-10-22）
+
+23单位、6小时回合的完整实时链路（真实局域网Qwen，未打桩）：初始化276.6秒/19671 tok，
+`request/header`事件确认5个原生领域工具进入模型请求且运行时默认`reasoningEffort=high`。
+第一次「下一轮」在16384输出预算下`finish_reason=max-tokens`被门控拒收：UI可见报错、
+`failed-operations`工件落盘、回合与态势不变；重试提交T+1（6条决策带DSH事件引用、名册23→23、
+时钟标签不可换算如实标unknown、原生JSONL复核9/9 verified）。
+
+在途取消实测：`native-agent-cancel`送达引擎角色会话，约15秒落定，`turn/end`记为
+`aborted(user)`，turn_count与23单位态势逐项不变。单步几何反事实撤销坦克分队推进后
+红方切断4→3、被围1→0、退路已断1→0。
+
+成对模型分支在16384下同样max-tokens拒收；上调`.env.wargame`的
+`GENTACTIX_ENGINE_MAX_TOKENS`与`GENTACTIX_COUNTERFACTUAL_MAX_TOKENS`至32768后重跑：
+初始化151.3秒/19956 tok、推进167.8秒/**25711 tok（超过旧上限，证实临界诊断）**、
+成对分支精确继承父前缀（父序号13），两臂均可采纳，补给切断状态在两臂间可区分。
+全程`~/.dsh`未触碰（mtime仍为9月19日）。23单位规模下16384不是安全预算，是概率性拒收；
+更大兵员表若仍失败，继续按角色上调预算或降低该角色effort，而不是放宽finish_reason门控。

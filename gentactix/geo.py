@@ -6,15 +6,34 @@
 
 import math
 
-import streamlit as st
+try:
+    import streamlit as st  # Streamlit 前端可用时走 UI 提示
+except ImportError:
+    st = None  # 无 Streamlit 运行时（如 FastAPI 后端）降级为静默捕获
 from global_land_mask import globe  # 🌟 核心：引入地球海陆面具
-from folium import plugins  # 🌟 新增：引入 folium 插件库以使用 AntPath
 
 from .config import to_float, is_naval
 from .state import get_unit_field, normalize_state_units
+from .anchors import node_metadata
 
 # 红蓝双方单位容器键名（全应用统一引用，避免硬编码字符串漂移）
 UNIT_TEAMS = ["red_units", "blue_units"]
+
+# 无 Streamlit 时，清洗/吸附提示收集到这里，由调用方（后端 API）转交给界面显示。
+GEO_NOTICES = []
+
+
+def _notify(level, message, icon=None):
+    """UI 提示单点：Streamlit 在就弹 Streamlit，不在就进 GEO_NOTICES。"""
+    if st is not None:
+        if level == "toast":
+            st.toast(message, icon=icon)
+        elif level == "error":
+            st.error(message)
+        else:
+            st.warning(message)
+    else:
+        GEO_NOTICES.append({"level": level, "message": message})
 
 
 # ==========================================
@@ -22,7 +41,6 @@ UNIT_TEAMS = ["red_units", "blue_units"]
 # ==========================================
 # 启动 SRTM 军用级高程探测器（第一次探测某区域时会在本地自动下载缓存文件）
 # 🐛 修复：原代码每次 rerun 都重新执行 srtm.get_data()，属无谓开销；改用进程级缓存
-@st.cache_resource(show_spinner=False)
 def _load_elevation_data():
     try:
         import srtm
@@ -31,9 +49,22 @@ def _load_elevation_data():
         return None
 
 
+if st is not None:
+    _load_elevation_data = st.cache_resource(show_spinner=False)(_load_elevation_data)
+else:
+    # 无 Streamlit 时自己做进程级缓存
+    _elevation_raw = _load_elevation_data
+    _elevation_cache = {}
+
+    def _load_elevation_data():
+        if "data" not in _elevation_cache:
+            _elevation_cache["data"] = _elevation_raw()
+        return _elevation_cache["data"]
+
+
 elevation_data = _load_elevation_data()
 if elevation_data is None:
-    st.warning("⚠️ SRTM 地形雷达初始化失败，已降级为「海陆面具」单波段扫描（近岸精度下降）。")
+    _notify("warning", "⚠️ SRTM 地形雷达初始化失败，已降级为「海陆面具」单波段扫描（近岸精度下降）。")
 
 
 def is_water_precise(lat, lng):
@@ -56,8 +87,8 @@ def is_water_precise(lat, lng):
             elevation = elevation_data.get_elevation(lat_f, lng_f)
         except Exception:
             return False
-        # 海洋、港口和深水航道通常没有海拔数据 (None) 或海拔极低 (<=0米)
-        if elevation is None or elevation <= 0:
+        # None 也可能是瓦片缺失/下载失败，不能据此把海陆面具确认的陆地改判为海洋。
+        if elevation is not None and elevation <= 0:
             return True
 
     return False
@@ -137,6 +168,10 @@ def match_anchor(unit_name, available_nodes):
     if not unit_name:
         return None, None
     for anchor_name, coords in available_nodes.items():
+        # 朝鲜战争参考点包含城市、山体，单位名称提到目标不等于驻于该点。
+        # 必须显式声明 node_name；保留旧舰艇/长平库原有名称匹配契约。
+        if node_metadata(anchor_name):
+            continue
         # 提取核心短键名（如 "福特岛-战列舰大街-亚利桑那号" → "亚利桑那号"）
         core_name = anchor_name.split('-')[-1]
         if core_name and (core_name in unit_name or unit_name in core_name):
@@ -149,7 +184,7 @@ def sanitize_init_units(init_state, available_nodes):
     🌟 核心防线修补：在创世阶段就进行绝对物理清洗。
 
     正确语义：
-      - 命中智库锚点 → 坐标由人工核定，直接采信，无需再走雷达；
+      - 显式 node_name 优先；朝鲜战争地名参考不按单位名称自动吸附；
       - 未命中      → AI 自由坐标，海军单位必须过海陆雷达。
     """
     # 🐛 修复：AI 若用中文键名（"名称"/"类型"），锚点匹配和海军判定会全部失效，
@@ -162,13 +197,22 @@ def sanitize_init_units(init_state, available_nodes):
             unit_name = get_unit_field(
                 unit, 'name', '名称', '单位名称', '部队名称', 'unit_name') or ''
 
-            # 1. 优先查表：遍历高精锚点字典，寻找名称交集
-            anchor_name, coords = match_anchor(unit_name, available_nodes)
+            # 1. 先履行 prompt 的显式锚定契约，再兼容旧库名称匹配。
+            requested = unit.get('node_name')
+            if isinstance(requested, str) and requested in available_nodes:
+                anchor_name, coords = requested, available_nodes[requested]
+            else:
+                anchor_name, coords = match_anchor(unit_name, available_nodes)
+                if requested:
+                    _notify("warning", f"未收录或不属当前战役的锚点：{requested}，保留自由坐标并执行常规检查")
+            # 新库全为陆上参考，不能让舰艇借 node_name 绕过海陆检查。
+            if anchor_name and node_metadata(anchor_name) and is_naval(unit_type):
+                anchor_name, coords = None, None
             if anchor_name:
                 unit['lat'] = coords[0]
                 unit['lng'] = coords[1]
-                st.toast(f"🎯 智库强制导航：[{unit_name}] 已精确吸附至锚点 [{anchor_name}]", icon="⚓")
-                continue  # 锚点是人工核定的合法水域坐标，无需再走雷达
+                _notify("toast", f"🎯 地理参考：[{unit_name}] 已按声明部署至 [{anchor_name}]", icon="⚓")
+                continue
 
             # 2. 降级路径：AI 自由坐标，海军单位必须过一遍海陆雷达
             if not is_naval(unit_type):
@@ -189,13 +233,13 @@ def sanitize_init_units(init_state, available_nodes):
 
                 if offset_km <= 5:
                     # 🟢 5公里以内：属于战术微调，正常放行
-                    st.toast(f"⚓ 战术微调：{unit_name} 偏航，已拖拽 {offset_km:.1f} 公里至港口/水域。", icon="🌊")
+                    _notify("toast", f"⚓ 战术微调：{unit_name} 偏航，已拖拽 {offset_km:.1f} 公里至港口/水域。", icon="🌊")
                 elif offset_km <= 15:
                     # 🟡 5~15公里：大模型产生中度幻觉，提出警告
-                    st.toast(f"⚠️ 战略警告：{unit_name} 偏航严重！系统强行跨越 {offset_km:.1f} 公里将其拖入海中，可能偏离原定战区！", icon="⚠️")
+                    _notify("toast", f"⚠️ 战略警告：{unit_name} 偏航严重！系统强行跨越 {offset_km:.1f} 公里将其拖入海中，可能偏离原定战区！", icon="⚠️")
                 else:
                     # 🔴 15公里以上（逼近22公里极限）：发生严重空间扭曲
-                    st.error(f"🚨 极限地理穿透：{unit_name} 被 AI 投送至内陆深处！系统实施了 {offset_km:.1f} 公里的强行拖拽。战术意图已遭破坏，建议总参谋长重点核查该单位坐标！")
+                    _notify("error", f"🚨 极限地理穿透：{unit_name} 被 AI 投送至内陆深处！系统实施了 {offset_km:.1f} 公里的强行拖拽。战术意图已遭破坏，建议总参谋长重点核查该单位坐标！")
 
                 unit['lat'] = new_lat
                 unit['lng'] = new_lng
@@ -223,6 +267,6 @@ def sanitize_step_units(updated_data):
                     unit_name = get_unit_field(
                         unit, 'name', '名称', '单位名称', '部队名称', 'unit_name',
                         default='未命名单位')
-                    st.toast(f"⚓ 系统强制干预：检测到 {unit_name} 偏航至陆地，已强制拖入附近海域！", icon="🌊")
+                    _notify("toast", f"⚓ 系统强制干预：检测到 {unit_name} 偏航至陆地，已强制拖入附近海域！", icon="🌊")
                     unit['lat'] = new_lat
                     unit['lng'] = new_lng

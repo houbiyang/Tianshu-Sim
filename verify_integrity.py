@@ -168,6 +168,47 @@ check("但列入 suspected 供人眼复核", len(rep9["suspected"]) == 1, rep9["
 # ==========================================
 print()
 print("=" * 66)
+print("三点五、同名单位漏字段 → 按上一回合补全（只填不覆）")
+print("=" * 66)
+# 对照：临时注释掉 reconcile_roster 里的 _merge_missing_fields 调用，
+# 下面每一组都会失败 —— 断言不是恒真。
+
+prev_m = make_state(red=[unit("赵军主力", 8000, typ="城塞")],
+                    blue=[unit("秦军主力", 9000)])
+# 模型只回 name+坐标：hp/type/morale/supply 全被抹掉（旧实现直接 continue 放过）
+new_m = make_state(red=[{"name": "赵军主力", "lat": 35.91, "lng": 112.86}],
+                   blue=[unit("秦军主力", 8900)])
+patched_m, rep_m = integrity.reconcile_roster(prev_m, new_m)
+merged_u = patched_m["red_units"][0]
+check("hp/type/morale/supply 等漏写字段按上一回合补回",
+      merged_u.get("hp") == 8000 and merged_u.get("type") == "城塞"
+      and merged_u.get("morale") == 80 and merged_u.get("supply") == 70,
+      merged_u)
+check("模型写过的坐标保持本回合值（移动是叙事，不回填）",
+      merged_u["lat"] == 35.91 and merged_u["lng"] == 112.86, merged_u)
+check("字段齐全的同名单位不误报（merged 只列真漏写的）",
+      [e["name"] for e in rep_m["merged"]] == ["赵军主力"], rep_m["merged"])
+check("merged 报告带补回的字段清单",
+      "hp" in rep_m["merged"][0]["fields"], rep_m["merged"])
+check("摘要行出现「补全字段」",
+      "补全字段" in integrity.summarize(rep_m, []), integrity.summarize(rep_m, []))
+
+# 只填不覆：模型写了 hp=4000（合法减员），不能被上一回合的 8000 盖掉
+new_w = make_state(red=[{"name": "赵军主力", "hp": 4000}],
+                   blue=[unit("秦军主力", 8900)])
+patched_w, rep_w = integrity.reconcile_roster(prev_m, new_w)
+check("模型已写的 hp 不被上一回合覆盖",
+      patched_w["red_units"][0]["hp"] == 4000, patched_w["red_units"][0])
+check("只补了其余字段（hp 不在 fields 里）",
+      "hp" not in rep_w["merged"][0]["fields"], rep_w["merged"])
+
+# 幂等：对补全结果再核对一次，不应再报 merged
+_, rep_idem = integrity.reconcile_roster(prev_m, patched_m)
+check("补全幂等：第二次核对 merged 为空", rep_idem["merged"] == [], rep_idem["merged"])
+
+# ==========================================
+print()
+print("=" * 66)
 print("四、数值守恒（只报告，不修正）")
 print("=" * 66)
 

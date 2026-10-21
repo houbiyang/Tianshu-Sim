@@ -34,6 +34,7 @@ RUN pip install --no-cache-dir --index-url "${PIP_INDEX_URL}" -r /app/requiremen
 COPY app.py /app/app.py
 COPY gentactix /app/gentactix
 COPY corpus /app/corpus
+COPY adjudication /app/adjudication
 COPY logo.png /app/logo.png
 COPY .streamlit /app/.streamlit
 

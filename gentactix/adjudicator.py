@@ -37,9 +37,10 @@ import json
 import math
 
 from . import adjudication_lib
+from .unit_types import classify_unit
 
 # 版本标记：界面上显示，用来区分「内核改了」和「这局确实没变化」
-ADJUDICATOR_VERSION = "geo-1"
+ADJUDICATOR_VERSION = "geo-3"
 
 # 平面近似的换算系数（km / 度）
 _KM_PER_DEG_LAT = 110.57
@@ -271,7 +272,9 @@ def unit_march_speed_kmh(unit_type, declared_speed=None, hours=0.5):
     直接采信会得到「步兵 30 km/h」这种硬伤。这里的做法是：**以兵种表为基准**，
     speed 只当相对强弱的提示（0.75—1.25 倍），并把明显离谱的值直接忽略。
     """
-    base = _longest_match(unit_type, MARCH_SPEED_KMH, DEFAULT_SPEED_KMH)
+    profile = classify_unit(unit_type)
+    base = (profile["march_speed_kmh"] if profile else
+            _longest_match(unit_type, MARCH_SPEED_KMH, DEFAULT_SPEED_KMH))
 
     factor = 1.0
     declared = _to_float(declared_speed)
@@ -289,6 +292,9 @@ def unit_attack_range_m(unit):
     if explicit is not None and explicit > 0:
         return explicit
     unit_type = str(_field(unit, "type", "") or "")
+    profile = classify_unit(unit_type)
+    if profile and profile["range_hint_m"] is not None:
+        return float(profile["range_hint_m"])
     lowered = unit_type.lower()
     for keyword, meters in UNIT_TYPE_RANGE_M:
         if keyword in lowered or keyword in unit_type:
@@ -298,6 +304,9 @@ def unit_attack_range_m(unit):
 
 def unit_control_radius_km(unit, minimum=3.0):
     """该单位能形成的区域控制半径（km）= max(下限, 射程 × 1.2)。"""
+    profile = classify_unit(_field(unit, "type", ""))
+    if profile and not profile["ground_control"]:
+        return 0.0
     reach_km = unit_attack_range_m(unit) * ENGAGEMENT_RADIUS_FACTOR / 1000.0
     return max(float(minimum), reach_km)
 
@@ -330,6 +339,10 @@ def _collect_units(war_state):
     units, skipped = [], []
     for team, key in UNIT_CONTAINERS:
         for unit in (war_state.get(key) or []):
+            profile = classify_unit(_field(unit, "type", ""))
+            if profile and not profile["ground_geometry"]:
+                skipped.append(f"{_field(unit, 'name', '未命名单位')}（航空/舰艇支援不参加地面几何）")
+                continue
             view = _unit_view(unit, team)
             if view is None:
                 if isinstance(unit, dict):
@@ -479,7 +492,17 @@ def adjudicate(war_state, time_step="30分钟", turn=0, params=None):
 
     hours = parse_time_step(time_step)
     terrain = str(war_state.get("current_terrain") or "")
-    factor = terrain_factor(terrain)
+    # 战役参数库写下 terrain_factor 的瞬间即覆盖模型标签：模型常把河谷丘陵
+    # 标成「平原」（×1.0），而内核不能靠模型的诚实度来保证机动尺度。
+    # 注意只认 params（= spec.explicit）里真实写下的键，DEFAULT_PARAMS 里的
+    # terrain_factor 默认值不算「标定」，否则「未标定」与「标定成 1.0」无法区分。
+    calibrated_factor = (params or {}).get("terrain_factor")
+    if calibrated_factor is not None:
+        factor = float(calibrated_factor)
+        terrain_source = "战役参数库标定"
+    else:
+        factor = terrain_factor(terrain)
+        terrain_source = "模型地形标签"
     contact_km = float(settings["contact_km"])
     control_km = float(settings["control_radius_km"])
     encircle_km = float(settings["encircle_radius_km"])
@@ -509,15 +532,21 @@ def adjudicate(war_state, time_step="30分钟", turn=0, params=None):
             dist = distance_km(unit["pos"], enemy["pos"])
             if nearest_km is None or dist < nearest_km:
                 nearest_name, nearest_km = enemy["name"], dist
-        can_contact = nearest_km is not None and nearest_km <= reach_km
+        contact_reach_km = reach_km + contact_km
+        can_contact = nearest_km is not None and nearest_km <= contact_reach_km
         hours_to_contact = None
-        if nearest_km is not None and speed > 0:
-            hours_to_contact = nearest_km * factor / speed
+        if nearest_km is not None:
+            remaining = max(0.0, nearest_km - contact_km)
+            if remaining == 0:
+                hours_to_contact = 0.0
+            elif speed > 0:
+                hours_to_contact = remaining * factor / speed
 
         # --- 威胁圈（敌方每个单位形成一个控制区）---
         threats = [
-            (e["name"], e["pos"], unit_control_radius_km(e["raw"], control_km))
+            (e["name"], e["pos"], radius)
             for e in enemies
+            if (radius := unit_control_radius_km(e["raw"], control_km)) > 0
         ]
 
         # --- 补给线 ---
@@ -552,6 +581,7 @@ def adjudicate(war_state, time_step="30分钟", turn=0, params=None):
             "lng": round(unit["pos"][1], 5),
             "speed_kmh": round(speed, 2),
             "reach_km": round(reach_km, 2),
+            "contact_reach_km": round(contact_reach_km, 2),
             "nearest_enemy": nearest_name,
             "nearest_enemy_km": None if nearest_km is None else round(nearest_km, 2),
             "can_contact": bool(can_contact),
@@ -559,6 +589,7 @@ def adjudicate(war_state, time_step="30分钟", turn=0, params=None):
             "supply": supply,
             "cut_by": cut_by,
             "cut_at_km": None if cut_km is None else round(cut_km, 2),
+            "supply_path": [list(rear), list(unit["pos"])] if rear else [],
             "sealed_ratio": round(sealed, 3),
             "encirclement": encirclement,
             "retreat": "可退" if retreat_ok else "已断",
@@ -571,12 +602,12 @@ def adjudicate(war_state, time_step="30分钟", turn=0, params=None):
             if can_contact:
                 facts.append(
                     f"{unit['name']}（{_team_cn(unit['team'])}）距 {nearest_name} "
-                    f"{nearest_km:.1f} km，本回合可机动 {reach_km:.1f} km ⇒ **能够接触**"
+                    f"{nearest_km:.1f} km，可机动 {reach_km:.1f} km＋接触带 {contact_km:g} km ⇒ **能够接触**"
                 )
             else:
                 facts.append(
                     f"{unit['name']}（{_team_cn(unit['team'])}）距 {nearest_name} "
-                    f"{nearest_km:.1f} km，本回合只能机动 {reach_km:.1f} km ⇒ **无法接触**"
+                    f"{nearest_km:.1f} km，可机动 {reach_km:.1f} km＋接触带 {contact_km:g} km ⇒ **无法接触**"
                 )
         if supply == "已切断":
             facts.append(
@@ -599,7 +630,9 @@ def adjudicate(war_state, time_step="30分钟", turn=0, params=None):
         "hours": round(hours, 3),
         "terrain": terrain,
         "terrain_factor": factor,
+        "terrain_source": terrain_source,
         "contact_km": contact_km,
+        "control_radius_km": control_km,
         "units": rows,
         "skipped_units": skipped,
         "facts": facts,
@@ -637,12 +670,13 @@ def _compose_digest(result, max_chars=2000):
     hours = result["hours"]
     head = (
         f"\n【⚖️ 确定性裁决 · 第 {result['turn']} 回合 · 本回合 {result['time_step']}"
-        f"（{hours:g} 小时）· 地形「{result['terrain'] or '未标注'}」×{result['terrain_factor']:g}】\n"
+        f"（{hours:g} 小时）· 地形「{result['terrain'] or '未标注'}」×{result['terrain_factor']:g}"
+        f"（{result['terrain_source']}）】\n"
         "以下结论来自纯几何计算（距离 ÷ 速度 × 地形系数），**不可改写、不可忽略**。\n"
         "你的任务是把它们讲成战场故事，不是重新推演一遍。\n"
     )
 
-    move_lines = ["\n■ 机动上限（本回合各单位最多能移动的距离）"]
+    move_lines = [f"\n■ 机动上限（接触条件为敌距≤可机动距离＋{result['contact_km']:g} km接触带；不代表直接射击或命中）"]
     for row in result["units"]:
         if row["nearest_enemy"] is None:
             move_lines.append(

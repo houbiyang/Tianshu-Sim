@@ -1,0 +1,74 @@
+{
+  "name": "gentactix-desktop",
+  "version": "3.1.0",
+  "private": true,
+  "description": "GenTactix · dsh harness 版桌面前端（Vue3 + Electron）",
+  "type": "module",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "dev": "concurrently -k \"vite\" \"wait-on tcp:127.0.0.1:5173 && VITE_DEV_SERVER_URL=http://127.0.0.1:5173 electron .\"",
+    "build": "vite build",
+    "typecheck": "vue-tsc --noEmit",
+    "start": "npm run build && electron .",
+    "dist:linux": "npm run typecheck && npm run build && electron-builder --linux AppImage tar.gz --publish never"
+  },
+  "dependencies": {
+    "leaflet": "^1.9.4",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@types/leaflet": "^1.9.15",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "concurrently": "^9.1.0",
+    "electron": "^33.2.0",
+    "electron-builder": "^26.15.3",
+    "typescript": "~5.7.2",
+    "vite": "^6.0.5",
+    "vue-tsc": "^2.2.0",
+    "wait-on": "^8.0.1"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "沈阳理工大学装备工程学院深度学习实验室"
+  },
+  "build": {
+    "compression": "normal",
+    "appId": "edu.sylu.deeplearning.gentactix",
+    "productName": "GenTactix-DSH",
+    "executableName": "gentactix-dsh",
+    "directories": {
+      "output": "../release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "public/icons/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "../dist-backend/gentactix-backend",
+        "to": "backend"
+      },
+      {
+        "from": "../LICENSE",
+        "to": "LICENSE"
+      },
+      {
+        "from": "../NOTICE.md",
+        "to": "NOTICE.md"
+      }
+    ],
+    "linux": {
+      "target": [
+        "AppImage",
+        "tar.gz"
+      ],
+      "category": "Education",
+      "icon": "public/icons/gentactix.png",
+      "artifactName": "${productName}-${version}-${arch}.${ext}",
+      "syncDesktopName": true
+    }
+  },
+  "desktopName": "gentactix-dsh.desktop"
+}

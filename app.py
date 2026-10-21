@@ -15,7 +15,7 @@ from pathlib import Path
 import streamlit as st
 from streamlit_folium import st_folium
 
-from gentactix import (adjudication_lib, adjudicator, anchors, engine, geo,
+from gentactix import (adjudication_lib, adjudicator, anchors, battlefield, engine, geo,
                        integrity, prompts, rag, state, viz)
 
 
@@ -35,7 +35,7 @@ def _safe_adjudicate(state_data, time_step, turn, params, phase):
         return None
 
 
-def _retrieve_briefing(query, enabled, top_k, max_chars, phase):
+def _retrieve_briefing(query, enabled, top_k, max_chars, phase, battle=None):
     """检索本地史料并返回 (briefing_text, meta)。
 
     三条降级路径（开关关闭 / 语料为空 / 零命中）都必须把原因写进 meta 并显示到界面上。
@@ -55,7 +55,7 @@ def _retrieve_briefing(query, enabled, top_k, max_chars, phase):
         meta["note"] = f"史料库为空（{stats['dir']}），本次为模型自由发挥"
         return "", meta
 
-    hits = rag.search(query, top_k=top_k)
+    hits = rag.search(query, top_k=top_k, battle=battle)
     if not hits:
         meta["note"] = "未命中相关史料，本次为模型自由发挥"
         return "", meta
@@ -172,6 +172,12 @@ with st.sidebar:
                      "同时提到两场仗时请显式选一场。",
             )
             _battle_choice = None if _picked.startswith("自动匹配") else _picked
+            # 战役文件可带 time_step 提示：回合跨度与这场仗的决策窗口不匹配时，
+            # 部队每回合挪一两公里、两军永远够不着 —— 把建议直接说出来。
+            _hint = adjudication_lib.load_battle(_battle_choice).time_step_hint if _battle_choice else ""
+            if _hint:
+                st.caption(f"这场战役建议回合跨度 `{_hint}`（回合太短则全军每回合只能挪 1–4 km，"
+                           "两军永远接触不上）——请配合上方「单回合时间跨度」调整。")
         else:
             st.caption("裁决库为空：`adjudication/` 下还没有战役文件，将使用默认几何。")
     else:
@@ -200,19 +206,8 @@ with st.sidebar:
     # ==========================================
     st.divider()
 
-    # 仅当存在推演历史时才显示导出按钮
-    if st.session_state.history:
-        json_string = state.generate_json_export()
-        st.download_button(
-            label="📥 一键导出战局快照 (JSON)",
-            data=json_string,
-            file_name=f"GenTactix_推演数据_T{st.session_state.turn_count}.json",
-            mime="application/json",
-            width="stretch",
-            help="将当前所有的底层战场坐标、单位状态与复盘记录导出为结构化 JSON 文件"
-        )
-    else:
-        st.button("📥 一键导出战局快照 (JSON)", disabled=True, width="stretch", help="请先进行沙盘推演再导出数据")
+    # 先占侧栏位置，所有回调完成后再生成快照，避免导出上一轮的数据。
+    export_container = st.container()
 
     # ==========================================
     # 🔧 渲染自检：不必等 AI 打出交战，一键验证扇区链路是否活着
@@ -235,12 +230,12 @@ if btn_init:
         st.warning("⚠️ 请先输入 API Key 和推演场景！")
     else:
         # 🌟 1. 战前情报检索：检查用户输入是否命中了我们的高精坐标库
-        available_nodes = anchors.collect_available_nodes(scenario_input)
+        available_nodes = anchors.collect_available_nodes(scenario_input, battle=_battle_choice)
 
         # 📚 2. 史料检索（可选）：初始化阶段把整张战役卡片尽量都取回来——
         #    兵力、时间线、地形、兵力争议都在不同的 `##` 段落里，只要 3 段会漏。
         briefing, rag_meta = _retrieve_briefing(
-            scenario_input, use_rag, top_k=8, max_chars=3200, phase="init")
+            scenario_input, use_rag, top_k=8, max_chars=3200, phase="init", battle=_battle_choice)
         st.session_state.rag_last = rag_meta
 
         with st.spinner("DeepSeek正在侦察地形并部署单位..."):
@@ -253,6 +248,8 @@ if btn_init:
 
                 # 2. 将清洗后的纯净数据写入系统状态（锚点吸附 + 海军强制落水）
                 geo.sanitize_init_units(init_state, available_nodes)
+                from gentactix import sim_clock
+                sim_clock.initialize(init_state)
 
                 st.session_state.war_state = init_state
                 st.session_state.last_war_state = None
@@ -296,7 +293,7 @@ if btn_init:
                     prefix=f"**【T+0 | {start_time}】初始态势评估**：\n")]
 
             except Exception as e:
-                st.error(f"初始化失败: {e}")
+                st.error(engine.format_api_error(e, "初始化"))
 
 if btn_next:
     if not deepseek_api_key or not st.session_state.war_state:
@@ -313,7 +310,7 @@ if btn_next:
             st.session_state.war_state.get("current_terrain", ""),
         ) if x)
         briefing, rag_meta = _retrieve_briefing(
-            _query, use_rag, top_k=4, max_chars=2200, phase="step")
+            _query, use_rag, top_k=4, max_chars=2200, phase="step", battle=_battle_choice)
         st.session_state.rag_last = rag_meta
 
         # ⚖️ 推演前先裁决。此刻 war_state 仍是上一回合末的真实态势，
@@ -342,6 +339,8 @@ if btn_next:
                 )
 
                 updated_data = result.get("updated_state", result)
+                from gentactix import sim_clock
+                sim_clock.enforce_step(_prev_state, updated_data, time_step)
 
                 # 🌟🌟🌟 强制洗数据，执行“落水算法” 🌟🌟🌟
                 geo.sanitize_step_units(updated_data)
@@ -356,6 +355,7 @@ if btn_next:
                             and not updated_data.get("eliminated"):
                         updated_data["eliminated"] = _declared
                 updated_data, _roster = integrity.reconcile_roster(_prev_state, updated_data)
+                battlefield.carry_battlefield_state(_prev_state, updated_data)
                 st.session_state.roster_last = _roster
                 st.session_state.numeric_flags = integrity.check_numeric_integrity(
                     _prev_state, updated_data)
@@ -390,7 +390,7 @@ if btn_next:
                 st.session_state.turn_count = next_turn_num
 
             except Exception as e:
-                st.error(f"❌ 本回合推演因为 AI 生成数据错误而终止，请重试。错误详情: {e}")
+                st.error(engine.format_api_error(e, "本回合推演"))
 
 # ==========================================
 # 🦅 参谋长复盘区
@@ -413,7 +413,7 @@ if btn_review:
                 st.session_state.review_text = conclusion
 
             except Exception as e:
-                st.error(f"总参谋长复盘请求失败: {e}")
+                st.error(engine.format_api_error(e, "总参谋长复盘"))
 
 # ==========================================
 # 🗺️ 地图展示端
@@ -443,6 +443,7 @@ with col1:
             _map_state,
             st.session_state.last_war_state,
             st.session_state.turn_count,
+            battlefield.build_battlefield_view(_map_state, st.session_state.get("adj_last")),
         )
 
         # 渲染最终地图
@@ -450,6 +451,24 @@ with col1:
         # returned_objects=[]：本应用不消费地图的点击/缩放回传值，
         # 关掉可减少 payload，并避免组件回传默认值引发多余 rerun。
         st_folium(m, width=None, height=700, returned_objects=[], key="gentactix_tactical_map")
+
+        with st.expander("🗺️ 地形、火力与人员装备战损"):
+            from gentactix.battlefield_viz import loss_table_rows, equipment_table_rows
+            _view = battlefield.build_battlefield_view(
+                st.session_state.war_state, st.session_state.get("adj_last"))
+            st.caption(f"地形：{_view['terrain']['label']} · 地形要素 {len(_view['terrain']['features'])} · "
+                       f"火力范围 {len(_view['fire_ranges'])} · 已知射界 {len(_view['fields_of_fire'])} · "
+                       f"补给路线 {len(_view['supply_lines'])}")
+            st.dataframe(loss_table_rows(_view), use_container_width=True, hide_index=True)
+            _equipment_rows = equipment_table_rows(_view)
+            if _equipment_rows:
+                st.dataframe(_equipment_rows, use_container_width=True, hide_index=True)
+            else:
+                st.caption("暂无装备数量记录；不以HP推算装备损失。")
+            for _note in _view["notes"]:
+                st.caption(_note)
+            for _warning in _view["warnings"]:
+                st.warning(_warning)
 
         # 🐛 修复「推演过程中从没看到交战扇区」：
         #    原实现遇到非法/中文键的交战会静默 continue，界面上既不报错也无提示，
@@ -530,7 +549,7 @@ with col1:
                 st.caption(
                     f"ℹ️ 本回合没有任何单位能接战：跨度 `{_adj['time_step']}` 下，"
                     f"各单位最多走 **{min(_reaches):.1f}–{max(_reaches):.1f} km**"
-                    f"（地形 ×{_adj['terrain_factor']:g}）。这是几何结论，不是渲染问题 ——"
+                    f"（地形 ×{_adj['terrain_factor']:g}），另加 {_adj['contact_km']:g} km 接触带宽。"
                     "想看到接战，请调大时间跨度，或让部队初始距离更近。"
                 )
 
@@ -744,4 +763,18 @@ with col2:
                                     st.session_state.chat_messages = st.session_state.chat_messages[-40:]
 
                             except Exception as e:
-                                st.error(f"⚠️ 指挥部通讯中断: {e}")
+                                st.error(engine.format_api_error(e, "参谋长问答"))
+
+# 初始化、推演、复盘和聊天都会修改状态；导出必须读取本次运行的最终结果。
+with export_container:
+    if st.session_state.history:
+        st.download_button(
+            label="📥 一键导出战局快照 (JSON)",
+            data=state.generate_json_export(),
+            file_name=f"GenTactix_推演数据_T{st.session_state.turn_count}.json",
+            mime="application/json",
+            width="stretch",
+            help="将当前所有的底层战场坐标、单位状态与复盘记录导出为结构化 JSON 文件",
+        )
+    else:
+        st.button("📥 一键导出战局快照 (JSON)", disabled=True, width="stretch", help="请先进行沙盘推演再导出数据")

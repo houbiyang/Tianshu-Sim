@@ -3,7 +3,7 @@
 ## 为什么单独成库
 
 几何内核（`adjudicator.py`）算的是**物理**：走得动多远、粮道通不通、退路断没断。
-这些算法跨战役通用。但内核里的六个**尺度**不通用 ——
+这些算法跨战役通用。但内核里的**尺度与节奏**不通用 ——
 
     弓弩射程 300 步（约 0.9 km）、线膛枪 300 m、现代火炮 20 km 以上，
     兵力密度与战场纵深差一个数量级，用同一套「3 km 算接触」去裁决，
@@ -53,6 +53,8 @@ META_KEYS = {
     "note",
     "source_ref",
     "updated",
+    "time_step",   # 建议回合跨度（给前端预填，不参与几何计算）
+    "aliases",     # 用 | 分隔的历史简称；展示名仍取文件名
 }
 
 # ==========================================
@@ -64,7 +66,7 @@ PARAM_SCHEMA = {
     "contact_km": {
         "default": 3.0,
         "bounds": (0.1, 500.0),
-        "doc": "双方最近单位 ≤ 此距离视为接触",
+        "doc": "进入接触的距离带宽：敌距≤本回合可机动距离＋此值；不是武器射程或命中判定",
     },
     "control_radius_km": {
         "default": 3.0,
@@ -91,6 +93,12 @@ PARAM_SCHEMA = {
         "bounds": (0.05, 1.0),
         "doc": "被封锁方向占比 ≥ 此值判「半包围」",
     },
+    "terrain_factor": {
+        "default": 1.0,
+        "bounds": (1.0, 5.0),
+        "doc": "地形机动拖慢系数；写下的瞬间**覆盖**模型自报的地形标签"
+               "（模型常把河谷丘陵标成平原），未写下则按标签查表",
+    },
 }
 
 # 文件名里不允许出现的字符（Windows 与一切平台的安全交集）
@@ -115,6 +123,7 @@ class BattleSpec:
     source: Path | None = None
     source_kind: str = "default"       # library / corpus / default
     matched_by: str = "fallback"       # explicit / exact / contains / fallback / miss
+    time_step_hint: str = ""           # 战役文件建议的回合跨度（仅提示，不强制）
     warnings: list = field(default_factory=list)
     errors: list = field(default_factory=list)
 
@@ -282,6 +291,13 @@ def _prefer_library(hits, warnings):
     return chosen
 
 
+def battle_aliases(path):
+    """读取平面 frontmatter 的别名；不把简称扩散为额外的战役条目。"""
+    raw, _ = parse_frontmatter(path)
+    return tuple(alias.strip() for alias in str(raw.get("aliases") or "").split("|")
+                 if alias.strip())
+
+
 def _pick(items, scenario_text, battle, warnings):
     """决定用哪一个文件，返回 ((name, path, kind) | None, matched_by)。"""
     if battle:
@@ -289,6 +305,8 @@ def _pick(items, scenario_text, battle, warnings):
         hits = [it for it in items if it[0] == wanted]
         if not hits:
             hits = [it for it in items if it[0].casefold() == wanted.casefold()]
+        if not hits:
+            hits = [it for it in items if wanted in battle_aliases(it[1])]
         if not hits:
             warnings.append(
                 f"裁决库中没有战役「{wanted}」，已回落到默认几何参数。")
@@ -314,6 +332,14 @@ def _pick(items, scenario_text, battle, warnings):
                 "多个战役名同时命中（" + "、".join(names) + "），取排序第一份，请改用显式指定。")
         return _prefer_library(top, warnings), "contains"
 
+    alias_hits = [(len(alias), it) for it in items
+                  for alias in battle_aliases(it[1]) if alias in text]
+    if alias_hits:
+        longest = max(length for length, _ in alias_hits)
+        top = [it for length, it in alias_hits if length == longest]
+        if len({it[0] for it in top}) > 1:
+            warnings.append("多个战役别名同时命中，请显式选择战役；当前取排序第一份。")
+        return _prefer_library(top, warnings), "alias"
     return None, "fallback"
 
 
@@ -356,9 +382,22 @@ def resolve(scenario_text="", battle=None, corpus_dir=None, library_dir=None):
         source=path,
         source_kind=kind,
         matched_by=matched_by,
+        time_step_hint=str(raw.get("time_step") or ""),
         warnings=warnings,
         errors=errors,
     )
+
+
+def list_battle_details(library_dir=None, corpus_dir=None):
+    """给前端用：每场战役一行，带建议回合跨度（time_step 提示）。"""
+    details = {}
+    for name, path, _kind in _collect(library_dir, corpus_dir):
+        raw, _errors = parse_frontmatter(path)
+        hint = str(raw.get("time_step") or "")
+        # library 排在前面：同名战役以裁决库那份的提示为准
+        if name not in details or not details[name]["time_step"]:
+            details[name] = {"name": name, "time_step": hint}
+    return [details[k] for k in sorted(details)]
 
 
 def load_battle(name, corpus_dir=None, library_dir=None):

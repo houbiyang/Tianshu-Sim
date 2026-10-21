@@ -1,0 +1,323 @@
+[
+  {
+    "id": "command",
+    "label": "指挥机构",
+    "keywords": [
+      "指挥",
+      "司令部",
+      "总部",
+      "headquarters",
+      "command post"
+    ],
+    "symbol": "★",
+    "march_speed_kmh": 3,
+    "range_hint_m": null,
+    "ground_control": false,
+    "ground_geometry": true
+  },
+  {
+    "id": "medical",
+    "label": "医疗后送",
+    "keywords": [
+      "医疗",
+      "卫生队",
+      "野战医院",
+      "medical",
+      "ambulance"
+    ],
+    "symbol": "+",
+    "march_speed_kmh": 3,
+    "range_hint_m": null,
+    "ground_control": false,
+    "ground_geometry": true
+  },
+  {
+    "id": "signal",
+    "label": "通信",
+    "keywords": [
+      "通信",
+      "通讯",
+      "signal",
+      "communications"
+    ],
+    "symbol": "⌁",
+    "march_speed_kmh": 3,
+    "range_hint_m": null,
+    "ground_control": false,
+    "ground_geometry": true
+  },
+  {
+    "id": "rail",
+    "label": "铁道运输",
+    "keywords": [
+      "铁道",
+      "铁路运输",
+      "railway",
+      "rail transport"
+    ],
+    "symbol": "□",
+    "march_speed_kmh": 3,
+    "range_hint_m": null,
+    "ground_control": false,
+    "ground_geometry": true
+  },
+  {
+    "id": "transport",
+    "label": "汽车运输",
+    "keywords": [
+      "汽车运输",
+      "汽车兵",
+      "运输部队",
+      "后勤运输",
+      "运输",
+      "补给",
+      "辎重",
+      "logistics",
+      "transport"
+    ],
+    "symbol": "□",
+    "march_speed_kmh": 6,
+    "range_hint_m": null,
+    "ground_control": false,
+    "ground_geometry": true
+  },
+  {
+    "id": "engineer",
+    "label": "工兵",
+    "keywords": [
+      "工兵",
+      "架桥",
+      "工程保障",
+      "engineer"
+    ],
+    "symbol": "⚒",
+    "march_speed_kmh": 3,
+    "range_hint_m": null,
+    "ground_control": false,
+    "ground_geometry": true
+  },
+  {
+    "id": "aviation",
+    "label": "航空支援",
+    "keywords": [
+      "航空",
+      "战斗机",
+      "轰炸机",
+      "飞行",
+      "fighter",
+      "bomber",
+      "air support"
+    ],
+    "symbol": "∞",
+    "march_speed_kmh": 0,
+    "range_hint_m": null,
+    "ground_control": false,
+    "ground_geometry": false
+  },
+  {
+    "id": "naval",
+    "label": "舰艇支援",
+    "keywords": [
+      "舰艇支援",
+      "海军支援",
+      "驱逐舰",
+      "巡洋舰",
+      "战列舰",
+      "航空母舰",
+      "现代舰艇",
+      "destroyer",
+      "cruiser",
+      "battleship",
+      "aircraft carrier"
+    ],
+    "symbol": "⚓",
+    "march_speed_kmh": 0,
+    "range_hint_m": null,
+    "ground_control": false,
+    "ground_geometry": false
+  },
+  {
+    "id": "air_defense",
+    "label": "高射炮兵",
+    "keywords": [
+      "高射炮",
+      "高射机枪",
+      "高炮",
+      "防空",
+      "anti-air",
+      "air defense"
+    ],
+    "symbol": "⊕",
+    "march_speed_kmh": 4,
+    "range_hint_m": 2000,
+    "ground_control": false,
+    "ground_geometry": true
+  },
+  {
+    "id": "anti_tank",
+    "label": "反坦克",
+    "keywords": [
+      "反坦克",
+      "无后坐力",
+      "战防炮",
+      "anti-tank",
+      "antitank",
+      "recoilless"
+    ],
+    "symbol": "⊗",
+    "march_speed_kmh": 3,
+    "range_hint_m": 800,
+    "ground_control": false,
+    "ground_geometry": true
+  },
+  {
+    "id": "rocket",
+    "label": "火箭炮",
+    "keywords": [
+      "火箭炮",
+      "多管火箭",
+      "rocket artillery"
+    ],
+    "symbol": "●",
+    "march_speed_kmh": 6,
+    "range_hint_m": 8000,
+    "ground_control": false,
+    "ground_geometry": true
+  },
+  {
+    "id": "sp_artillery",
+    "label": "自行炮兵",
+    "keywords": [
+      "自行炮",
+      "自行火炮",
+      "self-propelled artillery"
+    ],
+    "symbol": "●",
+    "march_speed_kmh": 10,
+    "range_hint_m": 12000,
+    "ground_control": false,
+    "ground_geometry": true
+  },
+  {
+    "id": "towed_artillery",
+    "label": "牵引炮兵",
+    "keywords": [
+      "牵引炮",
+      "榴弹炮",
+      "加农炮",
+      "炮兵",
+      "towed artillery",
+      "howitzer"
+    ],
+    "symbol": "●",
+    "march_speed_kmh": 5,
+    "range_hint_m": 10000,
+    "ground_control": false,
+    "ground_geometry": true
+  },
+  {
+    "id": "mortar",
+    "label": "迫击炮",
+    "keywords": [
+      "迫击炮",
+      "mortar"
+    ],
+    "symbol": "●",
+    "march_speed_kmh": 2.5,
+    "range_hint_m": 3000,
+    "ground_control": false,
+    "ground_geometry": true
+  },
+  {
+    "id": "mechanized",
+    "label": "机械化步兵",
+    "keywords": [
+      "机械化步兵",
+      "装甲步兵",
+      "mechanized infantry",
+      "mechanised infantry"
+    ],
+    "symbol": "armor",
+    "march_speed_kmh": 10,
+    "range_hint_m": 500,
+    "ground_control": true,
+    "ground_geometry": true
+  },
+  {
+    "id": "motorized",
+    "label": "摩托化步兵",
+    "keywords": [
+      "摩托化步兵",
+      "汽车输送步兵",
+      "motorized infantry",
+      "motorised infantry"
+    ],
+    "symbol": "X",
+    "march_speed_kmh": 8,
+    "range_hint_m": 500,
+    "ground_control": true,
+    "ground_geometry": true
+  },
+  {
+    "id": "armor",
+    "label": "坦克装甲兵",
+    "keywords": [
+      "坦克",
+      "装甲兵",
+      "tank",
+      "armored",
+      "armoured"
+    ],
+    "symbol": "armor",
+    "march_speed_kmh": 12,
+    "range_hint_m": 2000,
+    "ground_control": true,
+    "ground_geometry": true
+  },
+  {
+    "id": "recon",
+    "label": "侦察",
+    "keywords": [
+      "侦察",
+      "侦查",
+      "reconnaissance",
+      "recon"
+    ],
+    "symbol": "◎",
+    "march_speed_kmh": 3.5,
+    "range_hint_m": 500,
+    "ground_control": true,
+    "ground_geometry": true
+  },
+  {
+    "id": "machine_gun",
+    "label": "机枪分队",
+    "keywords": [
+      "机枪",
+      "machine gun"
+    ],
+    "symbol": "X",
+    "march_speed_kmh": 3,
+    "range_hint_m": 800,
+    "ground_control": true,
+    "ground_geometry": true
+  },
+  {
+    "id": "infantry",
+    "label": "徒步步兵",
+    "keywords": [
+      "徒步步兵",
+      "轻步兵",
+      "山地步兵",
+      "步兵",
+      "陆战队",
+      "infantry",
+      "marine"
+    ],
+    "symbol": "X",
+    "march_speed_kmh": 3,
+    "range_hint_m": 500,
+    "ground_control": true,
+    "ground_geometry": true
+  }
+]

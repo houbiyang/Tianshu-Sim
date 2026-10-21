@@ -6,9 +6,15 @@
 """
 
 import json
+from .battlefield import CAPABILITY_NOTE
+import logging
+from urllib.parse import urlsplit
+from urllib.request import getproxies, proxy_bypass
 
 import streamlit as st
-from openai import OpenAI
+from openai import (APIConnectionError, APIStatusError, APITimeoutError,
+                    AuthenticationError, DefaultHttpxClient, OpenAI,
+                    RateLimitError, Timeout)
 
 from .config import (
     DEEPSEEK_BASE_URL,
@@ -21,8 +27,9 @@ from .config import (
 from .geo import get_coordinate_errors
 from .state import normalize_state_units
 
-# 已确认失效的模型，后续直接走回退，避免每回合都撞一次 400
-_MODEL_DEGRADED = set()
+# 记录每个主模型上次成功的回退模型，后续回合从这里继续。
+_MODEL_DEGRADED = {}
+_LOGGER = logging.getLogger(__name__)
 
 
 # ==========================================
@@ -31,7 +38,39 @@ _MODEL_DEGRADED = set()
 @st.cache_resource(show_spinner=False)
 def get_client(api_key):
     """按 DeepSeek API Key 缓存 OpenAI 客户端，避免每次调用都重建。"""
-    return OpenAI(api_key=api_key, base_url=DEEPSEEK_BASE_URL)
+    target = urlsplit(DEEPSEEK_BASE_URL)
+    proxies = getproxies()
+    proxy = None if proxy_bypass(target.netloc) else (
+        proxies.get(target.scheme) or proxies.get("all"))
+    # 只解析本次 HTTPS 请求实际使用的代理；无关的 ALL_PROXY=socks:// 不应使其启动失败。
+    # NO_PROXY 命中时明确直连，避免 HTTP 客户端再次读取环境变量覆盖这一选择。
+    transport = DefaultHttpxClient(proxy=proxy, trust_env=False)
+    return OpenAI(
+        api_key=api_key, base_url=DEEPSEEK_BASE_URL, http_client=transport,
+        timeout=Timeout(180, connect=10, write=30, pool=10), max_retries=2,
+    )
+
+
+def format_api_error(exc, operation):
+    """按真实故障类型给出可操作提示；日志不记录密钥、请求头或提示词。"""
+    _LOGGER.warning("DeepSeek operation=%s error=%s cause=%s status=%s", operation,
+                    type(exc).__name__, type(exc.__cause__).__name__ if exc.__cause__ else "none",
+                    getattr(exc, "status_code", None))
+    if isinstance(exc, APITimeoutError):
+        detail = "DeepSeek 响应超时，当前战局未推进。请稍后重试。"
+    elif isinstance(exc, APIConnectionError):
+        detail = "无法连接 DeepSeek（网络、代理或 TLS 连接失败），当前战局未推进。请检查网络后重试。"
+    elif isinstance(exc, AuthenticationError):
+        detail = "DeepSeek API Key 验证失败（401），请检查侧栏密钥。"
+    elif isinstance(exc, RateLimitError):
+        detail = "DeepSeek 请求频率或配额受限（429），请稍后重试。"
+    elif isinstance(exc, APIStatusError):
+        detail = f"DeepSeek 接口返回 HTTP {exc.status_code}，请检查服务状态或账号配置。"
+    elif isinstance(exc, ValueError) and "proxy" in str(exc).lower():
+        detail = "代理配置无法被 API 客户端识别，请检查 HTTPS_PROXY / ALL_PROXY。"
+    else:
+        detail = f"数据处理失败：{exc}"
+    return f"⚠️ {operation}未完成：{detail}"
 
 
 def _looks_like_model_error(exc):
@@ -43,18 +82,24 @@ def _looks_like_model_error(exc):
 
 def chat_completion(client, model, messages, **kwargs):
     """统一模型调用入口：主模型失效时自动回退，保证推演链不因模型名写错而全挂。"""
-    chain = [model] if model in _MODEL_DEGRADED else [model] + MODEL_FALLBACKS.get(model, [])
+    chain = [model] + MODEL_FALLBACKS.get(model, [])
+    preferred = _MODEL_DEGRADED.get(model)
+    if preferred in chain:
+        chain = chain[chain.index(preferred):]
     last_exc = None
-    for idx, m in enumerate(chain):
+    for m in chain:
         try:
             resp = client.chat.completions.create(model=m, messages=messages, **kwargs)
-            if idx > 0:
-                _MODEL_DEGRADED.add(model)
+            if m != model and preferred != m:
+                _MODEL_DEGRADED[model] = m
                 st.warning(f"⚠️ 模型 `{model}` 不可用，已自动回退至 `{m}`。"
                            f"建议在文件顶部配置区修正 MODEL_* 常量。")
             return resp
         except Exception as exc:
             last_exc = exc
+            if isinstance(exc, APIConnectionError):
+                # SDK 已有限重试；清除该密钥的连接缓存，让下一次点击使用新连接池。
+                get_client.clear(client.api_key)
             if not _looks_like_model_error(exc):
                 raise      # 鉴权/网络/配额问题原样抛出，别用回退掩盖真实故障
     raise last_exc
@@ -138,6 +183,7 @@ def get_r1_strategic_review(history, current_state, api_key):
     client = get_client(api_key)
 
     prompt = f"""
+    {CAPABILITY_NOTE}
     你现在是最高统帅部的首席战略推演官璇玑。
     以下是本次沙盘推演从开战至今的全部战报记录：
     {json.dumps(history, ensure_ascii=False, indent=2)}
@@ -177,6 +223,7 @@ def ask_xuanji(history, war_state, api_key, chat_messages):
 
     # 将战场环境动态注入到 System Prompt 中
     system_prompt = f"""
+    {CAPABILITY_NOTE}
     你是最高统帅部的首席战略推演官璇玑。冷酷、理性，深谙军事战略。
     以下是开战至今的全部战报：{json.dumps(history, ensure_ascii=False)}
     这是当前最新沙盘状态：{json.dumps(war_state, ensure_ascii=False)}

@@ -115,8 +115,9 @@ check("摘要行出现", "粮道被断" in cap, cap[:200])
 check("表格已渲染", len(at.dataframe) >= 1, len(at.dataframe))
 # 按列名找单位表，而不是取第 0 张 —— 面板以后再加别的表（例如「几何尺度明细」），
 # 取索引会张冠李戴，而且失败信息会指向错误的地方。
-_unit_tables = [d.value for d in at.dataframe if "单位" in list(d.value.columns)]
+_unit_tables = [d.value for d in at.dataframe if {"单位", "补给"}.issubset(d.value.columns)]
 check("单位表已渲染", bool(_unit_tables), [list(d.value.columns) for d in at.dataframe])
+check("人员战损表已渲染", any("战斗减员率" in d.value.columns for d in at.dataframe))
 if _unit_tables:
     df = _unit_tables[0]
     check("表格行数 = 3（三支部队）", len(df) == 3, len(df))

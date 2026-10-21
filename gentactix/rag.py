@@ -211,7 +211,7 @@ class BM25Index:
         }
 
     def search(self, query: str, top_k: int = 4, min_score: float = 1.0,
-               relative_floor: float = 0.35):
+               relative_floor: float = 0.35, allowed_sources=None):
         """返回 [{score, source, section, doc_title, text}]，按分数降序。
 
         「强 token 门控」是这里最关键的一条，不是调参能替代的：
@@ -231,6 +231,8 @@ class BM25Index:
 
         scored = []
         for idx, (tf, dl) in enumerate(self.docs):
+            if allowed_sources is not None and self.chunks[idx]["source"] not in allowed_sources:
+                continue
             score = 0.0
             strong_hit = False
             for token in unique:
@@ -278,12 +280,25 @@ class BM25Index:
         return results
 
 
-def search(query: str, corpus_dir=None, top_k: int = 4, min_score: float = 1.0):
+def search(query: str, corpus_dir=None, top_k: int = 4, min_score: float = 1.0,
+           battle=None):
     """一步到位：载入语料 → 建索引 → 检索。语料为空则返回 []。"""
     chunks = load_corpus(corpus_dir)
     if not chunks:
         return []
-    return BM25Index(chunks).search(query, top_k=top_k, min_score=min_score)
+    # 九份档案含有共同战争名称和相邻战役引用。先锁定场景，再排名，
+    # 否则“上甘岭”可能取回1952年全线反击的2.7万作为本场伤亡。
+    from . import adjudication_lib
+    root = Path(corpus_dir) if corpus_dir else CORPUS_DIR
+    spec = adjudication_lib.resolve(query, battle=battle, corpus_dir=root)
+    selected = f"{spec.name}.md"
+    allowed = None
+    if spec.name.startswith("抗美援朝-") and any(c["source"] == selected for c in chunks):
+        allowed = {c["source"] for c in chunks
+                   if c["source"] == selected or not c["source"].startswith("抗美援朝-")}
+        query = f"{spec.name} {query}"
+    return BM25Index(chunks).search(query, top_k=top_k, min_score=min_score,
+                                   allowed_sources=allowed)
 
 
 # ==========================================

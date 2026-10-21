@@ -5,6 +5,10 @@
 """
 
 import json
+from . import sim_clock
+from .unit_types import modern_unit_instruction
+from .battlefield import DISPLAY_INSTRUCTION
+from .anchors import node_metadata
 
 
 # ==========================================
@@ -48,7 +52,7 @@ REPORT_STYLE_RULES = """
 
 TIME_FORMAT_RULE = (
     "\n        ⏱️ current_time 必须是**简短的时间表述**（8—18 字），"
-    "例如「公元前260年秋 某日黎明前两小时」。\n"
+    "现代已知日期必须使用YYYY-MM-DD HH:MM格式，例如1952-10-14 04:00。\n"
     "        严禁把战局背景、兵力、考据括注写进这个字段——它只是时间，"
     "写成一句话会让整个战报标题变成一段考据。\n"
     "        不确定具体日期就用「某日」「某年」这类模糊表述；"
@@ -57,14 +61,25 @@ TIME_FORMAT_RULE = (
 
 
 def build_node_instruction(available_nodes):
-    """根据命中的高精锚点库，动态组装「高精战术锚点解锁」或「通用地理生成」指令。"""
+    """给模型实际坐标、来源与精度边界，而非仅给地名。"""
     if available_nodes:
-        node_names_str = "、".join(available_nodes.keys())
+        rows = []
+        for name, coords in available_nodes.items():
+            meta = node_metadata(name)
+            rows.append({"node_name": name, "lat": coords[0], "lng": coords[1],
+                         **({"kind": meta["kind"],
+                             "uncertainty_km": meta["uncertainty_km"],
+                             "source": meta["source_url"], "note": meta["note"]}
+                            if meta else {})})
+        nodes_json = json.dumps(rows, ensure_ascii=False)
         return f"""
-        5. ⚓ 【高精战术锚点解锁】：本次推演战区已被系统高精地图覆盖！你可以选择将核心单位部署在以下极高精度的锚点位置：
-           [{node_names_str}]
-           - 如果你决定使用锚点，请在单位 JSON 属性中新增字段 "node_name" 并填入对应锚点名称。
-           - 剩余不需要精确锚定的单位，或者未解锁锚点的单位，请照常生成 "lat" 和 "lng"。
+        5. ⚓ 【地理参考锚点】：下列为当前战役可用的经纬度参考（lat=纬度，lng=经度）：
+           {nodes_json}
+           - 先用参考点确定真实战区与center；按用户指定阶段和战线分别部署，第二次战役东西两线不可混为一处。
+           - 仅当单位确实驻于该点时，在单位 JSON 中填写完全一致的 "node_name"，系统会据此吸附坐标。
+           - 进攻、途经或支援某点不等于已占领该点；这些单位用参考点周边合理的独立 lat/lng，不填写node_name。
+           - 地名中心不代表战时阵地；uncertainty_km是工作不确定范围，不是测绘保证。不得把所有部队堆在参考点上。
+           - 未收录的部署位置仍须有合理历史依据，不能据这些参考点虚构坑道、补给站、道路或DEM地形。
             """
     return "5. 【通用地理生成】：请依靠你的历史地理知识，自行生成合理的 lat 和 lng 坐标。"
 
@@ -87,7 +102,7 @@ def build_init_prompt(scenario_input, available_nodes, briefing=""):
         你是一位顶级的军事战略分析师和历史学家。请针对以下背景进行推演初始化： '{scenario_input}'。
 {briefing_block}
         1. 确定核心战区的真实经纬度。
-        2. ⏱️ 【战前静默时间线】：必须将【起始时间】设定在历史冲突真正爆发的 **前 1 到 2 小时**（例如：日军第一波战机尚未起飞，美军尚在沉睡的宁静阶段）。第 0 回合绝对禁止发生交火。
+        2. ⏱️ 【场景起始时间】：按用户指定的战役或子阶段设置起点；未给具体时刻时，设在本阶段首次行动前1到2小时。不得把1951—1953年场景倒退到1950年战争爆发。第0回合描述已有态势，不新增本回合交火；前期损耗和既有阵地必须保留。
 
         3. 🌟 【动态非对称兵力生成】：请严格依据真实历史背景中的【红蓝实力对比】，进行符合史实的兵力部署！
            - 数量分配：全场核心单位总数严格控制在 12 到 24个之间。你需要根据历史真实的兵力悬殊比例，不对称地分配双方单位数量（例如：如果历史上是1:3的劣势，你可以分配为 红方4个 vs 蓝方12个）。{briefing_rule}
@@ -116,7 +131,7 @@ def build_init_prompt(scenario_input, available_nodes, briefing=""):
         【最高级 JSON 格式强制警告】：
         经纬度必须且只能使用 "lat" 和 "lng" 这两个独立的键名！
         绝对不允许擅自发明同义词或将其打包合并！
-{REPORT_STYLE_RULES}{TIME_FORMAT_RULE}
+{REPORT_STYLE_RULES}{TIME_FORMAT_RULE}{modern_unit_instruction(scenario_input + briefing)}{DISPLAY_INSTRUCTION}
         请直接返回 JSON 数据，格式如下：
         {{
           "center": [lat, lng],
@@ -191,9 +206,12 @@ def build_step_prompt(war_state, next_turn_num, time_step, use_live_intel, brief
     return f"""
         当前系统时间：{war_state.get('current_time', '00:00')}
         这是第{next_turn_num} 轮推演。当前回合流逝的时间跨度为：【{time_step}】。
+{modern_unit_instruction(json.dumps(war_state, ensure_ascii=False) + briefing)}
+{DISPLAY_INSTRUCTION}
         当前战场数据：{json.dumps(war_state, ensure_ascii=False)}
 {briefing_block}{adjudication_block}
        ### 强制任务：
+       {sim_clock.instruction(war_state, time_step)}
        {intel_instruction}
         {timeline_cmd}
         {physics_cmd}
@@ -231,6 +249,10 @@ def build_step_prompt(war_state, next_turn_num, time_step, use_live_intel, brief
         3. 兵力只能减少。只有「援军抵达 / 就地整补」这类事件可以让 hp 增加，
            且必须在 report 里写明理由；否则会被标记为兵力异常。
         4. 单位已失去战斗力但仍保留在列表里时，把 hp 写成 0，不要留一个满编数字。
+        5. 在顶层decisions数组记录本回合最多6个关键决策：team（red/blue）、unit_name（已有番号）、
+           action（具体命令）、rationale（简短依据）、expected_effect（预期影响）。
+           这是可公开核对的决策摘要，不是内部思维链。决策意图不等于已证明的因果关系；
+           未能确认决策时返回空数组，不为已发生的战果编造意图或因果贡献百分比。
 {REPORT_STYLE_RULES}{TIME_FORMAT_RULE}
         请直接返回以下 JSON 结构：
         {{
@@ -253,6 +275,7 @@ def build_step_prompt(war_state, next_turn_num, time_step, use_live_intel, brief
             "eliminated": ["本回合被歼灭的单位名称；没有就给空数组 []"]
           }},
           "report": "必须以 '【T+{next_turn_num} | 新时间】' 开头。战报正文（讲解体，150—200 字）...",
+          "decisions": [{{"team":"red","unit_name":"已有番号","action":"具体命令","rationale":"可核对的简短依据","expected_effect":"预期影响"}}],
           "source_note": "考据注（30—60 字，交代数字出处与争议；无史料则说明系推演）..."
         }}
         """

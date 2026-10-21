@@ -296,21 +296,47 @@ battle = {
                   unit("赵军乙", 35.9100, 112.8700)],
     "blue_units": [unit("秦军甲", 35.9600, 112.8800)],
 }
-tight = adj.adjudicate(battle, "1天", params={"contact_km": 0.5})
-loose = adj.adjudicate(battle, "1天", params={"contact_km": 50.0})
+tight = adj.adjudicate(battle, "15分钟", params={"contact_km": 0.5})
+loose = adj.adjudicate(battle, "15分钟", params={"contact_km": 50.0})
 check("参数确实进了计算（接触线放大后接触数上升）",
-      loose["summary"]["can_contact"] >= tight["summary"]["can_contact"],
+      loose["summary"]["can_contact"] > tight["summary"]["can_contact"],
       (tight["summary"]["can_contact"], loose["summary"]["can_contact"]))
 check("不同参数产生不同指纹（能区分，不是形参）",
       tight["fingerprint"] != loose["fingerprint"])
 check("同一参数两次指纹相同（仍可复现）",
-      adj.adjudicate(battle, "1天", params={"contact_km": 0.5})["fingerprint"]
+      adj.adjudicate(battle, "15分钟", params={"contact_km": 0.5})["fingerprint"]
       == tight["fingerprint"])
 
 rows = L.param_table(L.resolve(battle="长平之战"))
 check("界面参数表覆盖全部键", len(rows) == len(L.PARAM_SCHEMA), len(rows))
 check("参数表能标出哪些是默认值",
       any(r["来源"] == "默认" for r in rows) or all(r["来源"] == "本战役标定" for r in rows))
+
+# ==========================================
+# 🗺️ terrain_factor 标定 + time_step 建议回合跨度
+# ==========================================
+spec_cp = L.resolve(battle="长平之战")
+check("长平已标定 terrain_factor=1.4（河谷丘陵，覆盖模型标签）",
+      spec_cp.explicit.get("terrain_factor") == 1.4, spec_cp.explicit)
+check("time_step 是元信息：不产生未知参数错误",
+      not any("time_step" in e for e in spec_cp.errors), spec_cp.errors)
+check("time_step 提示透出（前端预填回合跨度）",
+      spec_cp.time_step_hint == "6小时", spec_cp.time_step_hint)
+details = {d["name"]: d for d in L.list_battle_details()}
+check("list_battle_details 带建议回合跨度",
+      details.get("长平之战", {}).get("time_step") == "6小时", details)
+cp_row = next(r for r in L.param_table(spec_cp) if r["参数"] == "terrain_factor")
+check("参数表把 terrain_factor 标成本战役标定", cp_row["来源"] == "本战役标定", cp_row)
+
+with tempfile.TemporaryDirectory() as td:
+    lib = Path(td) / "lib"
+    lib.mkdir()
+    write_battle(lib, "坏地形", "---\nbattle_name: 坏地形\nterrain_factor: 0.5\n---\n")
+    s_bad = L.resolve(battle="坏地形", library_dir=lib, corpus_dir=empty_dir(td))
+    check("terrain_factor 越界必须报错且不生效",
+          any("terrain_factor" in e for e in s_bad.errors)
+          and "terrain_factor" not in s_bad.explicit,
+          (s_bad.errors, s_bad.explicit))
 
 # ==========================================
 print()

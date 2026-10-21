@@ -1,4 +1,36 @@
-# GenTactix
+# GenTactix-DSH
+
+**开发维护单位：沈阳理工大学装备工程学院深度学习实验室。**
+
+基于 [pystrategylab/Gentactix](https://github.com/pystrategylab/Gentactix) 扩展，感谢原作者开源。
+保留上游 MIT 版权和许可证，详见 [署名与致谢](NOTICE.md)。
+
+本分支增加 Vue/Electron 界面、DSH 原生领域工具与控制插件、决策轨迹、归因与反事实分析。
+启动后显示中国及周边地图，在战役资料库中选择场景，或通过问答生成想定，确认参数后进入推演工作台。
+菜单 **配置 → DSH · LLM配置**（`Ctrl+,`）显示当前生效的接口与模型，可编辑 vLLM/OpenAI 兼容或 DeepSeek Flash 的地址、模型、密钥、上下文、超时和各角色预算。
+配置与密钥使用 Fernet 认证加密保存于项目根目录 `.gentactix-llm.enc`（已忽略）；解密密钥位于 `~/.config/GenTactix-DSH/vault.key`，不随项目上传。更换接口不会自动发送原接口密钥。
+
+```bash
+python -m pip install -r requirements.txt -r requirements-dsh.txt
+python -m uvicorn backend.main:app --host 127.0.0.1 --port 8700
+# 另开终端启动前端开发服务器
+cd frontend
+npm ci
+npm run dev
+```
+
+vLLM 使用实际 `served-model-name`；DeepSeek 推荐 `deepseek-flash`，也支持填写 `deepseek-v4-flash` 兼容别名，参见[官方API文档](https://api-docs.deepseek.com/)。
+首次启动可用 `GENTACTIX_LLM_BASE_URL`、`GENTACTIX_LLM_MODEL`、`GENTACTIX_LLM_API_KEY` 环境变量引导；界面保存的加密配置优先。公开版本不含预置私有 API Key。
+战局自动写入 `.cache/sessions/`，新版后端重启自动恢复；JSON 导出支持 `POST /api/sessions/import` 导入。
+后端 `/api/health` 返回加载版本与磁盘版本，二者不一致会显示重启提示。
+
+Linux 用户可从 [Releases](https://github.com/snow-wind-001/Gentactix-DSH/releases) 下载 AppImage 或便携压缩包，无需另装 Python/Conda。源码打包与加密配置迁移见[桌面使用说明](docs/桌面启动与配置.md)。
+
+当前回归与真实调用证据见 [TESTING.md](TESTING.md) 和[本轮验收报告](docs/桌面与配置验收-2026-10-22.md)，插件和分析边界见[架构说明](docs/因果分析与DSH插件架构.md)。以下保留上游功能说明与历史记录。
+
+![启动与战役选择](docs/screenshots/launch.png)
+
+![推演工作台（固定响应界面验收）](docs/screenshots/workspace.png)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](requirements.txt)
@@ -150,7 +182,7 @@ Gentactix/
 ## Run locally
 
 ```bash
-cd C:\Gentactix-Judge
+cd Gentactix
 
 python -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
@@ -168,7 +200,11 @@ Then open http://localhost:8501, paste a DeepSeek API key in the sidebar, and en
 **Verify without spending a token.** All of these run offline and need no API key:
 
 ```bash
-python verify_adjudicator.py        # 67 checks: geometry, supply cut, encirclement, reproducibility
+python verify_all.py                # Run every offline regression, workflow and probe check
+# Also validate the deployment build (requires npm ci and a running Docker daemon):
+python verify_all.py --with-worker --with-container
+
+python verify_adjudicator.py        # 68 checks: geometry, supply cut, encirclement, reproducibility
 python verify_adjudication_lib.py   # 59 checks: no bleed between battles, validation, round-trip
 python verify_app_integration.py    # 22 checks: kernel stays opt-in, panel renders when on, toggle bites
 python verify_anchors.py            # 74 checks: anchor library regression
@@ -176,15 +212,94 @@ python verify_integrity.py          # 43 checks: roster restore, kill channel, n
 python verify_integrity_panel.py    # 16 checks: panel appears on trouble, stays silent otherwise
 python verify_roundtrip_guard.py    # 14 checks: stubbed model omits a unit, guard must save it
 python measure_turn_degradation.py  #  6 checks: prompt growth vs turn count, roster attrition
+python verify_engine.py             # SDK response parsing, model fallback, coordinate retries
+python verify_features.py           # RAG, session isolation, geography, map layers, JSON export
+python verify_workflow.py           # Initialize → advance → review → chat → export, using fixed API responses
 
 python live_adjudication_probe.py --dry-run   # detector self-test: feed it a known-bad response
 python live_adjudication_probe.py             # needs DEEPSEEK_API_KEY: does the model obey?
+python live_workflow_probe.py                 # Real init/turn/review/chat/export; prompts for key, incurs API usage
 ```
+
+`verify_all.py` saves individual logs and a JSON summary in `.cache/qa/`; any failed check
+returns a nonzero exit code. It never calls a live model or uploads a deployment. See
+[TESTING.md](TESTING.md) for the local reproduction steps, coverage and external-service limits.
 
 `verify_adjudication_lib.py` is the one worth reading if you plan to add a battle: it builds two
 temporary battles that override *different* keys and asserts neither can see the other's values.
 The same file reproduces the old last-write-wins merge and asserts it produces a blend that
 neither battle ever specified — so the isolation assertion cannot pass vacuously.
+
+---
+
+## 抗美援朝九次战役资料
+
+新增九份同名配对的 `corpus/` 史料与 `adjudication/` 几何参数，名称统一为
+`抗美援朝-战役名称-起止时间`。含来源核对、损失口径差异、简称匹配和近现代兵种分类。
+完整清单、使用方法与史实修订见 [抗美援朝资料说明](docs/抗美援朝资料说明.md)。
+九场分别提供28个有来源的[地理参考锚点](docs/抗美援朝地理锚点.md)，区分历史地名、现代参考点与工作精度。
+史料检索与确定性裁决须分别开启；几何工作值不等于历史战损模型。
+
+## 战场图层与战损展示
+
+地图支持地形底图、地形要素、方向射界、最大/最小射程及补给节点和路线，各图层可单独开关。
+“态势与战损”页按双方和单位展示人员战斗/非战斗减员、装备可用/待修/永久损失。
+人数和装备采用独立计数，未知数据保持空缺；退场单位保留最后损失记录。
+字段结构、比例公式、数据来源与功能边界见[战场图层与战损数据](docs/战场图层与战损数据.md)。
+Vue和Streamlit共用同一展示数据模块；射程图形未计算地形遮挡或确定性伤亡。
+
+## Desktop variant: dsh harness + Vue3/Electron
+
+新增[因果分析与DSH插件架构](docs/因果分析与DSH插件架构.md)：原生领域工具、在途取消、分角色预算、
+决策轨迹、状态转折候选、几何归因和成对原生分支。进入“因果与轨迹”页使用；各分支保持只读。
+
+A second front door for the same simulation core: a FastAPI backend (`backend/`) whose three model
+brains all run through the **DeepSeek Harness** (dsh) Python SDK — `dsh --profile sdk-minimal` as a
+subprocess over JSON-RPC — instead of the OpenAI SDK, and a **Vue 3 + Electron** desktop app
+(`frontend/`) in place of Streamlit. The Streamlit flow above stays intact; both doors share
+`gentactix/`, `corpus/` and `adjudication/`.
+
+The harness talks to a **LAN vLLM** endpoint (OpenAI-compatible). Connection settings live in
+`.env.wargame` (gitignored):
+
+```bash
+GENTACTIX_LLM_BASE_URL=http://<lan-host>:8081/v1
+GENTACTIX_LLM_API_KEY=<key>
+GENTACTIX_LLM_MODEL=<served-model-name>
+```
+
+**dsh isolation:** the harness runs with `dsh_home` pointed at the project-local
+`.dsh-wargame-home/` and `cwd` at `.dsh-wargame-workspace/`. It never reads or writes `~/.dsh`,
+so an existing global dsh configuration (providers, profiles, sessions) is untouched.
+
+Run it (conda env `wargame`, Python 3.10+; needs `deepseek_harness`, `fastapi`, `uvicorn`, `SRTM.py`):
+
+```bash
+conda activate wargame
+python -m uvicorn backend.main:app --host 127.0.0.1 --port 8700   # backend only
+
+cd frontend
+npm install
+npm run dev     # Vite dev server + Electron window (Electron also spawns the backend itself)
+npm run build && npm start   # production build
+```
+
+The Electron shell starts the backend via `conda run -n wargame python -m uvicorn …`, waits for
+`/api/health`, and reuses an already-running backend instead of double-binding the port.
+
+The desktop map is a faithful port of `gentactix/viz.py` (`frontend/src/tactical.ts`): NATO APP-6
+style symbols (red diamond / blue rectangle frames with per-branch glyphs and nameplates), march
+trails with animated ant paths and `➤` arrows, engagement radii derived from the attacker's range
+(× 1.2, unit-type fallback table), directional impact sectors (±30°) that degrade to hollow dashed
+rings when no attack bearing is given, radius-tiered colors, and the same tile-layer set — Gaode
+stays hidden for its GCJ-02 offset. The caption strip under the map (engagement stats, RAG
+injection, roster/numeric conservation) and the adjudication panel keep app.py's analysis wording.
+
+Offline regression for this layer (skips cleanly where `deepseek_harness` is not installed):
+
+```bash
+python verify_harness_engine.py   # JSON extraction, coordinate retry, dsh_home isolation, review/chat
+```
 
 ---
 
@@ -432,6 +547,9 @@ MODEL_CHAT       = "deepseek-reasoner"   # sidebar Q&A
 Each entry has a fallback chain in `MODEL_FALLBACKS`. If a model name is unavailable on your account, the engine degrades to the next model instead of raising.
 
 To point at a different OpenAI-compatible provider, change `DEEPSEEK_BASE_URL` and the model names together.
+
+The desktop variant above ignores these names: its model is whatever the LAN vLLM serves
+(`GENTACTIX_LLM_MODEL`), reached through the dsh harness rather than the OpenAI SDK.
 
 ---
 

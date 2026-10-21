@@ -1,0 +1,7 @@
+# Desktop/API runtime; install alongside requirements.txt. Tested Python 3.10.
+fastapi==0.156.8
+uvicorn==0.53.0
+httpx==0.28.1
+cryptography==50.0.1
+deepseek-harness-sdk==0.2.1rc2
+deepseek-harness-runtime-bin==0.2.1rc2

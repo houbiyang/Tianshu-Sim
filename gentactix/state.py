@@ -4,9 +4,13 @@
 现统一为 get_unit_field / extract_lat_lng，单点维护、口径一致。
 """
 
+import copy
 import json
 
-import streamlit as st
+try:
+    import streamlit as st  # Streamlit 前端可用时提供 session_state
+except ImportError:
+    st = None  # 无 Streamlit 运行时（如 FastAPI 后端）：仅使用本模块的纯函数
 
 from .config import to_float
 
@@ -34,7 +38,7 @@ def ensure_session_state():
     """幂等初始化所有 Session State 键，避免后续访问 AttributeError。"""
     for _key, _default in DEFAULT_SESSION_STATE.items():
         if _key not in st.session_state:
-            st.session_state[_key] = _default
+            st.session_state[_key] = copy.deepcopy(_default)
 
 
 # ==========================================

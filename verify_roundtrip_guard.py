@@ -66,7 +66,7 @@ FIXTURE = {
 FAKE_RESPONSE = {
     "updated_state": {
         "center": [35.83, 112.85],
-        "current_time": "公元前260年秋 次日",
+        "current_time": "公元前260年秋 某日黎明 · T+30分钟",
         "era": "战国",
         "red_units": [
             {"name": "赵军主力", "type": "步兵", "lat": 35.9006, "lng": 112.8556,

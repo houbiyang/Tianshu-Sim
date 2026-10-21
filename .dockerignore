@@ -23,6 +23,8 @@ wrangler.jsonc
 *.md
 !corpus/*.md
 !corpus/**/*.md
+!adjudication/*.md
+!adjudication/**/*.md
 *.orig_backup
 __pycache__
 *.pyc
@@ -31,3 +33,17 @@ __pycache__
 # 本地虚拟环境（若有）
 .venv
 venv
+.cache
+.playwright-cli
+.env
+.env.*
+.gentactix-llm.enc*
+*.key
+.packaging-venv
+.dsh-wargame-home
+.dsh-wargame-workspace
+release
+dist-backend
+build-backend
+frontend/node_modules
+.firecrawl
