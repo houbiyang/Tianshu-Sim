@@ -118,7 +118,7 @@ class DesktopBackendTest(unittest.TestCase):
     def test_health_exposes_versions(self):
         h = self.client.get("/api/health").json()
         self.assertEqual(h["engine"], "deepseek-harness")
-        self.assertEqual(h["adjudicator_version"], "geo-3")
+        self.assertEqual(h["adjudicator_version"], "geo-4")
 
     def test_battlefield_snapshot_carries_nested_metrics_and_archived_losses(self):
         sid = self._create()

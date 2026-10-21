@@ -40,7 +40,7 @@ from . import adjudication_lib
 from .unit_types import classify_unit
 
 # 版本标记：界面上显示，用来区分「内核改了」和「这局确实没变化」
-ADJUDICATOR_VERSION = "geo-3"
+ADJUDICATOR_VERSION = "geo-4"
 
 # 平面近似的换算系数（km / 度）
 _KM_PER_DEG_LAT = 110.57
@@ -304,6 +304,9 @@ def unit_attack_range_m(unit):
 
 def unit_control_radius_km(unit, minimum=3.0):
     """该单位能形成的区域控制半径（km）= max(下限, 射程 × 1.2)。"""
+    hp = _to_float(_field(unit, "hp"))
+    if hp is not None and hp <= 0:
+        return 0.0
     profile = classify_unit(_field(unit, "type", ""))
     if profile and not profile["ground_control"]:
         return 0.0
@@ -325,12 +328,13 @@ def _unit_view(unit, team):
     lng = _to_float(_field(unit, "lng"))
     if lat is None or lng is None:
         return None
+    hp = _to_float(_field(unit, "hp"))
     return {
         "name": str(_field(unit, "name", "未命名单位") or "未命名单位").strip() or "未命名单位",
         "team": team,
         "type": str(_field(unit, "type", "") or ""),
         "pos": (lat, lng),
-        "hp": _to_float(_field(unit, "hp")) or 1.0,
+        "hp": hp if hp is not None else 1.0,
         "raw": unit,
     }
 
@@ -339,6 +343,10 @@ def _collect_units(war_state):
     units, skipped = [], []
     for team, key in UNIT_CONTAINERS:
         for unit in (war_state.get(key) or []):
+            hp = _to_float(_field(unit, "hp"))
+            if hp is not None and hp <= 0:
+                skipped.append(f"{_field(unit, 'name', '未命名单位')}（HP≤0，保留记录但不参加地面几何）")
+                continue
             profile = classify_unit(_field(unit, "type", ""))
             if profile and not profile["ground_geometry"]:
                 skipped.append(f"{_field(unit, 'name', '未命名单位')}（航空/舰艇支援不参加地面几何）")

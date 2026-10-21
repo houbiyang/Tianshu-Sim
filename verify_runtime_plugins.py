@@ -4,6 +4,7 @@ import json
 import os
 import tempfile
 import unittest
+from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
@@ -42,6 +43,23 @@ class RuntimePluginTests(unittest.TestCase):
     def tearDown(self):
         self.mock.stop(); self.persist.stop(); self.env.stop(); self.directory.cleanup(); main._SESSIONS.clear()
 
+    def test_trace_waits_for_buffered_tail_and_checks_event_type(self):
+        from backend.analysis_routes import verify_dsh_records
+        path = Path(self.directory.name) / 'sessions/workspace/trace-test/session.v4.jsonl'
+        path.parent.mkdir(parents=True)
+        event = {'seq': 7, 'type': 'turn/end'}
+        record = {'runs': [{'id': 'run', 'session_id': 'trace-test', 'last_seq': 7, 'events': [event]}]}
+        with patch.object(h, 'DSH_HOME', self.directory.name):
+            path.write_text('{"seq":7')
+            with patch('backend.analysis_routes.time.sleep', side_effect=lambda _: path.write_text(json.dumps(event) + '\n')):
+                self.assertEqual(verify_dsh_records(record)[0]['status'], 'verified')
+            path.write_text(json.dumps({'seq': 7, 'type': 'user/message'}) + '\n')
+            self.assertEqual(verify_dsh_records(record, flush_timeout=0)[0]['status'], 'partial')
+            path.write_text('not-json\n')
+            self.assertEqual(verify_dsh_records(record, flush_timeout=0)[0]['status'], 'corrupt')
+            path.write_text('')
+            self.assertEqual(verify_dsh_records(record, flush_timeout=0)[0]['found_events'], 0)
+
     def response(self, payload, sid):
         text = json.dumps(payload, ensure_ascii=False) if isinstance(payload, dict) else payload
         return SimpleNamespace(final_response=text, finish_reason='completed', session_id=sid,
@@ -60,6 +78,16 @@ class RuntimePluginTests(unittest.TestCase):
         self.responses.append(initial())
         self.assertEqual(self.client.post(f'/api/sessions/{sid}/init').status_code, 200)
         return sid
+
+    def test_restored_snapshot_exposes_actual_session_controls(self):
+        sid = self.create()
+        main._SESSIONS[sid].update(use_agent_tools=True, persist_roles=True,
+                                   agent_mode='native', use_live_intel=False)
+        snap = self.client.get(f'/api/sessions/{sid}').json()
+        self.assertEqual(snap['time_step'], '15分钟')
+        self.assertTrue(snap['adjudication']['enabled'])
+        self.assertEqual(snap['settings'], {'use_agent_tools': True, 'persist_roles': True,
+                                          'agent_mode': 'native', 'use_live_intel': False})
 
     def advance(self, sid):
         self.responses.append(advanced())

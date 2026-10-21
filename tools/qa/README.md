@@ -9,12 +9,19 @@ never publish that directory because it can contain model outputs and local path
 .venv/bin/python verify_all.py --with-worker --with-container
 conda run -n wargame python verify_release_boundaries.py
 node tools/qa/electron_boundary.cjs
+node tools/qa/build_proxy.cjs
 ```
 
 The legacy environment skips desktop checks when the SDK is absent. Run the
 desktop suites in the environment containing `requirements-dsh.txt`; inspect
 `unittest_skipped` in the result JSON instead of treating task exit codes as
 complete coverage.
+
+The build proxy regression covers HTTP/HTTPS downloads, NO_PROXY, checksum
+rejection and untrusted TLS certificates using local servers. It validates the
+scoped `@electron/get@3.1.0` → `global-agent@4.1.3` override, which removes the
+vulnerable `roarr` → `sprintf-js` build dependency chain. Keep full `npm audit`
+enabled; remove the override when the upstream downloader no longer needs it.
 
 ## Browser acceptance
 
@@ -40,6 +47,11 @@ Responses are fixed fixtures; these checks do **not** establish model quality.
 
 ```bash
 conda run -n wargame python tools/live_release_smoke.py --live
+conda run -n wargame python tools/live_campaign_soak.py --live --turns 20 \
+  --out .cache/qa/live-soak
+conda run -n wargame python tools/qa/audit_campaign.py \
+  --export .cache/qa/live-soak/export.json --dsh-home .cache/qa/live-soak/dsh \
+  --out .cache/qa/live-soak/audit.json
 conda run -n wargame python tools/qa/live_cancel.py --live \
   --session-export .cache/qa/live-release/export.json
 ```
@@ -48,6 +60,10 @@ These commands use the existing encrypted LLM settings and incur real API usage.
 They isolate battles, traces and DSH homes. `--resume` on the first command resumes
 its isolated two-turn checkpoint after a later-stage failure; retain the original
 failed result separately. A pass does not certify every historical scenario.
+The soak runner also supports `--resume`: it continues from the last committed
+checkpoint and retains earlier attempts. It restarts the native runtime after
+turn 10. The export audit checks every snapshot, including turns committed before
+a failed verification; optional loss records and guard warnings remain visible.
 
 For Linux packages, use a separate Xvfb display and `GENTACTIX_PORT`,
 `GENTACTIX_DESKTOP_DATA`, and CDP port. `desktop_key.py` exercises native menus.

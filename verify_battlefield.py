@@ -20,6 +20,16 @@ def scenario():
 
 
 class BattlefieldTests(unittest.TestCase):
+    def test_zero_hp_retains_loss_records_without_live_fire_overlays(self):
+        original = scenario()
+        original['red_units'][0]['hp'] = 0
+        before = copy.deepcopy(original)
+        view = battlefield.build_battlefield_view(original)
+        self.assertFalse(any(r['team'] == 'red' for r in view['fire_ranges']))
+        self.assertFalse(any(r['team'] == 'red' for r in view['fields_of_fire']))
+        self.assertEqual(view['losses']['units'][0]['personnel']['loss_rate'], .08)
+        self.assertEqual(original, before)
+
     def test_hp_is_never_headcount_and_missing_data_stays_unknown(self):
         view = battlefield.build_battlefield_view({"red_units": [{"name": "旧单位", "hp": 1000}], "blue_units": []})
         self.assertIsNone(view["losses"]["units"][0]["personnel"])

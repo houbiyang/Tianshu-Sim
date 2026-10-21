@@ -84,6 +84,8 @@ export function natoSymbol(unit: Unit): string {
 
 export function natoHtml(unit: Unit, team: "red" | "blue"): string {
   const symbol = natoSymbol(unit);
+  const hp = toFloat(unit.hp ?? unit["兵力"]);
+  const inactive = hp !== null && hp <= 0;
   const unitName = escapeHtml(unitNameOf(unit));
   const frame = team === "red"
     ? `<div style="position: relative; width: 30px; height: 30px;">
@@ -103,10 +105,10 @@ export function natoHtml(unit: Unit, team: "red" | "blue"): string {
         color: black; font-weight: bold; font-size: 20px; font-family: sans-serif;">
         ${symbol}
     </div>`;
-  return `<div style="display: flex; flex-direction: column; align-items: center; width: 120px; margin-left: -60px; margin-top: -15px;">
+  return `<div class="${inactive ? "unit-inactive" : "unit-active"}" style="${inactive ? "filter: grayscale(1); opacity: .65;" : ""} display: flex; flex-direction: column; align-items: center; width: 120px; margin-left: -60px; margin-top: -15px;">
     ${frame}
     <div class="unit-name" style="background: rgba(0,0,0,0.7); color: #fff; font-size: 11px; padding: 2px 5px; border-radius: 3px; margin-top: 3px; font-family: sans-serif; white-space: nowrap; border: 1px solid rgba(255,255,255,0.2);">
-        ${unitName}
+        ${unitName}${inactive ? " · 已失能" : ""}
     </div>
 </div>`;
 }
@@ -118,6 +120,7 @@ export function unitPopup(unit: Unit): string {
   const moraleIcon = morale > 50 ? "🔥" : "⚠️";
   const supplyIcon = supply > 50 ? "🔋" : "🪫";
   return `<b>${escapeHtml(unitNameOf(unit))}</b><br>类型: ${escapeHtml(unitTypeOf(unit) || "?")}<br>HP: ❤️ ${escapeHtml(hp)}` +
+    ((toFloat(hp) ?? 1) <= 0 ? '<br>已失能：保留历史位置，不参与地面几何裁决' : '') +
     `<br>士气: ${moraleIcon} ${morale}%<br>补给: ${supplyIcon} ${supply}%`;
 }
 

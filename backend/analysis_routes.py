@@ -4,6 +4,7 @@ from __future__ import annotations
 import copy
 import json
 import re
+import time
 import uuid
 from pathlib import Path
 
@@ -35,7 +36,10 @@ def _record(session, turn):
     raise ValueError('未找到当前开局的回合轨迹；旧进程的历史战报不能补造决策前快照')
 
 
-def verify_dsh_records(record):
+def verify_dsh_records(record, *, flush_timeout=2.0):
+    # DSH publishes turn/end before its buffered JSONL writer has necessarily
+    # flushed. Bound the wait for all runs together; missing evidence stays partial.
+    deadline = time.monotonic() + flush_timeout
     rows = []
     for run in record.get('runs', []):
         sid = run.get('session_id', '')
@@ -43,14 +47,26 @@ def verify_dsh_records(record):
         if re.fullmatch(r'[A-Za-z0-9_.-]+', sid) and isinstance(run.get('last_seq'), int):
             paths = list((Path(h.DSH_HOME) / 'sessions').glob(f'*/{sid}/session.v4.jsonl'))
             if len(paths) == 1:
-                wanted = set(e['seq'] for e in run.get('events', []) if isinstance(e.get('seq'), int))
-                found = set()
-                with paths[0].open() as stream:
-                    for line in stream:
-                        item = json.loads(line)
-                        if item.get('seq') in wanted:
-                            found.add(item['seq'])
-                row.update(status='verified' if wanted and found == wanted else 'partial',
+                wanted = {(e['seq'], e.get('type')) for e in run.get('events', []) if isinstance(e.get('seq'), int)}
+                while True:
+                    found, corrupt = set(), False
+                    with paths[0].open() as stream:
+                        for line in stream:
+                            # An unfinished final line can be a concurrent append.
+                            if not line.endswith('\n'):
+                                continue
+                            try:
+                                item = json.loads(line)
+                            except json.JSONDecodeError:
+                                corrupt = True
+                                break
+                            key = (item.get('seq'), item.get('type'))
+                            if key in wanted:
+                                found.add(key)
+                    if corrupt or found == wanted or time.monotonic() >= deadline:
+                        break
+                    time.sleep(min(.05, max(0, deadline - time.monotonic())))
+                row.update(status='corrupt' if corrupt else 'verified' if wanted and found == wanted else 'partial',
                            expected_events=len(wanted), found_events=len(found))
         rows.append(row)
     return rows

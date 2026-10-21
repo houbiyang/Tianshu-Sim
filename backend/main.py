@@ -46,7 +46,7 @@ async def lifespan(_app):
     harness_engine.close_harness()
 
 
-app = FastAPI(title="GenTactix dsh backend", version="3.1.1", lifespan=lifespan)
+app = FastAPI(title="GenTactix dsh backend", version="3.1.2", lifespan=lifespan)
 
 # Electron 渲染进程（dev: vite 端口 / prod: file://）都要能访问本机后端
 app.add_middleware(
@@ -278,6 +278,12 @@ def _snapshot(session: dict) -> dict:
         "scenario": session["scenario_input"],
         "turn_count": session["turn_count"],
         "time_step": session["time_step"],
+        "settings": {
+            "use_agent_tools": bool(session.get("use_agent_tools")),
+            "persist_roles": session.get("persist_roles") if session.get("persist_roles") is not None else harness_engine.PERSIST_ROLES,
+            "agent_mode": session.get("agent_mode", "json"),
+            "use_live_intel": bool(session.get("use_live_intel")),
+        },
         "war_state": session["war_state"],
         "last_war_state": session["last_war_state"],
         "battlefield": battlefield.build_battlefield_view(session["war_state"], session["adj_last"]),

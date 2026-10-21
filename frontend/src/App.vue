@@ -29,6 +29,7 @@ let unsubscribeMenu: (() => void) | undefined;
 function openSettings() { settingsDialog.value?.showModal(); void settingsPanel.value?.reload(); }
 async function resumeSession(id: string) {
   if (await run('正在恢复战局…', () => api.get(id))) {
+    if (snap.value) restoreOptions(snap.value);
     sessionId.value = id; localStorage.setItem('gentactix-session', id); screen.value = 'workspace';
   }
 }
@@ -96,7 +97,7 @@ async function refreshBackend() {
     catch { recentSessions.value = []; }
     const saved = localStorage.getItem('gentactix-session');
     if (saved) {
-      try { apply(await api.get(saved)); sessionId.value = saved; }
+      try { const savedState = await api.get(saved); apply(savedState); restoreOptions(savedState); sessionId.value = saved; }
       catch { localStorage.removeItem('gentactix-session'); }
     }
     return true;
@@ -104,6 +105,12 @@ async function refreshBackend() {
     error.value = `后端未就绪：${e}`;
     return false;
   }
+}
+
+function restoreOptions(s: Snapshot) {
+  Object.assign(opts, { scenario: s.scenario, time_step: s.time_step,
+    battle: s.adjudication.battle_choice || '', use_adjudicator: s.adjudication.enabled,
+    use_rag: s.rag.enabled, ...s.settings });
 }
 
 function apply(s: Snapshot) {

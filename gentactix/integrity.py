@@ -190,7 +190,8 @@ def check_numeric_integrity(prev_state, new_state, hp_gain_tolerance=HP_GAIN_TOL
 
     三类问题：
     - `hp_gain`：hp 上涨。可能是增援/整补（合法），也可能是模型漏减。
-    - `hp_zero_alive`：hp 归零但仍在列表里。地图照样画满编军标，视觉上错。
+    - `hp_zero_alive`：hp 归零但仍在列表里，提示核实是否应显式归档。
+      geo-4 已排除其几何影响，桌面以失能标记保留历史位置。
     - `hp_negative`：hp 为负，一定是错的。
     """
     flags = []

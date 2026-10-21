@@ -17,7 +17,14 @@ function projectRoot() {
     if (fs.existsSync(path.join(candidate, 'AGENTS.md')) && fs.existsSync(path.join(candidate, 'gentactix'))) return candidate;
     candidate = path.dirname(candidate);
   }
-  return directory;
+  // A .deb installs binaries in /opt, where an ordinary user cannot save the
+  // encrypted settings. Give installed apps a writable project workspace.
+  try { fs.accessSync(directory, fs.constants.W_OK); return directory; }
+  catch {
+    const workspace = path.join(app.getPath('userData'), 'project');
+    fs.mkdirSync(workspace, { recursive: true });
+    return workspace;
+  }
 }
 const PORT = String(process.env.GENTACTIX_PORT || '8700');
 if (!/^\d{2,5}$/.test(PORT) || +PORT > 65535) throw new Error('Invalid backend port');

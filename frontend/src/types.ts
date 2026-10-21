@@ -146,6 +146,7 @@ export interface Snapshot {
   scenario: string;
   turn_count: number;
   time_step: string;
+  settings?: { use_agent_tools: boolean; persist_roles: boolean; agent_mode: string; use_live_intel: boolean };
   war_state: WarState | null;
   last_war_state: WarState | null;
   battlefield?: BattlefieldView;

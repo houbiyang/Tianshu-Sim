@@ -247,6 +247,9 @@ def build_battlefield_view(state, adjudication=None):
                          "source": str(f.get("source") or "战局记录")})
     for team, u in _units(state):
         pos = _coord([u.get("lat"), u.get("lng")])
+        hp = _number(u.get("hp", u.get("兵力")))
+        if hp is not None and hp <= 0:
+            continue
         if not pos:
             continue
         profile = classify_unit(u.get("type"))

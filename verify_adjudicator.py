@@ -13,6 +13,7 @@
 """
 
 import sys
+import copy
 import tempfile
 from pathlib import Path
 
@@ -315,6 +316,18 @@ check("DEFAULT 里的 terrain_factor 默认值不算标定",
 
 print()
 print("=" * 60)
+inactive_state = copy.deepcopy(changping)
+for u in inactive_state['blue_units']:
+    u['hp'] = 0
+inactive_copy = copy.deepcopy(inactive_state)
+inactive_result = adj.adjudicate(inactive_state, '15分钟', turn=1)
+check("零HP单位不产生接触、包围与补给封锁", all(
+    r['team'] == 'red' and not r['can_contact'] and r['nearest_enemy'] is None
+    and r['cut_by'] is None and r['encirclement'] == '未被围'
+    for r in inactive_result['units']))
+check("零HP单位保留原始状态用于历史与战损", inactive_state == inactive_copy)
+check("零HP控制半径归零", adj.unit_control_radius_km({'hp': 0, 'type': '徒步步兵'}) == 0)
+check("未知HP不擅自判定失能", adj.unit_control_radius_km({'type': '徒步步兵'}) > 0)
 print(f"结果：{PASS} 通过 / {FAIL} 失败")
 for item in FAILURES:
     print(f"  ✗ {item}")
