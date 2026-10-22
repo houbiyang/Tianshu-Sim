@@ -84,15 +84,15 @@ def build_node_instruction(available_nodes):
     return "5. 【通用地理生成】：请依靠你的历史地理知识，自行生成合理的 lat 和 lng 坐标。"
 
 
-def build_init_prompt(scenario_input, available_nodes, briefing=""):
+def build_init_prompt(scenario_input, available_nodes, briefing="", simulation_mode="open"):
     """🚀 初始化沙盘：返回战前部署 Prompt（含动态锚点指令与可选史料摘录）。"""
     node_instruction = build_node_instruction(available_nodes)
 
     # 📚 史料注入：只有真的检索到内容时才出现，避免给模型一个空的「史料库」暗示
     briefing_block = f"\n{briefing}\n" if briefing else ""
     briefing_rule = (
-        "\n           - 📚 【史料优先】：上方史料若给出双方兵力数字，必须按其**比例**分配到 12—24 个单位上"
-        "\n             （比例保真即可，不必凑出原始数字）。"
+        "\n           - 📚 【史料优先】：上方史料若给出双方兵力数字，保留其统计范围与编制层级，不按可视单位个数摊派人数"
+        "\n             （未知的局部人数保持未知，合成编组必须标注教学假设）。"
         "\n           - 📚 数字的出处与争议写进 source_note，**不要写进 situation_report 正文**。"
         "\n           - 📚 史料标注「未载」「有争议」的项，禁止补成确数。"
         if briefing else ""
@@ -102,11 +102,11 @@ def build_init_prompt(scenario_input, available_nodes, briefing=""):
         你是一位顶级的军事战略分析师和历史学家。请针对以下背景进行推演初始化： '{scenario_input}'。
 {briefing_block}
         1. 确定核心战区的真实经纬度。
-        2. ⏱️ 【场景起始时间】：按用户指定的战役或子阶段设置起点；未给具体时刻时，设在本阶段首次行动前1到2小时。不得把1951—1953年场景倒退到1950年战争爆发。第0回合描述已有态势，不新增本回合交火；前期损耗和既有阵地必须保留。
+        2. ⏱️ 【场景起始时间】：按用户指定的战役或子阶段设置起点；未给具体时刻时，可采用便于教学的工作时刻，并在source_note标注时刻假设。不得把1951—1953年场景倒退到1950年战争爆发。第0回合描述已有态势，不新增本回合交火；前期损耗和既有阵地必须保留。
 
         3. 🌟 【动态非对称兵力生成】：请严格依据真实历史背景中的【红蓝实力对比】，进行符合史实的兵力部署！
-           - 数量分配：全场核心单位总数严格控制在 12 到 24个之间。你需要根据历史真实的兵力悬殊比例，不对称地分配双方单位数量（例如：如果历史上是1:3的劣势，你可以分配为 红方4个 vs 蓝方12个）。{briefing_rule}
-           - 质量代换：对于历史上【兵力较少，但单兵素质/装备更优】的一方，你必须在其单体单位的 HP、战斗力、morale(士气0-100) 上给予显著的数值优势。
+           - 数量分配：根据资料的编制层级和局部范围选择少量编组；不得为凑足12至24个单位虚构番号。单位个数不代表人数比例，人数须独立记录；未知人数明确标未知。{briefing_rule}
+           - 质量代换：对于历史上【兵力较少，但单兵素质/装备更优】的一方，可在战斗力、morale上作有标注的教学假设；hp不是人员计数，禁止因装备优势增加人数。
            - 每个单位必须包含以下【英文键名】（键名严禁翻译成中文，字段值可以是中文）：
              "name"(名称/番号)、"type"(兵种类型)、"lat"(纬度)、"lng"(经度)、"hp"(兵力值)、
              "combat_power"(战斗力)、"speed"(移动速度)、"attack_range"(射程)、
@@ -128,7 +128,7 @@ def build_init_prompt(scenario_input, available_nodes, briefing=""):
            - 正文写进 situation_report，考据写进 source_note，时间写进 current_time —— 三者不许混。
            - 正文按下方【战报写作规范】写，150—200 字。
         【绝对地理红线】：所有包含“舰”、“船”、“航母”、“潜艇”的海洋单位，经纬度必须位于水域中！
-        6.历史锚定原则：如果是历史上的战争，需要严格按照历史剧本进行推演。
+        6. {mode_instruction(simulation_mode)}
         【最高级 JSON 格式强制警告】：
         经纬度必须且只能使用 "lat" 和 "lng" 这两个独立的键名！
         绝对不允许擅自发明同义词或将其打包合并！
@@ -147,8 +147,14 @@ def build_init_prompt(scenario_input, available_nodes, briefing=""):
         """
 
 
+def mode_instruction(simulation_mode="open"):
+    if simulation_mode == "replay":
+        return "【历史回放】按有出处的事件顺序讲解，未载细节标明推演；回放不是决策效果或因果检验，不得按历史总伤亡机械扣减本回合人员。"
+    return "【开放推演】只以起点已知条件和本回合决策计算后果，允许偏离历史结果；历史结局不是必须发生的事件。禁止因抵达某个史实日期强制位移、伤亡或胜负；不得使用未来战果作为决策依据。"
+
+
 def build_step_prompt(war_state, next_turn_num, time_step, use_live_intel, briefing="",
-                      adjudication=None):
+                      adjudication=None, simulation_mode="open"):
     """⏩ 单回合推演：返回含史料锚定与物理约束的 Prompt。
 
     `adjudication` 为 adjudicator.adjudicate() 的结果（可选）。传入时把几何裁决
@@ -177,7 +183,7 @@ def build_step_prompt(war_state, next_turn_num, time_step, use_live_intel, brief
         )
     else:
         physics_cmd = (
-            "2. **物理计算辅助**：在绝对尊重历史时间线的前提下，结合各单位的"
+            "2. **物理计算辅助**：在当前状态与回合时间约束下，结合各单位的"
             "【移动速度】和【射程】计算合理的走位微调。\n"
             "           - 补给低于 20 机动减半；士气低于 30 战力下降。"
         )
@@ -185,14 +191,16 @@ def build_step_prompt(war_state, next_turn_num, time_step, use_live_intel, brief
     # 🐛 原文写的是「立即检索你数据库中关于该历史事件的真实时间线」——
     #    项目并没有任何数据库或联网检索，这句话只是在诱导模型「编得像查过」。
     #    现在分两种措辞：有史料就要求逐条比对，没史料就要求对不确定处标注「存疑」。
-    if briefing:
+    if simulation_mode != "replay":
+        timeline_cmd = mode_instruction("open")
+    elif briefing:
         # 注意：这里不能写「在战报中注明依据（如『据《史记》载……』）」——
         # 那与下方【战报写作规范】禁止考据用语直接冲突，模型会写成四不像。
         # 依据一律落到 source_note，正文只讲战场变化。
         timeline_cmd = (
             f"1. **精准时间推进与史料锚定（最高级命令）**：你必须将系统时间准确向后推进【{time_step}】。"
             "推进后，**逐条比对上方【史料摘录】中有明确记载的时间节点**：若新时间点已抵达其中某个事件，"
-            "必须让相关单位产生符合该记载的位移与战损，并把该事件对应的文献依据写进 source_note"
+            "在讲解中说明相关历史事件与出处；本回合状态只按本次行动更新，历史累计战损不能直接写入单位账本。依据写进 source_note"
             "（正文只讲战场怎么变，不要在正文里引用书名）。"
             "史料未覆盖的时段按军事常识推演，但**禁止编造具体史实、禁止虚构出处或书名**。"
         )
@@ -200,7 +208,7 @@ def build_step_prompt(war_state, next_turn_num, time_step, use_live_intel, brief
         timeline_cmd = (
             f"1. **精准时间推进（最高级命令）**：你必须将系统时间准确向后推进【{time_step}】。"
             "本次**未提供史料摘录**，你只能依据自身历史知识推演：若新时间点对应你已知的标志性事件，"
-            "应让相关单位产生相应位移与战损；对没有把握的史实，需在 source_note 中说明"
+            "可以在讲解中注明，但不得将未知战损补造为单位账；对没有把握的史实，需在 source_note 中说明"
             "「此项无出处、系推演」，不要写成确证，更不得虚构书名或章节。"
         )
 
@@ -215,10 +223,11 @@ def build_step_prompt(war_state, next_turn_num, time_step, use_live_intel, brief
        ### 强制任务：
        {sim_clock.instruction(war_state, time_step)}
        {intel_instruction}
+        {mode_instruction(simulation_mode)}
         {timeline_cmd}
         {physics_cmd}
            - 🌟 【绝对地理红线】：在计算位移时，必须确保所有海军单位的新坐标依然位于水域中！
-           - 🌟 【锚地静默规则】：如果海军单位当前处于狭窄的内海或港口内，且历史上的此时并未出动，【严禁】微调其坐标，保持原地静默！
+           - 🌟 【锚地静默规则】：海军在港口等待且本轮没有机动命令时保持原位；开放推演不因历史上未出动而禁止合法机动。
         3. **战报输出**：编写一段 150—200 字的实时战报（讲解体），
            正文写进 report，考据写进 source_note，两者不许混写。写作要求见下方【战报写作规范】。
 
@@ -238,11 +247,11 @@ def build_step_prompt(war_state, next_turn_num, time_step, use_live_intel, brief
         1. 该键**每回合都必须出现**：本回合无接触就输出空数组 []，不要省略该键；
         2. 交战对象内部**同样只允许英文键**：lat / lng / description / attacker / attacker_pos，
            严禁 "纬度"、"经度"、"描述"、"攻击者" 这类中文键（系统会直接丢弃该条交战）；
-        3. 只要双方最近单位距离 ≤ 3 公里，或任一方发起攻击/伏击/追击，就必须输出至少 1 条交战；
+        3. 只有本回合实际安排射程内的攻击并通过接触条件时才输出交战；3公里内靠近、追击或伏击准备本身不等于开火。
            确实尚未接触时，请在 report 里明确写出「双方仍在对峙/机动，尚未接战」。
 
         【单位名单守恒规则】（系统会逐回合核对，违反的部分会被自动回填或标记）
-        1. 上一回合还活着的单位，本回合**一个都不许省略** —— 名字与坐标必须原样带出。
+        1. 上一回合还活着的单位，本回合**一个都不许省略** —— 名字必须保留，坐标按本轮合法移动更新；未移动才原样带出。
            系统发现「既没阵亡、也没声明」的单位凭空消失，会按上一回合快照把它补回来，
            你这一回合对它做的任何安排都会失效。
         2. 确实被歼灭的单位：从 red_units / blue_units 里移除，**并把名字写进

@@ -65,13 +65,20 @@ STRATEGIC_NODES = {
 
 KOREAN_ANCHORS = json.loads(
     Path(__file__).with_name("korean_anchors.json").read_text(encoding="utf-8"))
-NODE_METADATA = {point["name"]: point for point in KOREAN_ANCHORS["points"].values()}
-for _battle, _entry in KOREAN_ANCHORS["campaigns"].items():
-    STRATEGIC_NODES[_battle] = {
-        KOREAN_ANCHORS["points"][key]["name"]:
-        KOREAN_ANCHORS["points"][key]["coordinates"]
-        for key in _entry["points"]
-    }
+LONG_MARCH_ANCHORS = json.loads(
+    Path(__file__).with_name("long_march_anchors.json").read_text(encoding="utf-8"))
+ANTI_JAPANESE_WAR_ANCHORS = json.loads(
+    Path(__file__).with_name("anti_japanese_war_anchors.json").read_text(encoding="utf-8"))
+NODE_METADATA = {}
+SCOPED_CAMPAIGNS = set()
+for _dataset in (KOREAN_ANCHORS, LONG_MARCH_ANCHORS, ANTI_JAPANESE_WAR_ANCHORS):
+    NODE_METADATA.update({p["name"]: p for p in _dataset["points"].values()})
+    for _battle, _entry in _dataset["campaigns"].items():
+        SCOPED_CAMPAIGNS.add(_battle)
+        STRATEGIC_NODES[_battle] = {
+            _dataset["points"][key]["name"]: _dataset["points"][key]["coordinates"]
+            for key in _entry["points"]
+        }
 
 
 def node_metadata(name):
@@ -80,17 +87,17 @@ def node_metadata(name):
 
 
 def collect_available_nodes(scenario_input, battle=None):
-    """按同一战役解析器选择九场朝鲜战争锚点；其余沿用旧战区匹配。
+    """按同一战役解析器选择已建档系列的锚点；其余沿用旧战区匹配。
 
-    显式选择优先、别名取最长，不因泛称“抗美援朝”混入全部九场。
+    显式选择优先、别名取最长，不因系列泛称混入全部场景。
     返回独立坐标列表，调用方无法修改源库。
     """
     text = str(scenario_input or "")
     selected = adjudication_lib.resolve(text, battle=battle).name
-    if selected in KOREAN_ANCHORS["campaigns"]:
+    if selected in SCOPED_CAMPAIGNS:
         return {name: list(coords) for name, coords in STRATEGIC_NODES[selected].items()}
     available_nodes = {}
     for key, nodes in STRATEGIC_NODES.items():
-        if key not in KOREAN_ANCHORS["campaigns"] and key in text:
+        if key not in SCOPED_CAMPAIGNS and key in text:
             available_nodes.update({name: list(coords) for name, coords in nodes.items()})
     return available_nodes

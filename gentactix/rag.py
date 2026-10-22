@@ -281,34 +281,67 @@ class BM25Index:
 
 
 def search(query: str, corpus_dir=None, top_k: int = 4, min_score: float = 1.0,
-           battle=None):
+           battle=None, phase=None, simulation_mode=None):
     """一步到位：载入语料 → 建索引 → 检索。语料为空则返回 []。"""
     chunks = load_corpus(corpus_dir)
     if not chunks:
         return []
-    # 九份档案含有共同战争名称和相邻战役引用。先锁定场景，再排名，
-    # 否则“上甘岭”可能取回1952年全线反击的2.7万作为本场伤亡。
+    # 先锁定系列和场景，再排名；跨场战果和不同年份的同名渡江不可混用。
     from . import adjudication_lib
     root = Path(corpus_dir) if corpus_dir else CORPUS_DIR
     spec = adjudication_lib.resolve(query, battle=battle, corpus_dir=root)
     selected = f"{spec.name}.md"
     allowed = None
-    if spec.name.startswith("抗美援朝-") and any(c["source"] == selected for c in chunks):
+    series = {"抗美援朝-": "抗美援朝/", "红军长征-": "红军长征/", "抗日战争-": "抗日战争/"}
+    prefix = next((p for p in series if spec.name.startswith(p)), None)
+    if prefix and any(c["source"] == selected for c in chunks):
         allowed = {c["source"] for c in chunks
-                   if c["source"] == selected or not c["source"].startswith("抗美援朝-")}
+                   if c["source"] == selected or c["source"].startswith(series[prefix])}
         query = f"{spec.name} {query}"
-    return BM25Index(chunks).search(query, top_k=top_k, min_score=min_score,
-                                   allowed_sources=allowed)
+    if simulation_mode == "open":
+        # Do not inject future timelines and aggregate outcomes into an open decision.
+        chunks = [c for c in chunks if c["section"] not in
+                  {"作战过程与指挥时间线", "作战过程要点", "伤亡、兵力快照与结果", "伤亡与结果", "资料与出处"}]
+    index = BM25Index(chunks)
+    if phase not in ("init", "step") or allowed is None:
+        return index.search(query, top_k=top_k, min_score=min_score,
+                            allowed_sources=allowed)
+    # 初始化必须看见战役范围、指挥关系和证据限制；不能让链接目录挤掉它们。
+    ranked = index.search(query, top_k=len(chunks), min_score=min_score,
+                          allowed_sources=allowed)
+    selected_chunks = {c["section"]: c for c in chunks if c["source"] == selected}
+    if phase == 'init':
+        required = ['时间与地点', '双方兵力与指挥', '争议与待考']
+    else:
+        # Historical families use different headings for the same essential constraints.
+        required = [next((name for name in alternatives if name in selected_chunks), alternatives[0])
+                    for alternatives in [('推演目标、关键决策与反事实', '对推演建模的关键约束'),
+                                         ('争议与待考', '双方兵力与指挥'), ('兵种、装备与补给', '兵种与装备')]]
+    if simulation_mode == 'replay' and phase == 'step':
+        required.append('作战过程与指挥时间线' if '作战过程与指挥时间线' in selected_chunks else '作战过程要点')
+    result = []
+    for section in required:
+        if section in selected_chunks:
+            hit = next((h for h in ranked if h["source"] == selected and
+                        h["section"] == section), None)
+            result.append(dict(hit or dict(selected_chunks[section], score=0.0), required=True))
+    seen = {(h["source"], h["section"]) for h in result}
+    for hit in sorted(ranked, key=lambda h: h["section"] == "资料与出处"):
+        key = (hit["source"], hit["section"])
+        if key not in seen:
+            result.append(hit)
+            seen.add(key)
+    return result[:max(top_k, 1)]
 
 
 # ==========================================
 # 🧾 注入 prompt 的史料摘要
 # ==========================================
-BRIEFING_HEADER = """【史料摘录 · 最高优先级】
-以下内容来自本项目**本地已核对史料库**，不是你的记忆，也不是网络检索结果。
+BRIEFING_HEADER = """【史料摘录 · 证据与适用范围】
+以下内容来自本地登记来源的资料库。公开报道、回忆转述、日期异文和教学假设的证据等级不同，不等于均已核验原始档案。
 
 硬性规则：
-1. 与之冲突时，一律以史料为准。史料给出的数字、日期、人名、地名**不得改写、不得四舍五入、不得补全**。
+1. 保留条目来源、统计范围与证据限定；不同来源冲突时并列说明，不擅自裁定。数字、日期、人名、地名不得改写、四舍五入或补全；教学假设不得称为史实。
 2. 史料明确标注「未载」「有争议」的内容，你必须在文字中保留这一限定，禁止编造成确数。
 3. 史料未覆盖的细节可以合理推演，但不得伪造出处、不得虚构书名或章节。
 4. 这些内容只能写进文字字段（situation_report / report / description / source_note），
@@ -316,32 +349,105 @@ BRIEFING_HEADER = """【史料摘录 · 最高优先级】
    不要塞进正文——正文是战场讲解，读者在那里不想读到文献综述。"""
 
 
+def _evidence_blocks(text):
+    """完整段落、列表项或带表头的整行；绝不切开数值、范围或出处链接。"""
+    blocks, paragraph, table = [], [], []
+
+    def flush():
+        if paragraph:
+            blocks.append("\n".join(paragraph))
+            paragraph.clear()
+
+    for line in text.splitlines():
+        if line.startswith("|"):
+            flush()
+            if len(table) < 2:
+                table.append(line)
+            else:
+                blocks.append("\n".join(table + [line]))
+        else:
+            table.clear()
+            if not line.strip():
+                flush()
+            elif re.match(r"(?:[-*] |\d+[.)] )", line):
+                flush()
+                paragraph.append(line)
+            else:
+                paragraph.append(line)
+    flush()
+    return blocks
+
+
+def select_passages(results, max_chars=2400):
+    """按轮分配预算，保证短的必要章节有机会入选。预算不含固定规则头。
+
+    返回真正入选的内容供提示词和应用层工具共同使用；过长条目整体省略。
+    """
+    marker = "（受预算限制，仅列完整条目；省略内容不得自行补全。）"
+    groups = [_evidence_blocks(h["text"]) for h in results]
+    selected = [[] for _ in results]
+    selected_indexes = [set() for _ in results]
+    budget = max(0, max_chars)
+
+    def take(i, j):
+        nonlocal budget
+        if j in selected_indexes[i]:
+            return
+        block = groups[i][j]
+        overhead = 2
+        if not selected[i]:
+            head = f"\n[史料 {i + 1}] 来源：{results[i]['doc_title']} · {results[i]['section']}"
+            overhead += len(head) + len(marker) + 2
+        if len(block) + overhead <= budget:
+            selected[i].append(block)
+            selected_indexes[i].add(j)
+            budget -= len(block) + overhead
+
+    # 完整优先保留初始化所需的范围、编组和争议，再给长时间线分配剩余预算。
+    for i, item in enumerate(results):
+        if item.get("required"):
+            for j in range(len(groups[i])):
+                take(i, j)
+                if selected[i]:
+                    break
+    for i, item in enumerate(results):
+        if item.get("required"):
+            for j in range(len(groups[i])):
+                take(i, j)
+    for turn in range(max((len(g) for g in groups), default=0)):
+        for i, group in enumerate(groups):
+            if turn >= len(group):
+                continue
+            take(i, turn)
+    passages = []
+    for i, blocks in enumerate(selected):
+        if not blocks:
+            continue
+        body = "\n\n".join(blocks)
+        if len(blocks) < len(groups[i]):
+            body += "\n" + marker
+        passages.append(dict(results[i], text=body, excerpted=len(blocks) < len(groups[i])))
+    return passages
+
+
 def build_briefing(results, max_chars: int = 2400):
     """把检索结果拼成一段可注入的史料摘要。
 
     返回 (text, used_count)。used_count 是**实际写进 prompt 的段数**——
-    它可能小于 len(results)（超长会被截断），界面必须显示真实数字，
+    它可能小于 len(results)（超长完整条目会被省略），界面必须显示真实数字，
     否则用户会以为命中的段落全都进去了。
     """
     if not results:
         return "", 0
 
+    passages = select_passages(results, max_chars)
+    if not passages:
+        return "", 0
     blocks = [BRIEFING_HEADER]
-    used_chars = 0
-    used = 0
-    for i, item in enumerate(results, 1):
+    for i, item in enumerate(passages, 1):
         head = f"\n[史料 {i}] 来源：{item['doc_title']} · {item['section']}"
-        body = item["text"]
-        remain = max_chars - used_chars - len(head) - 2
-        if remain <= 80:
-            break
-        if len(body) > remain:
-            body = body[:remain].rstrip() + "……（后略）"
-        block = f"{head}\n{body}"
-        blocks.append(block)
-        used_chars += len(block)
-        used += 1
-    return "\n".join(blocks), used
+        blocks.append(f"{head}\n{item['text']}")
+    return "\n".join(blocks), len(passages)
 
 
 def format_sources(results) -> str:

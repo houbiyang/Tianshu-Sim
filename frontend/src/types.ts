@@ -20,7 +20,21 @@ export interface Engagement {
   [key: string]: unknown; // 中文键兜底（描述/战况/攻击方坐标…），与 viz.py 别名链同口径
 }
 
+export interface MissionDefinition {
+  id: string; battle: string; title: string; profile: string; assumptions: string;
+  goal: string; time_step: string; deadline_turn: number; required_turns: number;
+  objective: { lat: number; lng: number }; exit: { lat: number; lng: number }; goal_radius_km: number;
+}
+export interface MissionState {
+  id: string; version: string; definition_hash: string; initial_hash: string;
+  definition: MissionDefinition; turn: number; status: 'active' | 'completed'; winner: string | null;
+  reason: string; progress: number; network: number; organization: number;
+  metrics?: Record<string, number | boolean>;
+  last_orders: { unit: string; action: string; target?: string; lat?: number; lng?: number }[];
+  ledger: { unit: string; action: string; supply_status: string; delivery: number; food_spent: number; ammo_spent: number; food_after: number; ammo_after: number }[];
+}
 export interface WarState {
+  mission?: MissionState;
   current_time?: string;
   current_terrain?: string;
   situation_report?: string;
@@ -59,7 +73,7 @@ export interface Adjudication {
   hours: number;
   terrain: string;
   terrain_factor: number;
-  terrain_source?: string; // 模型地形标签 / 战役参数库标定
+  terrain_source?: string; // 模型地形标签 / 战役参数库配置
   contact_km: number;
   control_radius_km: number;
   units: AdjUnit[];
@@ -82,7 +96,8 @@ export interface BattleSpec {
   source: string | null; // 参数文件路径；null = 默认几何
   source_kind: string;   // library / corpus / default
   time_step_hint: string;
-  calibrated: boolean;
+  calibrated: boolean; // 兼容字段，仅表示存在显式参数
+  validation_status?: string; // teaching_estimate / unverified；不等于参数已配置
   errors: string[];
   warnings: string[];
   table: unknown;
@@ -146,7 +161,7 @@ export interface Snapshot {
   scenario: string;
   turn_count: number;
   time_step: string;
-  settings?: { use_agent_tools: boolean; persist_roles: boolean; agent_mode: string; use_live_intel: boolean };
+  settings?: { simulation_mode?: 'open' | 'replay'; mission_id?: string | null; use_agent_tools: boolean; persist_roles: boolean; agent_mode: string; use_live_intel: boolean };
   war_state: WarState | null;
   last_war_state: WarState | null;
   battlefield?: BattlefieldView;

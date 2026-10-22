@@ -216,6 +216,12 @@ function render() {
   drawUnits(snap, "blue", "blue");
   drawEngagements(snap);
   drawBattlefield();
+  const mission = snap.war_state?.mission;
+  if (mission) {
+    const spec = mission.definition;
+    L.circle([spec.objective.lat, spec.objective.lng], { radius: spec.goal_radius_km * 1000, color: '#eac87b', weight: 2, fillOpacity: .08, dashArray: '5 5' }).bindTooltip(textTooltip('教学目标区 · ' + spec.goal)).addTo(layerGroup);
+    L.circle([spec.exit.lat, spec.exit.lng], { radius: 600, color: '#76c9b2', weight: 2, fillOpacity: .06 }).bindTooltip(textTooltip('教学后方出口 · 600米')).addTo(layerGroup);
+  }
 }
 
 onMounted(() => {

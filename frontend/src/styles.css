@@ -313,3 +313,8 @@ select { max-width: 100%; }
   .main header .muted { flex-basis: 100%; }
 }
 @media (prefers-reduced-motion: reduce) { *, *:before, *:after { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
+
+/* The local objective panel occupies its own row; never displace the map into a toolbar row. */
+.main.has-mission { grid-template-rows: 42px auto minmax(220px, 1fr) 56px 44px 200px; overflow-y: auto; }
+.main.has-mission.dock-collapsed { grid-template-rows: 42px auto minmax(220px, 1fr) 56px 44px 0; }
+@media (max-width: 700px) { .main.has-mission { height: 1150px; grid-template-rows: 48px auto minmax(320px,1fr) 60px 44px 280px; } }

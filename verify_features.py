@@ -26,6 +26,31 @@ class RetrievalTests(unittest.TestCase):
     def tearDown(self):
         rag.clear_cache()
 
+    def test_budget_never_splits_numbers_qualifiers_or_citations(self):
+        header = "| 数量 | 范围及依据 |\n|---|---|"
+        row = "| 5000余人 | 毙伤俘合计；不是阵亡。[S11](https://example.org/source) |"
+        hits = [{"source": "sample.md", "doc_title": "包座", "section": "伤亡", "score": 1,
+                 "text": "未知不等于零。\n\n" + header + "\n" + row}]
+        before = copy.deepcopy(hits)
+        for budget in range(0, 450):
+            text, used = rag.build_briefing(hits, budget)
+            self.assertLessEqual(max(0, len(text) - len(rag.BRIEFING_HEADER)), budget)
+            if "500" in text:
+                self.assertIn(row, text)
+                self.assertIn(header, text)
+            self.assertNotIn("后略", text)
+            self.assertEqual(used, bool(text))
+        self.assertEqual(hits, before)
+
+    def test_oversized_paragraph_does_not_hide_later_short_evidence(self):
+        hits = [dict(source="a.md", doc_title="长段", section="过程", text="甲" * 5000),
+                dict(source="b.md", doc_title="短段", section="限制", text="伤亡未核得，不能填零。")]
+        passages = rag.select_passages(hits, 200)
+        self.assertEqual([p["source"] for p in passages], ["b.md"])
+        text, used = rag.build_briefing(hits, 200)
+        self.assertEqual(used, 1)
+        self.assertIn("伤亡未核得，不能填零。", text)
+
     def test_real_corpus_and_unrelated_queries(self):
         stats = rag.corpus_stats()
         self.assertGreater(stats["chunks"], 0)

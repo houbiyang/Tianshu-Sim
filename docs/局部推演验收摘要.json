@@ -1,0 +1,307 @@
+{
+  "scope": "20 synthetic local WWII China exercises, not historical campaign validation",
+  "passed": 20,
+  "committed_turns": 74,
+  "verified_dsh_runs": 76,
+  "prior_attempt_errors": [
+    {
+      "id": "AJ01-local-v1",
+      "failures": [
+        "replay mismatch red_units"
+      ]
+    },
+    {
+      "id": "AJ02-local-v1",
+      "failures": [
+        "replay mismatch red_units"
+      ]
+    },
+    {
+      "id": "AJ03-local-v1",
+      "failures": [
+        "replay mismatch red_units"
+      ]
+    },
+    {
+      "id": "AJ04-local-v1",
+      "failures": [
+        "replay mismatch red_units"
+      ]
+    },
+    {
+      "id": "AJ05-local-v1",
+      "failures": [
+        "replay mismatch red_units"
+      ]
+    },
+    {
+      "id": "AJ06-local-v1",
+      "failures": [
+        "replay mismatch red_units"
+      ]
+    },
+    {
+      "id": "AJ07-local-v1",
+      "failures": [
+        "next 502: {\"detail\":\"本回合推演失败：timed out\"}"
+      ]
+    },
+    {
+      "id": "AJ10-local-v1",
+      "failures": [
+        "next 502: {\"detail\":\"本回合推演失败：timed out\"}"
+      ]
+    }
+  ],
+  "profiles": {
+    "delay": 5,
+    "assault": 7,
+    "breakout": 3,
+    "rail": 1,
+    "underground": 1,
+    "air": 2,
+    "reception": 1
+  },
+  "rows": [
+    {
+      "id": "AJ01-local-v1",
+      "battle": "抗日战争-淞沪会战-1937.08.13至1937.11.12",
+      "profile": "delay",
+      "definition_hash": "8eb5df5117be002fade45a81ce63b18b5d3f5a833ea2b78acd490340e1ba09a0",
+      "winner": "red",
+      "passed": true,
+      "turns": 4,
+      "red_available": 300,
+      "blue_available": 240,
+      "changed_steps": 4
+    },
+    {
+      "id": "AJ02-local-v1",
+      "battle": "抗日战争-太原会战-1937.09至1937.11",
+      "profile": "delay",
+      "definition_hash": "cc1db19f7e005561fb97c4c5fa0f5d7e109f3150f1499b2a8d5c8d60a076c82a",
+      "winner": "red",
+      "passed": true,
+      "turns": 4,
+      "red_available": 219,
+      "blue_available": 219,
+      "changed_steps": 4
+    },
+    {
+      "id": "AJ03-local-v1",
+      "battle": "抗日战争-平型关伏击战-1937.09.25",
+      "profile": "assault",
+      "definition_hash": "0bc3b11afa7fbea6ff6795ab9557e5b38643ea59062b6c3d44c008aa09776d1b",
+      "winner": "blue",
+      "passed": true,
+      "turns": 4,
+      "red_available": 231,
+      "blue_available": 231,
+      "changed_steps": 4
+    },
+    {
+      "id": "AJ04-local-v1",
+      "battle": "抗日战争-徐州会战总览-1938.01至1938.05",
+      "profile": "breakout",
+      "definition_hash": "243af4622d322eca7d8cdfc1d0b79c7d8abaf1e0cbbe3c0d9da2f9120b24da64",
+      "winner": "red",
+      "passed": true,
+      "turns": 2,
+      "red_available": 300,
+      "blue_available": 300,
+      "changed_steps": 1
+    },
+    {
+      "id": "AJ05-local-v1",
+      "battle": "抗日战争-台儿庄战役-1938.03.23至1938.04.07",
+      "profile": "assault",
+      "definition_hash": "94dc12353d4531eb423be76e0cf9b1ea7b510ce90334d5bbe99ae56890d12be9",
+      "winner": "blue",
+      "passed": true,
+      "turns": 4,
+      "red_available": 258,
+      "blue_available": 264,
+      "changed_steps": 4
+    },
+    {
+      "id": "AJ06-local-v1",
+      "battle": "抗日战争-武汉会战-1938.06至1938.10",
+      "profile": "delay",
+      "definition_hash": "b041163c0fa42277565c2810e66ffe951ec5ad984bd79025535ea0dc843f8263",
+      "winner": "red",
+      "passed": true,
+      "turns": 4,
+      "red_available": 270,
+      "blue_available": 264,
+      "changed_steps": 2
+    },
+    {
+      "id": "AJ07-local-v1",
+      "battle": "抗日战争-万家岭战役-1938.09下旬至1938.10",
+      "profile": "assault",
+      "definition_hash": "fbeb622693f3a7e59bba61c1495b6c32d1984ec58af1c9707d19243432a63470",
+      "winner": "blue",
+      "passed": true,
+      "turns": 4,
+      "red_available": 300,
+      "blue_available": 216,
+      "changed_steps": 4
+    },
+    {
+      "id": "AJ08-local-v1",
+      "battle": "抗日战争-第一次长沙会战-1939.09.14至1939.10",
+      "profile": "delay",
+      "definition_hash": "b89fead86c0637b76bcffcd9a7548d20bbf74b07c904e39a21b99cfffa511c89",
+      "winner": "red",
+      "passed": true,
+      "turns": 4,
+      "red_available": 300,
+      "blue_available": 270,
+      "changed_steps": 4
+    },
+    {
+      "id": "AJ09-local-v1",
+      "battle": "抗日战争-第二次长沙会战-1941.09.07至1941.10.09",
+      "profile": "breakout",
+      "definition_hash": "83df14ab1965fb302a4033d2eb8933b4b7f71060256577471162e8fdce647236",
+      "winner": "red",
+      "passed": true,
+      "turns": 2,
+      "red_available": 300,
+      "blue_available": 300,
+      "changed_steps": 1
+    },
+    {
+      "id": "AJ10-local-v1",
+      "battle": "抗日战争-第三次长沙会战-1941.12.24至1942.01.16",
+      "profile": "assault",
+      "definition_hash": "02e5835593e5350c0ec5616865474d50bf69d2cb963c4932d93bfd327b6b0247",
+      "winner": "blue",
+      "passed": true,
+      "turns": 4,
+      "red_available": 204,
+      "blue_available": 204,
+      "changed_steps": 4
+    },
+    {
+      "id": "AJ11-local-v1",
+      "battle": "抗日战争-桂南会战与昆仑关攻坚-1939.11至1940.01",
+      "profile": "assault",
+      "definition_hash": "df99ea6531c389e1381be7a29ba76f69ff95f7cce8d3182166d2c96bfa7aec99",
+      "winner": "blue",
+      "passed": true,
+      "turns": 4,
+      "red_available": 300,
+      "blue_available": 216,
+      "changed_steps": 4
+    },
+    {
+      "id": "AJ12-local-v1",
+      "battle": "抗日战争-豫湘桂战役总览-1944.04至1944.12",
+      "profile": "breakout",
+      "definition_hash": "1a88e9fd43d366b089a94126b7ab3543395ae585b6da559bc45114ef2a70cbe4",
+      "winner": "red",
+      "passed": true,
+      "turns": 2,
+      "red_available": 300,
+      "blue_available": 300,
+      "changed_steps": 1
+    },
+    {
+      "id": "AJ13-local-v1",
+      "battle": "抗日战争-衡阳保卫战-1944.06至1944.08.08",
+      "profile": "delay",
+      "definition_hash": "2a6fe02318341d450cb94797fccb93458ceda363b314e7e1927bf93eedc9520e",
+      "winner": "red",
+      "passed": true,
+      "turns": 4,
+      "red_available": 264,
+      "blue_available": 264,
+      "changed_steps": 4
+    },
+    {
+      "id": "AJ14-local-v1",
+      "battle": "抗日战争-百团大战-1940.08.20至1941.01.24",
+      "profile": "rail",
+      "definition_hash": "3bf19cd9dc26b0cd08d4ea0100db6c4902fdea0b0ba4407bd91d935dc7139392",
+      "winner": "red",
+      "passed": true,
+      "turns": 4,
+      "red_available": 300,
+      "blue_available": 300,
+      "changed_steps": 4
+    },
+    {
+      "id": "AJ15-local-v1",
+      "battle": "抗日战争-冀中五一反扫荡-1942.05.01至1942.06.20",
+      "profile": "underground",
+      "definition_hash": "707f757ece6fbec472d61a7fc45a89f3c7e6102f20ced88c19f04b904fa6e7b0",
+      "winner": "red",
+      "passed": true,
+      "turns": 4,
+      "red_available": 300,
+      "blue_available": 300,
+      "changed_steps": 4
+    },
+    {
+      "id": "AJ16-local-v1",
+      "battle": "抗日战争-敌后局部反攻总览-1944",
+      "profile": "assault",
+      "definition_hash": "231b41374b16938366d517857ca543108d1fd231b69c98ec96bac7862cadf5b0",
+      "winner": "blue",
+      "passed": true,
+      "turns": 4,
+      "red_available": 300,
+      "blue_available": 264,
+      "changed_steps": 3
+    },
+    {
+      "id": "AJ17-local-v1",
+      "battle": "抗日战争-车桥战役-1944.03.05至1944.03.06",
+      "profile": "assault",
+      "definition_hash": "296c1818003ee6c5d72ba4d0ec36c27c4899a63a25b3f9efb736b39580657b14",
+      "winner": "blue",
+      "passed": true,
+      "turns": 4,
+      "red_available": 204,
+      "blue_available": 204,
+      "changed_steps": 4
+    },
+    {
+      "id": "AJ18-local-v1",
+      "battle": "抗日战争-湘西会战-1945.04.09至1945.06.07",
+      "profile": "air",
+      "definition_hash": "48635133e98cbdbb686e14e547655170c050e45133a75aaf7d15daf5b74c2c16",
+      "winner": "blue",
+      "passed": true,
+      "turns": 4,
+      "red_available": 300,
+      "blue_available": 280,
+      "changed_steps": 4
+    },
+    {
+      "id": "AJ19-local-v1",
+      "battle": "抗日战争-缅北滇西反攻总览-1943.10至1945.03",
+      "profile": "air",
+      "definition_hash": "441ae2fbe8c6d477b553ad3295973edfb35197683c9deaadb81a5982df4d0d31",
+      "winner": "blue",
+      "passed": true,
+      "turns": 4,
+      "red_available": 300,
+      "blue_available": 240,
+      "changed_steps": 4
+    },
+    {
+      "id": "AJ20-local-v1",
+      "battle": "抗日战争-全面反攻与受降总览-1945.08至1945.09",
+      "profile": "reception",
+      "definition_hash": "c2c90e7c7ad02b94f85360b091dafe7267bd7c00725eccea2dc906cdbb28f91a",
+      "winner": "red",
+      "passed": true,
+      "turns": 4,
+      "red_available": 270,
+      "blue_available": 300,
+      "changed_steps": 2
+    }
+  ]
+}

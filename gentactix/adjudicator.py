@@ -529,7 +529,7 @@ def adjudicate(war_state, time_step="30分钟", turn=0, params=None):
     calibrated_factor = (params or {}).get("terrain_factor")
     if calibrated_factor is not None:
         factor = float(calibrated_factor)
-        terrain_source = "战役参数库标定"
+        terrain_source = "战役参数库配置"
     else:
         factor = terrain_factor(terrain)
         terrain_source = "模型地形标签"

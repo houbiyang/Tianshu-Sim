@@ -123,7 +123,8 @@ def render(text, state, previous=None, *, turn=None, adjudication=None, review=F
     if issues:
         parts.append('原模型文字触发事实校验，冲突内容未作为战报事实展示；原文与校验原因已留在审计记录。')
     if retained:
-        parts.append('**模型解读（仍需核验）**\n\n' + retained)
+        label = '教学规则结算（参数未史实标定）' if state.get('mission') and not review else '模型解读（仍需核验）'
+        parts.append('**' + label + '**\n\n' + retained)
     parts.append(facts(state, previous, adjudication))
     return '\n\n'.join(parts), {'version': 1, 'status': 'fallback' if issues else 'screened',
                                 'issues': issues, 'original_text': raw,

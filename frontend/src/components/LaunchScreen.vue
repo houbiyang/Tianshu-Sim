@@ -1,30 +1,38 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue';
-import type { Battle, Health } from '../types';
+import { computed, reactive, ref, watch, onMounted } from 'vue';
+import type { Battle, Health, MissionDefinition } from '../types';
 import { api } from '../api';
+import { normalizeStep, stepOptions } from '../timeSteps';
 import MapView from './MapView.vue';
 
 const props = defineProps<{ battles: Battle[]; health: Health | null; busy: string; error: string; canResume: boolean; recentSessions: { session_id: string; turn_count: number; scenario: string }[] }>();
-const emit = defineEmits<{ settings: []; resume: []; reconnect: []; cancel: []; resumeSession: [id: string]; deleteSession: [session: { session_id: string; turn_count: number; scenario: string }]; start: [value: { scenario: string; battle: string; time_step: string; use_rag: boolean; use_adjudicator: boolean }] }>();
+const emit = defineEmits<{ settings: []; resume: []; reconnect: []; cancel: []; resumeSession: [id: string]; deleteSession: [session: { session_id: string; turn_count: number; scenario: string }]; start: [value: { scenario: string; battle: string; time_step: string; use_rag: boolean; use_adjudicator: boolean; simulation_mode: string; mission_id: string }] }>();
 const minimized = ref(false);
 const mode = ref<'catalog' | 'assistant' | 'recent'>('catalog');
 const query = ref('');
 const family = ref('all');
 const phase = ref<'select' | 'configure'>('select');
 const selected = ref<Battle | null>(null);
-const draft = reactive({ scenario: '', battle: '', time_step: '30分钟', use_rag: true, use_adjudicator: false });
+const draft = reactive({ scenario: '', battle: '', time_step: '30分钟', use_rag: true, use_adjudicator: false, simulation_mode: 'open', mission_id: '' });
 const messages = ref<{ role: string; content: string }[]>([]);
 const question = ref('');
 const planning = ref(false);
 const planError = ref('');
 const sources = ref<{ source: string; section: string }[]>([]);
 const ready = ref(false);
-const steps = ['5分钟', '15分钟', '30分钟', '1小时', '6小时', '12小时', '1天', '1周', '1个月'];
+const steps = computed(() => stepOptions(draft.time_step));
+const missions = ref<MissionDefinition[]>([]);
+const missionError = ref('');
+onMounted(async () => { try { missions.value = (await api.missions()).missions; } catch { missionError.value = '局部想定目录暂不可用，请检查新版后端连接。'; } });
+const availableMissions = computed(() => missions.value.filter(m => m.battle === draft.battle));
+const localMission = computed(() => missions.value.find(m => m.id === draft.mission_id));
+watch(() => [draft.battle, draft.simulation_mode], () => { draft.mission_id = ''; });
+watch(() => draft.mission_id, () => { if (localMission.value) { draft.time_step = normalizeStep(localMission.value.time_step); draft.use_adjudicator = true; draft.use_rag = true; } });
 const filtered = computed(() => props.battles.filter(b => (family.value !== 'korea' || b.name.startsWith('抗美援朝-')) && b.name.includes(query.value.trim()))
   .sort((a, b) => (a.name.match(/\d{4}\.\d{2}\.\d{2}/)?.[0] || '').localeCompare(b.name.match(/\d{4}\.\d{2}\.\d{2}/)?.[0] || '')));
 function selectBattle(battle: Battle) {
   selected.value = battle;
-  Object.assign(draft, { battle: battle.name, scenario: `${battle.name}。按战役开始时的历史态势部署，保留双方兵力、后勤与地形约束。`, time_step: battle.time_step || '30分钟', use_rag: true });
+  Object.assign(draft, { battle: battle.name, scenario: `${battle.name}。按战役开始时的历史态势部署，保留双方兵力、后勤与地形约束。`, mission_id: '', time_step: normalizeStep(battle.time_step || '30分钟'), use_rag: true });
 }
 function shortName(name: string) { return name.replace(/^抗美援朝-/, '').replace(/-\d{4}.*$/, ''); }
 function dates(name: string) { return name.match(/\d{4}[.\d至—-]+/)?.[0] || '历史场景'; }
@@ -37,7 +45,7 @@ async function ask() {
     const data = await api.planScenario(messages.value.slice(-12));
     messages.value.push({ role: 'assistant', content: data.reply });
     ready.value = data.ready; sources.value = data.sources;
-    if (data.ready) Object.assign(draft, { scenario: data.scenario, battle: data.battle, time_step: data.time_step });
+    if (data.ready) Object.assign(draft, { scenario: data.scenario, battle: data.battle, time_step: normalizeStep(data.time_step) });
   } catch (e) { planError.value = String(e); messages.value.pop(); question.value = submitted; }
   finally { planning.value = false; }
 }
@@ -96,13 +104,18 @@ async function ask() {
       <template v-else>
         <div class="scenario-form">
           <label for="draft-scenario">想定与推演目标</label><textarea id="draft-scenario" v-model="draft.scenario" rows="6" :disabled="!!busy"></textarea>
-          <div class="config-row"><div><label for="draft-battle">关联战役资料</label><select id="draft-battle" v-model="draft.battle" :disabled="!!busy"><option value="">独立想定 / 自动匹配</option><option v-for="b in battles" :key="b.name" :value="b.name">{{ b.name }}</option></select></div><div><label for="draft-step">回合跨度</label><select id="draft-step" v-model="draft.time_step" :disabled="!!busy"><option v-for="step in steps" :key="step">{{ step }}</option></select></div></div>
+          <div class="config-row"><div><label for="draft-battle">关联战役资料</label><select id="draft-battle" v-model="draft.battle" :disabled="!!busy"><option value="">独立想定 / 自动匹配</option><option v-for="b in battles" :key="b.name" :value="b.name">{{ b.name }}</option></select></div><div><label for="draft-step">回合跨度</label><select id="draft-step" v-model="draft.time_step" :disabled="!!busy || !!localMission"><option v-for="step in steps" :key="step">{{ step }}</option></select></div></div>
+          <label for="draft-mode">推演模式</label><select id="draft-mode" v-model="draft.simulation_mode" :disabled="!!busy"><option value="open">开放推演 · 决策允许改变结果</option><option value="replay">历史回放 · 按史料讲解过程</option></select>
+          <label v-if="draft.simulation_mode === 'open'" for="draft-mission">初始态势</label><select v-if="draft.simulation_mode === 'open'" id="draft-mission" v-model="draft.mission_id" :disabled="!!busy"><option value="">模型生成 · 资料约束</option><option v-for="m in availableMissions" :key="m.id" :value="m.id">可重放局部教学 · {{ ({delay:'迟滞',breakout:'突围',assault:'据点争夺',rail:'交通破袭',underground:'组织存续',air:'航空遮断',reception:'停火接收'} as Record<string,string>)[m.profile] }}</option></select>
+          <p v-if="missionError" class="muted" role="status">{{ missionError }}</p>
+          <p v-if="localMission" class="muted"><b>{{ localMission.goal }}</b><br>{{ localMission.deadline_turn }}轮 × {{ localMission.time_step }}；{{ localMission.assumptions }}。模型只下达命令，程序计算战损、补给与目标。</p>
+          <p v-else class="muted">{{ draft.simulation_mode === 'replay' ? '回放用于史料讲解；缺载细节仍属模型假设，不能作为因果验收。' : '模型生成模式保留原有自由推演；不提供固定规则的人员战损与胜负保证。' }}</p>
           <label class="rule-option"><input type="checkbox" v-model="draft.use_rag" :disabled="!!busy"><span><strong>本地史料约束</strong><small>检索关联战役资料，并保留来源</small></span></label>
-          <label class="rule-option"><input type="checkbox" v-model="draft.use_adjudicator" :disabled="!!busy"><span><strong>确定性几何裁决</strong><small>裁决机动、接触、补给和包围；不计算确定性伤亡</small></span></label>
+          <label class="rule-option"><input type="checkbox" v-model="draft.use_adjudicator" :disabled="!!busy || !!localMission"><span><strong>确定性几何裁决</strong><small>裁决机动、接触、补给和包围；不计算确定性伤亡</small></span></label>
           <p class="muted">当前模型：{{ health?.model || '尚未连接' }} · 生成后进入推演工作台。</p>
           <p v-if="busy" class="draft-ready" role="status">{{ busy }}</p><p v-if="error" class="bad" role="alert">{{ error }}</p>
         </div>
-        <footer class="window-footer"><button v-if="!busy" @click="phase = 'select'">返回选择</button><button v-else @click="emit('cancel')">取消初始化</button><button class="primary" @click="emit('start', { ...draft })" :disabled="!!busy || !draft.scenario.trim()">{{ busy ? '正在初始化…' : '创建并进入推演' }}</button></footer>
+        <footer class="window-footer"><button v-if="!busy" @click="phase = 'select'">返回选择</button><button v-else @click="emit('cancel')">取消初始化</button><button class="primary" @click="emit('start', { ...draft, scenario: localMission ? localMission.title + '。目标：' + localMission.goal + '。' + draft.scenario : draft.scenario })" :disabled="!!busy || !draft.scenario.trim()">{{ busy ? '正在初始化…' : '创建并进入推演' }}</button></footer>
       </template>
     </section>
     <div class="overview-label"><span>中国及周边 · 地理总览</span><small>可拖动与缩放地图</small></div>

@@ -1,0 +1,3060 @@
+{
+  "schema_version": 2,
+  "title": "红军长征系列（1934—1936）",
+  "checked": "2026-10-22",
+  "use": "历史参考与教学情景编辑源；不是可直接导入的初始战局JSON，也不是强制发生的事件脚本",
+  "scenarios": [
+    {
+      "id": "LM01",
+      "name": "红军长征-湘江战役-1934.11.25至1934.12.01",
+      "track": "中央红军",
+      "kind": "掩护渡河与后卫阻击",
+      "scope": "包含11月25日渡江部署及27日至12月1日的主要渡河、阻击；地点为全州、兴安、灌阳及界首一带。10月出发兵力只是背景快照。",
+      "aliases": [
+        "湘江战役",
+        "血战湘江"
+      ],
+      "sources": [
+        "S01",
+        "S03",
+        "S04",
+        "S26"
+      ],
+      "forces": [
+        {
+          "side": "红军",
+          "unit": "中革军委与中央纵队",
+          "description": "博古、李德、周恩来的领导与指挥结构须按当时处理，不能提前使用遵义会议后的分工；军委纵队、辎重与战斗部队分别记账。",
+          "sources": [
+            "S03"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "红军",
+          "unit": "红1、红3、红5军团等",
+          "description": "红1军团在觉山铺（亦作脚山铺）方向、红3军团在光华铺和新圩方向担任掩护；红5军团第34师为后卫。红8、红9军团随整体部署行动，不能将几个阻击团等同全军。",
+          "sources": [
+            "S03",
+            "S04"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "国民党军",
+          "unit": "湘军、桂军及追击部队",
+          "description": "主要压力来自湘桂方向堵截与后续追击；报道中的近30万是战区包围兵力，不是同一渡口瞬时投入。逐日师团到达表未核齐。",
+          "sources": [
+            "S04"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        }
+      ],
+      "events": [
+        {
+          "date": "1934-11-25",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "军委部署分路西进抢渡湘江，战斗部队担任前出与掩护，纵队和辎重随后行动。",
+          "sources": [
+            "S03"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1934-11-26",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "红3军团第5师受命赶赴新圩阻击，为军委纵队争取数日渡江时间。",
+          "sources": [
+            "S04"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1934-11-27",
+          "time_label": "晚间",
+          "precision": "时段",
+          "event": "先头部队控制界首至屏山渡一带渡河地段，渡场控制并不代表全军已通过。",
+          "sources": [
+            "S03"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1934-11-28",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "觉山铺、光华铺、新圩阻击展开，形成渡场、道路与侧翼相互依赖的态势。",
+          "sources": [
+            "S03"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1934-11-30",
+          "time_label": "临近傍晚",
+          "precision": "时段",
+          "event": "新圩方向红5师接到撤出战斗的新命令；撤退与接替应作为独立事件。",
+          "sources": [
+            "S04"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1934-12-01",
+          "time_label": "凌晨",
+          "precision": "时段",
+          "event": "军委发出紧急抢渡指令，后卫继续掩护；不要把指令时间当成全军过江时间。",
+          "sources": [
+            "S04"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1934-12-01",
+          "time_label": "17时；S03、S26所载",
+          "precision": "小时",
+          "event": "军委纵队及主力渡江完成的一个记载时刻；只作参考节点，不强制所有后卫在此时消失。",
+          "sources": [
+            "S03",
+            "S26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S26": "第十二章；依条目日期检索相应段落"
+          }
+        }
+      ],
+      "figures": [
+        {
+          "side": "红军",
+          "metric": "出发兵力",
+          "value": 86000,
+          "qualifier": "余人",
+          "scope": "1934年10月离开中央苏区",
+          "note": "不是11月27日渡场初始人数。",
+          "sources": [
+            "S01",
+            "S26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S26": "第十二章；依条目日期检索相应段落"
+          }
+        },
+        {
+          "side": "红军",
+          "metric": "战前兵力",
+          "value": 64000,
+          "qualifier": "余人",
+          "scope": "突破前三道封锁线后；S03口径",
+          "note": "与10月出发快照窗口不同。",
+          "sources": [
+            "S03"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "红军",
+          "metric": "战后兵力",
+          "value": 35000,
+          "qualifier": "人左右",
+          "scope": "S03战后口径",
+          "note": "S04称3万余；不是阵亡数，不能相减得到战斗死亡。",
+          "sources": [
+            "S03",
+            "S04"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "红军",
+          "metric": "战斗伤亡合计",
+          "value": null,
+          "qualifier": "",
+          "scope": "整场湘江战役",
+          "note": "尚未核得可拆分死亡、负伤、失散、被俘的统一名册统计。",
+          "sources": [
+            "S03",
+            "S04"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {}
+        },
+        {
+          "side": "国民党军",
+          "metric": "战斗伤亡合计",
+          "value": null,
+          "qualifier": "",
+          "scope": "整场湘江战役",
+          "note": "未核得同窗口统计；不以交换比反推。",
+          "sources": [
+            "S03",
+            "S04"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {}
+        }
+      ],
+      "outcome": "主力突破封锁，后卫及掩护部队损失严重；战略转移仍然延续。红34师建制遭毁不能写成每名成员均在同一时刻阵亡。",
+      "geography": "界首是渡场地域参考；全州、兴安、灌阳仅为定位框架。应另绘渡口、东岸行军通道、阻击方向，不能用三县中心连线模拟真实河岸。新圩、光华铺和觉山铺阵地的精确边界待历史地图校准。",
+      "equipment": "以徒步步兵、机枪和有限支援火力为主，另列工兵架桥、担架和辎重。运输拥塞与收容掉队影响通过量；“中央纵队人数”不应再次计入军团作战人数。地图补给线表现携行物资与通过渡场的通路。",
+      "modeling": "教学目标：比较主力通过比例、渡口保持时长和后卫撤出比例。关键选择是辎重减载、渡场分流和阻击部队接替。反事实每次只改变一个条件，并保留相同敌情与初始兵力；所谓“减载可减少损失”是待试验假设，不预写胜利。",
+      "uncertainties": [
+        "不采纳“湘江一役阵亡5万余”的直接换算。",
+        "S03的左右翼叙述及个别番号有不一致，具体部署只采用交叉可核的方向。",
+        "17时为回顾文章时间，尚未核对原始电报与各渡口日志。"
+      ],
+      "points": [
+        "quanzhou",
+        "xingan",
+        "jieshou",
+        "guanyang"
+      ],
+      "time_step": "1小时",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "preset_note": "只对所选日期内的局部部队运行几何检查；战略转场以独立快照接续。",
+      "parameter_status": "teaching_estimate"
+    },
+    {
+      "id": "LM02",
+      "name": "红军长征-强渡乌江-1935.01.01至1935.01.06",
+      "track": "中央红军",
+      "kind": "多渡口突击与工程保障",
+      "scope": "1934年12月31日至1935年1月1日猴场会议是前置决策；运行窗口取1月1日至6日，江界河、回龙场、茶山关分开记录。",
+      "aliases": [
+        "强渡乌江",
+        "乌江战役"
+      ],
+      "sources": [
+        "S05",
+        "S01",
+        "S26"
+      ],
+      "forces": [
+        {
+          "side": "红军",
+          "unit": "红1军团第1师第1团、红1军团第2师第4团等",
+          "description": "回龙场与江界河为不同渡点、不同分队，不能把两次突击合为一船；另有其他渡点和军委纵队过江。",
+          "sources": [
+            "S05"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "国民党军",
+          "unit": "黔军江防部队",
+          "description": "守军依水险控制渡口。尚未在所核资料中获得所有渡口同一日期的师团实到人数，不预设全线战备低下。",
+          "sources": [
+            "S05"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "红军",
+          "unit": "红4团第3连及竹筏突击人员",
+          "description": "S05记毛振华率7名水性好的战士泅渡，晚间另组织18人乘筏；两次行动的人员重叠未核，不相加成固定编制。",
+          "sources": [
+            "S05"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        }
+      ],
+      "events": [
+        {
+          "date": "1934-12-31至1935-01-01",
+          "time_label": "前置；晚间至凌晨",
+          "precision": "时段",
+          "event": "猴场会议明确渡江后的行动方向，并要求军委就作战方针、时间与地点向政治局报告；命令关系变化先于渡口战斗。",
+          "sources": [
+            "S26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S26": "第十二章；依条目日期检索相应段落"
+          }
+        },
+        {
+          "date": "1935-01-01",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "猴场会议后继续向乌江以北发展；多渡点行动以夺取通路为目标。",
+          "sources": [
+            "S05"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-01-01",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "红1团8人突击队在回龙场乘竹筏偷渡遇难，表明水文危险是独立于敌火的损失来源。",
+          "sources": [
+            "S05"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-01-02",
+          "time_label": "上午",
+          "precision": "时段",
+          "event": "红4团在江界河开始渡河行动，毛振华率泅渡人员先行。",
+          "sources": [
+            "S05"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-01-02",
+          "time_label": "晚间",
+          "precision": "时段",
+          "event": "江界河组织18人乘竹筏偷渡，前出与后续工程衔接。",
+          "sources": [
+            "S05"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-01-03",
+          "time_label": "9时；S05报道记载",
+          "precision": "小时",
+          "event": "江界河重新组织强渡，竹筏突击与前夜已到对岸的人员接应；此钟点为报道所载，尚未核验原始命令。",
+          "sources": [
+            "S05"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-01-03",
+          "time_label": "当日上午",
+          "precision": "时段",
+          "event": "江界河浮桥架成，夺取对岸与持续渡运转入衔接阶段；不能将架桥完成等同全军通过。",
+          "sources": [
+            "S05"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-01-06",
+          "time_label": "截至当日",
+          "precision": "日",
+          "event": "各路完成这一阶段渡江，随后向遵义推进；跨渡口完成时间不必相同。",
+          "sources": [
+            "S05"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        }
+      ],
+      "figures": [
+        {
+          "side": "红军",
+          "metric": "遇难",
+          "value": 8,
+          "qualifier": "人",
+          "scope": "1月1日回龙场一次竹筏突击队",
+          "note": "仅此分队；不能用作全战役牺牲总数。",
+          "sources": [
+            "S05"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "红军",
+          "metric": "战斗伤亡合计",
+          "value": null,
+          "qualifier": "",
+          "scope": "1月1至6日全部渡口",
+          "note": "未知；江界河、回龙场、茶山关不能混为单点。",
+          "sources": [
+            "S05"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {}
+        },
+        {
+          "side": "国民党军",
+          "metric": "战斗伤亡合计",
+          "value": null,
+          "qualifier": "",
+          "scope": "全部江防部队",
+          "note": "未核得同窗口统计。",
+          "sources": [
+            "S05"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {}
+        }
+      ],
+      "outcome": "红军突破乌江防线，获得向遵义发展的通道。其意义在渡场打开和主力通过，不能用“极少牺牲”替代工程和水文分析。",
+      "geography": "江界河现代聚落坐标仅用于定位。新华社明确记载旧渡口已成为构皮滩库区、水位上升100多米；现代卫星图、水面宽度及公路桥均不能直接还原1935年地形。回龙场和茶山关精确渡口坐标暂空。",
+      "equipment": "突击步兵、机枪掩护、竹筏和架桥工兵分工显示。船筏可用数、单航次载员、回转耗时、水流、对岸控制与浮桥状态应分别建教学记录；没有证据时不提供自动渡运参数或把竹筏当现代舟桥。",
+      "modeling": "目标是建立桥头位置、保障主力持续渡江。可对比单渡口集中与多点尝试，分别改变水文或敌军戒备，观察失败重试和工程延迟。渡河成功不必以消灭全部守军为前提。",
+      "uncertainties": [
+        "1月3日9时采用S05公开报道，证据等级为published_account，非原始命令确证；12月31日22时、1月2日9时仍未取得对应依据。",
+        "8人死亡不是乌江作战总死亡；“全军约4万”亦不写成核定实到兵力。"
+      ],
+      "points": [
+        "jiangjiehe"
+      ],
+      "time_step": "30分钟",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 2.0
+      },
+      "preset_note": "只对所选日期内的局部部队运行几何检查；战略转场以独立快照接续。",
+      "parameter_status": "teaching_estimate"
+    },
+    {
+      "id": "LM03",
+      "name": "红军长征-四渡赤水-1935.01.19至1935.03.22",
+      "track": "中央红军",
+      "kind": "多阶段机动与敌情判断",
+      "scope": "本卡采用1月至3月四次渡河的教学范围，土城、扎西、遵义及赤水河诸渡点为节点。另有广义战役延伸至5月9日渡过金沙江的统计，单列不用来衡量本卡损失。",
+      "aliases": [
+        "四渡赤水",
+        "土城战斗",
+        "娄山关遵义战役"
+      ],
+      "sources": [
+        "S06",
+        "S07",
+        "S11",
+        "S26"
+      ],
+      "forces": [
+        {
+          "side": "红军",
+          "unit": "中革军委、红1与红3军团等",
+          "description": "朱德、周恩来、毛泽东等指挥分工在遵义、扎西及3月期间继续调整；不能把整个1月至3月写成一套不变指挥关系。军团、干部团和佯动分队分别记录。",
+          "sources": [
+            "S06",
+            "S07"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "国民党军",
+          "unit": "中央军及川、黔、滇等部",
+          "description": "周浑元部等中央军与地方军队形成多方向压力；战区总数十万不等于每次渡口守军，敌方情报与行动存在延迟。",
+          "sources": [
+            "S06"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        }
+      ],
+      "events": [
+        {
+          "date": "1935-01-15至1935-01-17",
+          "time_label": "前置；会议期间",
+          "precision": "日期范围",
+          "event": "遵义会议调整领导分工，取消原三人团；朱德、周恩来继续负责军事指挥，周恩来负军事最后决心责任。",
+          "sources": [
+            "S26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S26": "第十二章；依条目日期检索相应段落"
+          }
+        },
+        {
+          "date": "1935-01-20",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "军委下达渡江作战计划，拟由川南北渡长江；后来路线改变须与原计划区分。",
+          "sources": [
+            "S07"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-01-28",
+          "time_label": "未核钟点",
+          "precision": "日",
+          "event": "土城交战未能取得预期结果，红军调整原有行动方案，准备西渡。",
+          "sources": [
+            "S26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S26": "第十二章；依条目日期检索相应段落"
+          }
+        },
+        {
+          "date": "1935-01-29",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "由土城、元厚等处一渡赤水，原拟北渡长江，受阻后向扎西地区集结。",
+          "sources": [
+            "S07"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-02-05",
+          "time_label": "未载钟点；S26记载",
+          "precision": "日",
+          "event": "政治局常委重新分工，张闻天代替博古负中央总责，毛泽东协助周恩来军事指挥；不是遵义会议当日已经完成的全部任命。",
+          "sources": [
+            "S26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S26": "第十二章；依条目日期检索相应段落"
+          }
+        },
+        {
+          "date": "1935-02-18",
+          "time_label": "渡河过程的一日节点",
+          "precision": "日",
+          "event": "经太平渡、二郎滩二渡赤水，转回黔北；各部起止并非同时。",
+          "sources": [
+            "S07"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-02-24至1935-02-28",
+          "time_label": "多日",
+          "precision": "日期范围",
+          "event": "进攻桐梓、娄山关和遵义，取得较大胜利；这一战果属于本阶段，不能重复累加。",
+          "sources": [
+            "S06",
+            "S11"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-03-04",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "设置前敌司令部，朱德任司令员、毛泽东任政治委员；前敌指挥与中央领导分工分别记录。",
+          "sources": [
+            "S26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S26": "第十二章；依条目日期检索相应段落"
+          }
+        },
+        {
+          "date": "1935年3月中旬",
+          "time_label": "原文仅到旬",
+          "precision": "日期范围",
+          "event": "在鸭溪、苟坝一带形成毛泽东、周恩来、王稼祥新的三人军事指挥机构；本来源未给出统一的具体日、时，不补造。",
+          "sources": [
+            "S26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S26": "第十二章；依条目日期检索相应段落"
+          }
+        },
+        {
+          "date": "1935-03-16",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "经茅台三渡赤水，继续调动追击军。",
+          "sources": [
+            "S07"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-03-21至1935-03-22",
+          "time_label": "21日晚起",
+          "precision": "时段",
+          "event": "主力折返，利用二郎滩、九溪口、太平渡等渡点四渡赤水；佯动与真实主力分离。",
+          "sources": [
+            "S07"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-03-22",
+          "time_label": "15时；S06叙述的完成窗口",
+          "precision": "小时",
+          "event": "S06将第四次渡赤水过程记至当日15时；这是该文所载的渡河收束窗口，并非所有后卫同刻到达。",
+          "sources": [
+            "S06"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        }
+      ],
+      "figures": [
+        {
+          "side": "红军",
+          "metric": "初期兵力",
+          "value": 30000,
+          "qualifier": "余人",
+          "scope": "遵义地区阶段概数",
+          "note": "不是四次渡河中每回合不变人数。",
+          "sources": [
+            "S07"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "国民党军",
+          "metric": "被俘",
+          "value": 3000,
+          "qualifier": "余人",
+          "scope": "娄山关遵义阶段；红军战果口径",
+          "note": "不要另与击溃、歼灭建制数换算相加。",
+          "sources": [
+            "S06"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "国民党军",
+          "metric": "被俘",
+          "value": 3600,
+          "qualifier": "余人",
+          "scope": "S06广义1月19至5月9日范围",
+          "note": "不直接归入本卡1至3月；仅作范围辨析。",
+          "sources": [
+            "S06"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "双方",
+          "metric": "本卡期间战斗伤亡合计",
+          "value": null,
+          "qualifier": "",
+          "scope": "1月19日至3月22日",
+          "note": "未核得统一分项表，不采用草稿中的3000或18000作确数。",
+          "sources": [
+            "S06",
+            "S07"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {}
+        }
+      ],
+      "outcome": "反复机动改变了合围形势，四渡结束后仍需南渡乌江并继续西进；不能在3月22日直接写成已安全到达陕北或已渡金沙江。",
+      "geography": "土城、茅台、遵义为现代地名框架，不能将茅台镇中心当作具体浮桥。四渡范围跨多个河段，渡口控制与实际可用桥筏应独立显示，地形线不能只连接三个城市。",
+      "equipment": "徒步步兵、骑传与通信、侦察、工兵和辎重随阶段调整。情报内容、发现时间、送达时间分开；红军没有实时卫星视图。敌军航空观察可以是来源注明的支援，不等于双方共享全图。",
+      "modeling": "目标是保持主力、避免合围并获得新的行动空间。教学转折：土城后是否继续硬攻，二渡后是否利用黔北空隙，三渡是否被误判。反事实固定兵力而改变消息延迟或行军停顿，对照走廊开放时长；不能将机动成功全部归因于单一人格或固定速度加成。",
+      "uncertainties": [
+        "广义四渡赤水与狭义四次渡河统计必须分列。",
+        "娄山关11时30分等细时刻未在本轮已核文本中确认，不纳入事件表。",
+        "渡河常跨日，引用单篇的2月18日、3月16日不表示全军同刻开始与结束。",
+        "土城1月28日改引S26。三人军事指挥机构采用S26的3月中旬精度；没有把全阶段指挥权简化为一人始终独立决断。"
+      ],
+      "points": [
+        "tucheng",
+        "maotai",
+        "zunyi"
+      ],
+      "time_step": "6小时",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "preset_note": "只对所选日期内的局部部队运行几何检查；战略转场以独立快照接续。",
+      "parameter_status": "teaching_estimate"
+    },
+    {
+      "id": "LM04",
+      "name": "红军长征-中央红军巧渡金沙江-1935.05.03至1935.05.09",
+      "track": "中央红军",
+      "kind": "抢占渡口与持续渡运",
+      "scope": "以1935年皎平渡为主渡场，4月29日指示和30日分路北进为前置。不要混入1936年石鼓地区的红二、六军团渡江。",
+      "aliases": [
+        "中央红军巧渡金沙江",
+        "皎平渡",
+        "1935年巧渡金沙江"
+      ],
+      "sources": [
+        "S08",
+        "S06"
+      ],
+      "forces": [
+        {
+          "side": "红军",
+          "unit": "中革军委及三路纵队",
+          "description": "分向龙街、洪门、皎平渡；干部团先遣队担任皎平渡前出任务。主力规模为数万人，精确到渡口的逐日分配尚未核齐。",
+          "sources": [
+            "S08"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "国民党军",
+          "unit": "滇军与追击部队",
+          "description": "龙云接到封锁江面及控制船只的指令；渡口地方守备、江北部队和远方追兵必须分别表示。",
+          "sources": [
+            "S08"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        }
+      ],
+      "events": [
+        {
+          "date": "1935-04-29",
+          "time_label": "前置；未载钟点",
+          "precision": "日",
+          "event": "军委指示迅速渡金沙江，随后组织三路向北行动。",
+          "sources": [
+            "S08"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-04-30",
+          "time_label": "前置；未载钟点",
+          "precision": "日",
+          "event": "三路纵队分别奔向目标渡口，渡场条件成为决定主力集中方向的信息。",
+          "sources": [
+            "S08"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-05-03",
+          "time_label": "未核钟点",
+          "precision": "日",
+          "event": "皎平渡进入抢占与渡运阶段，先遣队在船工协助下取得渡江工具并控制对岸。",
+          "sources": [
+            "S08"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-05-03至1935-05-09",
+          "time_label": "连续多日；非固定每小时批次",
+          "precision": "日期范围",
+          "event": "利用有限木船持续运送人员和物资，渡口警戒与主力通过并行。",
+          "sources": [
+            "S08"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-05-09",
+          "time_label": "截至当日",
+          "precision": "日",
+          "event": "主要渡江阶段完成，中央红军进入川西方向。",
+          "sources": [
+            "S08"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        }
+      ],
+      "figures": [
+        {
+          "side": "红军",
+          "metric": "找到木船",
+          "value": 7,
+          "qualifier": "只",
+          "scope": "S08皎平渡搜集口径",
+          "note": "其中1只破损不可用；不能将7只全部投入容量计算。",
+          "sources": [
+            "S08"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "船工",
+          "metric": "参加摆渡人数",
+          "value": 37,
+          "qualifier": "人",
+          "scope": "S08采访转述",
+          "note": "民众支援人员单列，不计作战斗步兵。",
+          "sources": [
+            "S08"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "双方",
+          "metric": "战斗伤亡合计",
+          "value": null,
+          "qualifier": "",
+          "scope": "皎平渡全阶段",
+          "note": "巧渡不等于零伤亡，未核得统一统计。",
+          "sources": [
+            "S08"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {}
+        }
+      ],
+      "outcome": "红军摆脱南岸追堵并继续向大渡河方向转移。渡运成功来源于渡口、船工和警戒的协同，不等于只有先遣夺渡而没有后续风险。",
+      "geography": "皎平渡地名点不是原渡船上下水位置。历史河槽、现有水库和现代桥梁必须另查；未经历史影像校核不能凭现代道路估算1935年机动距离。",
+      "equipment": "干部团突击分队、渡场警戒、船工、运输与伤员分组。载重、航次、轮休和工具损坏只是可编辑教学变量，现有内核未提供真实水动力或渡船排队算法。",
+      "modeling": "目标：在追击部队抵近前持续完成主力和必要物资通过。可试验可用船由6减少到3时的排队变化，但须明确是教师设定的假设；不能把延迟自动等价于某人数死亡。",
+      "uncertainties": [
+        "6只可用木船与7只找到木船有统计关系，并非一定互相矛盾。",
+        "不采用未经核实的每船固定载员、每航次耗时或完全无守军说法。"
+      ],
+      "points": [
+        "jiaopingdu"
+      ],
+      "time_step": "1小时",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "preset_note": "只对所选日期内的局部部队运行几何检查；战略转场以独立快照接续。",
+      "parameter_status": "teaching_estimate"
+    },
+    {
+      "id": "LM05",
+      "name": "红军长征-强渡大渡河与飞夺泸定桥-1935.05.24至1935.05.29",
+      "track": "中央红军",
+      "kind": "夺渡、分路急进与夺桥",
+      "scope": "安顺场夺渡与泸定桥夺桥相互衔接，但不是同地点、同突击队、同一份伤亡表。主卡到29日夺桥，主力后续过桥另记。",
+      "aliases": [
+        "强渡大渡河",
+        "飞夺泸定桥",
+        "大渡河战役"
+      ],
+      "sources": [
+        "S09",
+        "S10"
+      ],
+      "forces": [
+        {
+          "side": "红军",
+          "unit": "红1团与红4团",
+          "description": "安顺场红1团第2连17人突击队；泸定桥为红4团22人突击队，后续铺板与渡桥分队另列。红4团团长王开湘、政委杨成武，不能误写杨成文或把突击队人数当全团。",
+          "sources": [
+            "S09",
+            "S10"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "红军",
+          "unit": "军委、左右两路部队",
+          "description": "26日改变单靠安顺场船渡的计划，红1师和干部团等与另一岸主力分路沿河推进。左右纵队与水文左右岸是不同概念，用地图岸线核对。",
+          "sources": [
+            "S09"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "国民党军",
+          "unit": "川军渡口守军及泸定桥守军",
+          "description": "区分安顺场局部守备、泸定守桥和赶来增援部队；战区大军概数不能放入单桥射界。",
+          "sources": [
+            "S09"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        }
+      ],
+      "events": [
+        {
+          "date": "1935-05-24",
+          "time_label": "未核钟点",
+          "precision": "日",
+          "event": "先遣部队袭占安顺场渡口，缴得渡船，获得强渡条件。",
+          "sources": [
+            "S09"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-05-25",
+          "time_label": "未核钟点",
+          "precision": "日",
+          "event": "红1团突击队渡河并控制对岸；少数人员成功不表示主力可即时通过。",
+          "sources": [
+            "S09"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-05-26",
+          "time_label": "中午",
+          "precision": "时段",
+          "event": "军委领导到安顺场了解船渡瓶颈，决定两岸分路向泸定桥前进。",
+          "sources": [
+            "S09"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-05-28",
+          "time_label": "昼夜急行阶段",
+          "precision": "时段",
+          "event": "红4团边战边进赶向泸定桥，资料以一昼夜240里概括行程。",
+          "sources": [
+            "S09"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-05-29",
+          "time_label": "6时许",
+          "precision": "小时",
+          "event": "红4团到达泸定桥西端，进行侦察、组织突击和铺板。",
+          "sources": [
+            "S10"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-05-29",
+          "time_label": "16时",
+          "precision": "小时",
+          "event": "22人突击队发起夺桥行动，后续部队铺板跟进并扩大控制。",
+          "sources": [
+            "S09"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        }
+      ],
+      "figures": [
+        {
+          "side": "红军",
+          "metric": "安顺场突击队规模",
+          "value": 17,
+          "qualifier": "人",
+          "scope": "红1团第2连突击队口径",
+          "note": "人数是队伍规模，不是阵亡；包括指挥员的18人说法需另核。",
+          "sources": [
+            "S09"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "红军",
+          "metric": "泸定桥突击队规模",
+          "value": 22,
+          "qualifier": "人",
+          "scope": "红4团突击梯队",
+          "note": "不是全部参战人员。",
+          "sources": [
+            "S09",
+            "S10"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "双方",
+          "metric": "全阶段战斗伤亡合计",
+          "value": null,
+          "qualifier": "",
+          "scope": "安顺场及泸定桥整体",
+          "note": "没有足够名册支持将3至4名突击队员损失外推为全战役总损失。",
+          "sources": [
+            "S09",
+            "S10"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {}
+        }
+      ],
+      "outcome": "安顺场成功打开渡点但运力受限，夺桥又打开主力通过通道。两场战斗应分别记录桥头控制、部队通过和全军后续行动。",
+      "geography": "安顺场现代聚落约29.277°N，较草稿29.12°N明显偏北；泸定县城点不是桥身端点。桥宽、铁索和沿岸小路需要专项测绘，地图上先保留位置误差，射界不跨山体任意延伸。",
+      "equipment": "步兵、机枪与迫击炮支援、工兵铺板、渡运和伤员保障分列。不能赋予所有红军现代牵引炮兵默认射程。240里的史料行程概述不能作为所有单位全天持续120公里的速度规则。",
+      "modeling": "关键转折是船渡容量不足后改用分路夺桥；目标同时考核通道打开、主力通过与疲劳。反事实分别改变船只可用量、行军休息或守桥增援到达时间；不能硬编码必须出现17或22人牺牲事件。",
+      "uncertainties": [
+        "草稿5月25日9时、29日17时全部完成未获本轮直接支持，未生成精确结束时刻。",
+        "17与18的计数边界、22人队伍的完整名单及全团伤亡须继续核对原始记录。"
+      ],
+      "points": [
+        "anshun",
+        "luding"
+      ],
+      "time_step": "30分钟",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 2.1
+      },
+      "preset_note": "只对所选日期内的局部部队运行几何检查；战略转场以独立快照接续。",
+      "parameter_status": "teaching_estimate"
+    },
+    {
+      "id": "LM06",
+      "name": "红军长征-懋功会师与雪山草地转移-1935.06.12至1935.09.12",
+      "track": "中央红军与红四方面军交汇",
+      "kind": "会师、补给与战略分途",
+      "scope": "覆盖达维先头会师、懋功主力集结及草地转移的教学阶段。包座战斗另有专卡；本阶段不把两支方面军视为永远共享同一库存和命令链。",
+      "aliases": [
+        "懋功会师",
+        "雪山草地转移"
+      ],
+      "sources": [
+        "S01",
+        "S02",
+        "S12",
+        "S13",
+        "S26"
+      ],
+      "forces": [
+        {
+          "side": "红军",
+          "unit": "中央红军与红四方面军",
+          "description": "6月先头会师和主力会合有不同日期；此后编组、左右路军和命令关系发生变化。仅用“毛泽东统一指挥全部红军”会遮蔽实际分歧。",
+          "sources": [
+            "S01",
+            "S02"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "国民党军",
+          "unit": "川甘方向堵截部队",
+          "description": "对松潘等通道的控制影响路线选择。此卡主要关注非战斗转移，不能为制造交战而将守军放入无证据的草地区域。",
+          "sources": [
+            "S12"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "红军",
+          "unit": "右路军（1935年8月3日编组）",
+          "description": "红1、红3军，红4、红30军，军委纵队大部与红军大学；徐向前、陈昌浩、叶剑英率领，中央领导随行。不同单位不共享实时库存。",
+          "sources": [
+            "S26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S26": "第十二章；依条目日期检索相应段落"
+          }
+        },
+        {
+          "side": "红军",
+          "unit": "左路军（1935年8月3日编组）",
+          "description": "红9、红31、红33军及红5、红32军、军委纵队一部，由朱德、张国焘、刘伯承率领；不能等同红四方面军单独行动。",
+          "sources": [
+            "S26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S26": "第十二章；依条目日期检索相应段落"
+          }
+        }
+      ],
+      "events": [
+        {
+          "date": "1935-06-12",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "中央红军翻越夹金山后，先头部队在达维方向与红四方面军前出部队会合。",
+          "sources": [
+            "S02"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-06-18",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "中央机关和主力到达懋功地区；会师完成范围区别于12日先头接触。",
+          "sources": [
+            "S02"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-06-26",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "两河口政治局会议讨论会师后的战略方向，形成向北发展的意见；与会合事件分开。",
+          "sources": [
+            "S26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S26": "第十二章；依条目日期检索相应段落"
+          }
+        },
+        {
+          "date": "1935-06-28",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "政治局发布会师后战略方针决定，提出集中主力北上、创造川陕甘根据地。",
+          "sources": [
+            "S26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S26": "第十二章；依条目日期检索相应段落"
+          }
+        },
+        {
+          "date": "1935-06-29",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "增补张国焘为中革军委副主席；军委制定松潘战役计划，拟在敌集结未完成前打开北上通道。",
+          "sources": [
+            "S26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S26": "第十二章；依条目日期检索相应段落"
+          }
+        },
+        {
+          "date": "1935-07-18",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "张国焘被任命为红军总政治委员；该人事变化需要记录生效日期。",
+          "sources": [
+            "S26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S26": "第十二章；依条目日期检索相应段落"
+          }
+        },
+        {
+          "date": "1935-07-21",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "芦花会议讨论指挥与北上问题；同日调整前敌总指挥部，由徐向前、陈昌浩、叶剑英分别任总指挥、政委、参谋长。",
+          "sources": [
+            "S26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S26": "第十二章；依条目日期检索相应段落"
+          }
+        },
+        {
+          "date": "1935-08-03",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "制定夏洮战役计划，混合编成左右路军；分别沿毛儿盖和卓克基等方向北进，预定会合并非已实现会合。",
+          "sources": [
+            "S26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S26": "第十二章；依条目日期检索相应段落"
+          }
+        },
+        {
+          "date": "1935-08-04至1935-08-06",
+          "time_label": "会议期间",
+          "precision": "日期范围",
+          "event": "沙窝会议重申北上方针；恢复红一方面军总部，周恩来任司令员兼政治委员。",
+          "sources": [
+            "S26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S26": "第十二章；依条目日期检索相应段落"
+          }
+        },
+        {
+          "date": "1935-08-15",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "中央致电张国焘，要求主力经班佑北上，强调敌情、地形、气候与粮食约束；发报时刻与各部收报时刻不可混同。",
+          "sources": [
+            "S26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S26": "第十二章；依条目日期检索相应段落"
+          }
+        },
+        {
+          "date": "1935-08-19",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "因周恩来病重，沙窝常委会议决定由毛泽东负责军事工作。",
+          "sources": [
+            "S26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S26": "第十二章；依条目日期检索相应段落"
+          }
+        },
+        {
+          "date": "1935-08-20",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "毛儿盖扩大会议继续讨论北上部署，要求左路军向右路军靠拢；目标、命令与实际行程分别记录。",
+          "sources": [
+            "S26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S26": "第十二章；依条目日期检索相应段落"
+          }
+        },
+        {
+          "date": "1935-08-21",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "右路军从毛儿盖出发，经草地向班佑、巴西、阿西地区转移；各部通过日期不同。",
+          "sources": [
+            "S26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S26": "第十二章；依条目日期检索相应段落"
+          }
+        },
+        {
+          "date": "1935-08-24至1935-08-26",
+          "time_label": "分批到达",
+          "precision": "日期范围",
+          "event": "地方遗址说明记录右路部队与中央机关陆续到班佑，部队通过草地不应写成同日齐到。",
+          "sources": [
+            "S13"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-08-29",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "巴西召开筹粮及相关会议，筹粮与后续道路选择相互影响。",
+          "sources": [
+            "S12",
+            "S13"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-09-02",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "巴西政治局会议讨论继续行动；北上与南下决策形成分途背景。",
+          "sources": [
+            "S12",
+            "S13"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-09-09及随后",
+          "time_label": "未载钟点；S26叙述",
+          "precision": "日期范围",
+          "event": "9月9日张国焘致电坚持南下；S26随后叙述中央决定率红1、红3军及军委纵队先行北上。本条日期只锚定发电，不能据此指定中央收报、磋商或出发钟点。",
+          "sources": [
+            "S26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S26": "第十二章；依条目日期检索相应段落"
+          }
+        },
+        {
+          "date": "1935-09-11",
+          "time_label": "晚间",
+          "precision": "时段",
+          "event": "中央到达俄界，为随后会议与继续北上提供集结节点。",
+          "sources": [
+            "S26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S26": "第十二章；依条目日期检索相应段落"
+          }
+        },
+        {
+          "date": "1935-09-12",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "俄界政治局扩大会议讨论战略分歧，通过相关决定，随后中央率部继续向甘南推进。",
+          "sources": [
+            "S26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S26": "第十二章；依条目日期检索相应段落"
+          }
+        }
+      ],
+      "figures": [
+        {
+          "side": "红军",
+          "metric": "双方会师总兵力",
+          "value": 100000,
+          "qualifier": "余人",
+          "scope": "S02会师概述",
+          "note": "不能与两军各自报告再累加，也不是每次过草地人数。",
+          "sources": [
+            "S02"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "红军",
+          "metric": "非战斗减员",
+          "value": null,
+          "qualifier": "",
+          "scope": "雪山与草地阶段",
+          "note": "未核得按疾病、饥饿、事故、掉队拆分的统一统计，严禁设为零。",
+          "sources": [
+            "S01",
+            "S13"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {}
+        }
+      ],
+      "outcome": "会师扩大了红军力量，但补给、方向与指挥协调问题仍待解决。之后各部行程分化，不应在教学上将分途处理为一次普通战术撤退。",
+      "geography": "小金县城（今美兴）只表示懋功地域，巴西点只表示聚落；二者之间不能画一条可直接通行的直线。湿地、雪线、季节水位与高程应作为待校核图层，不能用现代公路作为默认长征道路。",
+      "equipment": "粮食携行、驮运、医疗、收容与通信是关键。损失分为阵亡、负伤、病患、掉队待收容和调离；疲劳与营养不足不会自动等同死亡。牲畜数量不能与人员相加。",
+      "modeling": "目标是保持组织、完成集结并保留下一阶段行动能力。分配粮食、选择路线和等待友军是教学决策。反事实比较统一补给协调或延迟信息的影响；本卡只提供记录字段和问题，不宣称实现跨会话共享库存。",
+      "uncertainties": [
+        "阶段划分是教学索引，不宣称“六阶段”为唯一官方分期。",
+        "草地逐小时轨迹、海拔暴露时长和逐日死亡总数未核，不做拟真曲线。",
+        "左右路军不能等同红一和红四方面军的简单一一映射。",
+        "S26提供组织与战略决策叙述，未逐件核验电报原件；命令发出、送达及部队执行时差仍待考。"
+      ],
+      "points": [
+        "xiaojin",
+        "baxi"
+      ],
+      "time_step": "6小时",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 2.2
+      },
+      "preset_note": "只对所选日期内的局部部队运行几何检查；战略转场以独立快照接续。",
+      "parameter_status": "teaching_estimate"
+    },
+    {
+      "id": "LM07",
+      "name": "红军长征-包座战役-1935.08.29至1935.09.01",
+      "track": "红四方面军为主的右路军",
+      "kind": "围点打援与打开通道",
+      "scope": "8月29日至31日主要战斗，补录S27记载的9月1日凌晨残敌投降；S12的8月31日晚收束作为异文保留。求吉寺、达金寺（亦作大戒寺）与打援河谷分开表示。",
+      "aliases": [
+        "包座战役",
+        "包座战斗",
+        "红军长征-包座战役-1935.08.29至1935.08.31"
+      ],
+      "sources": [
+        "S11",
+        "S12",
+        "S13",
+        "S27"
+      ],
+      "forces": [
+        {
+          "side": "红军",
+          "unit": "红30军及红4军一部",
+          "description": "徐向前指挥；红30军军长程世才、政委李先念，以第88、89师为主，第264团攻击达金寺方向，其他部队隐蔽待援。红4军参加另一方向作战。",
+          "sources": [
+            "S11",
+            "S13"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "国民党军",
+          "unit": "胡宗南部守军与第49师援军",
+          "description": "寺院据点守军和由南向北的增援纵队职责不同；援军被击败不等于整个师所有人员均被杀。",
+          "sources": [
+            "S11",
+            "S12"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "红军",
+          "unit": "红4军第10师",
+          "description": "求吉寺方向攻点，与红30军打援协同；师长王友钧在战斗中牺牲，未核得准确牺牲钟点。",
+          "sources": [
+            "S27"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S27": "包座战斗；依条目日期或部队检索相应段落"
+          }
+        }
+      ],
+      "events": [
+        {
+          "date": "1935-08-25",
+          "time_label": "前置；未载钟点",
+          "precision": "日",
+          "event": "胡宗南令第49师由漳腊方向增援包座、求吉，援军行程是围点打援的前置条件。",
+          "sources": [
+            "S12"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-08-29",
+          "time_label": "黄昏起；S27记载",
+          "precision": "时段",
+          "event": "红264团攻击大戒寺外围据点；对后山残敌采取围而不攻，形成围点打援态势。",
+          "sources": [
+            "S27"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S27": "包座战斗；依条目日期或部队检索相应段落"
+          }
+        },
+        {
+          "date": "1935-08-30",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "胡宗南再令部队向包座增援；控制增援道路仍是关键。",
+          "sources": [
+            "S12"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-08-31",
+          "time_label": "15时；S27记载",
+          "precision": "小时",
+          "event": "红军向进入河谷的第49师援军发起伏击；地方所记持续8小时不用于反推另一唯一发起钟点。",
+          "sources": [
+            "S27"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S27": "包座战斗；依条目日期或部队检索相应段落"
+          }
+        },
+        {
+          "date": "1935-08-31",
+          "time_label": "晚间",
+          "precision": "时段",
+          "event": "S12记达金寺方向当晚结束战斗；与S27次日凌晨残敌投降属于收束时刻异文，不能同时作为唯一终点。",
+          "sources": [
+            "S12"
+          ],
+          "evidence_status": "source_conflict",
+          "variant_group": "baozuo_end",
+          "variant": "S12_evening",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-09-01",
+          "time_label": "凌晨；S27记载",
+          "precision": "时段",
+          "event": "S27记大戒寺后山残余守敌在援军溃败后缴械投降；与S12的收束日期并列，教学应先声明采用的来源。",
+          "sources": [
+            "S27"
+          ],
+          "evidence_status": "source_conflict",
+          "variant_group": "baozuo_end",
+          "variant": "S27_next_dawn",
+          "source_locator": {
+            "S27": "包座战斗；依条目日期或部队检索相应段落"
+          }
+        }
+      ],
+      "figures": [
+        {
+          "side": "国民党军",
+          "metric": "毙伤俘合计",
+          "value": 5000,
+          "qualifier": "余人",
+          "scope": "S11战役汇总",
+          "note": "不是死亡5000；不得与分项再相加。",
+          "sources": [
+            "S11"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "国民党军",
+          "metric": "毙伤",
+          "value": 4000,
+          "qualifier": "余人",
+          "scope": "S13地方打援战果口径",
+          "note": "与S11可能有范围和取整差异，不强行凑总数。",
+          "sources": [
+            "S13",
+            "S27"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S27": "包座战斗；文末战果段"
+          }
+        },
+        {
+          "side": "国民党军",
+          "metric": "被俘",
+          "value": 800,
+          "qualifier": "余人",
+          "scope": "S13口径",
+          "note": "与毙伤分项可辨，但不当作逐人核验数。",
+          "sources": [
+            "S13",
+            "S27"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S27": "包座战斗；文末战果段"
+          }
+        },
+        {
+          "side": "红军",
+          "metric": "战斗伤亡合计",
+          "value": null,
+          "qualifier": "",
+          "scope": "全战役",
+          "note": "本轮未核实草稿900人牺牲的口径。",
+          "sources": [
+            "S11",
+            "S12"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {}
+        }
+      ],
+      "outcome": "红军打开出草地后继续北上的通路，并取得急需物资。主要目标是打通道路、改善供给，而不是必须把所有援军歼灭后才允许继续前进。",
+      "geography": "包座现代聚落与巴西为区域定位。上、下包座、寺院与河谷战场之间仍需历史图逐点对照；GeoNames聚落位置不能当作整个伏击圈圆心。林地射界、桥梁和山道应另绘。",
+      "equipment": "步兵、机枪、林地伏击分队、运输和俘虏收容分列。缴获粮食和枪支是进入库存的事件，并不自动补足伤亡人员或使所有分队满编。",
+      "modeling": "目标：保持围点所需兵力、在援军行进中创造有利接触并保障北进通路。草稿“敌援到达前完成围歼”不适用于打援部分；应比较援军到达时的阵地、预备队和敌情掌握。",
+      "uncertainties": [
+        "9月1日凌晨2时伍诚仁逃离未在已核来源中确认，暂不生成小时事件。",
+        "机枪缴获50余与70挺存在版本差异，未选其一拟合武器损失。",
+        "900人不可未经查证写成红军阵亡总数。",
+        "8月31日晚与9月1日凌晨收束分别登记baozuo_end异文，不能将两条相加成两次投降。",
+        "S27的第89师第264团隶属表述尚需军史核验，不据此扩写完整编制。"
+      ],
+      "points": [
+        "baozuo",
+        "baxi"
+      ],
+      "time_step": "1小时",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 2.0
+      },
+      "preset_note": "只对所选日期内的局部部队运行几何检查；战略转场以独立快照接续。",
+      "parameter_status": "teaching_estimate"
+    },
+    {
+      "id": "LM08",
+      "name": "红军长征-腊子口战斗-1935.09.16至1935.09.17",
+      "track": "中央红军",
+      "kind": "隘口突破",
+      "scope": "以9月16日晚至17日的攻坚过程为教学窗口。13日起的行军是前置，不把9月13日写成已在桥头展开。",
+      "aliases": [
+        "腊子口战斗",
+        "腊子口战役"
+      ],
+      "sources": [
+        "S14",
+        "S11",
+        "S28"
+      ],
+      "forces": [
+        {
+          "side": "红军",
+          "unit": "红4团",
+          "description": "团长王开湘、政委杨成武；正面牵制、攀崖迂回和后续跟进各有任务。资料中突击分队人数不能替代全团实到人数。",
+          "sources": [
+            "S11",
+            "S14"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "国民党军",
+          "unit": "鲁大昌新编第14师部队",
+          "description": "据桥头及峡口工事守备，前沿守军与外围增援须分开。现有报道未给同一时刻完整兵力表。",
+          "sources": [
+            "S11",
+            "S14"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        }
+      ],
+      "events": [
+        {
+          "date": "1935-09-16",
+          "time_label": "晚间",
+          "precision": "时段",
+          "event": "红4团进攻隘口，正面攻击受阻后调整部署。",
+          "sources": [
+            "S14"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-09-16至1935-09-17",
+          "time_label": "夜间；未载绝对时刻",
+          "precision": "时段",
+          "event": "组织正面牵制和攀崖迂回，登崖人员为后续突击创造通道。",
+          "sources": [
+            "S14"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-09-16至1935-09-17",
+          "time_label": "半夜时分",
+          "precision": "时段",
+          "event": "正面进攻与侧后突击呼应，红军突破桥头守备。不得将“半夜”自动等同00时00分。",
+          "sources": [
+            "S14"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-09-16至1935-09-17",
+          "time_label": "突破后；日期边界未核",
+          "precision": "时段",
+          "event": "红4团通过桥头并追击；本卡用17日作为教学收束窗口，不宣称已核到该日具体历史结束时刻。",
+          "sources": [
+            "S11",
+            "S14"
+          ],
+          "evidence_status": "teaching_window",
+          "source_locator": {}
+        }
+      ],
+      "figures": [
+        {
+          "side": "双方",
+          "metric": "战斗伤亡合计",
+          "value": null,
+          "qualifier": "",
+          "scope": "腊子口局部战斗",
+          "note": "草稿“红军数十人”缺乏本轮直接核验，不补成整十数字。",
+          "sources": [
+            "S14"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {}
+        },
+        {
+          "side": "国民党军",
+          "metric": "被歼建制描述",
+          "value": null,
+          "qualifier": "",
+          "scope": "S11称2个多营",
+          "note": "是建制战果表述，不能乘理论编制得到死亡数。",
+          "sources": [
+            "S11"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {}
+        }
+      ],
+      "outcome": "红军通过险隘继续北进。决定性变化是攻击方向和协同条件改变，不能据结果宣称正面火力完全无效或迂回必然成功。",
+      "geography": "腊子口镇的现代参考坐标约34.066°N、103.894°E，不能沿用草稿103.50°E。镇点不是战斗木桥，具体峡口、山顶和攀登线坐标仍待核，教学地图必须注明示意。",
+      "equipment": "步兵、机枪掩护、手榴弹和绳索攀登保障分开。装配不明的“迫击炮数量”不自动添加为初始火力。山崖后的单位不能仅因落在射程圆内就宣称具有实际射界。",
+      "modeling": "目标是打开通路并保证后续部队通过。转折点为正面受阻后的重新侦察和迂回选择。反事实可改变攀登耗时、发现概率、守军预备队反应，但均为假设变量，不能从单场成功推出普适攀登成功率。",
+      "uncertainties": [
+        "报道存在日期边界差异，保留夜间跨日窗口，不编造17日某整点结束。",
+        "攀崖战士的姓名、族属细节及完整突击队名册未作独立档案核验。",
+        "“陕甘支队”成立日期与先期部队称谓应依阶段区分，避免套用事后总称。",
+        "S28遗址说明以9月16日表述攻破天险；9月17日收束不能包装为该文明确记载。遗址/纪念碑位置不等同战时桥头部署。"
+      ],
+      "points": [
+        "lazikou"
+      ],
+      "time_step": "30分钟",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 2.2
+      },
+      "preset_note": "只对所选日期内的局部部队运行几何检查；战略转场以独立快照接续。",
+      "parameter_status": "teaching_estimate"
+    },
+    {
+      "id": "LM09",
+      "name": "红军长征-红二十五军长征-1934.11.16至1935.09.16",
+      "track": "红二十五军",
+      "kind": "独立转移、创建根据地与北上",
+      "scope": "独立战线，包含独树镇、庾家河、鄂豫陕根据地和西征北上。9月15日到永坪、16日会师、18日合编是不同事件；不能归入中央红军1935年10月到吴起。",
+      "aliases": [
+        "红二十五军长征",
+        "红25军长征",
+        "独树镇战斗",
+        "庾家河战斗"
+      ],
+      "sources": [
+        "S15",
+        "S02",
+        "S01",
+        "S26"
+      ],
+      "forces": [
+        {
+          "side": "红军",
+          "unit": "红25军",
+          "description": "出发时军长程子华、政委吴焕先、副军长徐海东；223、224、225团等随阶段行动。1935年8月吴焕先牺牲后指挥关系改变，不沿用出发时名单到会师。",
+          "sources": [
+            "S15",
+            "S26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S26": "第十二章；依条目日期检索相应段落"
+          }
+        },
+        {
+          "side": "国民党军",
+          "unit": "河南堵截部队、追击军和陕西地方军",
+          "description": "独树镇为第40军第115旅及骑兵等；庾家河为第60师部队，进入陕南后另有地方军。跨阶段敌方序列不可合成一个静止蓝军。",
+          "sources": [
+            "S15"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        }
+      ],
+      "events": [
+        {
+          "date": "1934-11-16",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "红25军从河南罗山何家冲出发，开始独立战略转移。",
+          "sources": [
+            "S15"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1934-11-26",
+          "time_label": "13时许（回顾文章所载）",
+          "precision": "小时",
+          "event": "先头部队在独树镇七里岗附近遭堵截；吴焕先组织抵抗，后续部队跟进。",
+          "sources": [
+            "S15"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1934-11-26至1934-11-27",
+          "time_label": "夜间至拂晓",
+          "precision": "时段",
+          "event": "正面冲出受阻后改走隐蔽道路，跨越公路进入伏牛山方向。",
+          "sources": [
+            "S15"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1934-12-10",
+          "time_label": "上午",
+          "precision": "时段",
+          "event": "庾家河会议期间遇敌，红军反击；程子华、徐海东负伤，指挥连续性成为关键。",
+          "sources": [
+            "S15"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-07-16",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "根据对主力红军行动的判断，由沣峪口继续西征北上。",
+          "sources": [
+            "S15"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-08-21",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "四坡方向战斗中吴焕先牺牲；不得把该事件回填到独树镇。",
+          "sources": [
+            "S15"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-09-15",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "红25军抵达永坪。",
+          "sources": [
+            "S15",
+            "S26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S26": "第十二章；依条目日期检索相应段落"
+          }
+        },
+        {
+          "date": "1935-09-16",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "与红26、红27军会师，随后于18日合编红15军团。",
+          "sources": [
+            "S15",
+            "S02",
+            "S26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "S26": "第十二章；依条目日期检索相应段落"
+          }
+        }
+      ],
+      "figures": [
+        {
+          "side": "红军",
+          "metric": "出发兵力",
+          "value": 2980,
+          "qualifier": "余人",
+          "scope": "S15出发实有人数表述",
+          "note": "属于整军快照，不是独树镇投入数。",
+          "sources": [
+            "S15"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "红军",
+          "metric": "伤亡合计",
+          "value": 200,
+          "qualifier": "余人",
+          "scope": "S15庾家河战斗口径",
+          "note": "一次战斗回顾数，不能外推全长征；死亡与负伤未分。",
+          "sources": [
+            "S15"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "国民党军",
+          "metric": "毙伤",
+          "value": 800,
+          "qualifier": "余人",
+          "scope": "S15庾家河战果口径",
+          "note": "红军战果叙述，尚无敌方同窗口名册校核。",
+          "sources": [
+            "S15"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "双方",
+          "metric": "全线累计战斗伤亡",
+          "value": null,
+          "qualifier": "",
+          "scope": "1934年11月至1935年9月",
+          "note": "扩军和留守分流同时发生，前后人数差无法给出死亡数。",
+          "sources": [
+            "S15",
+            "S01"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {}
+        }
+      ],
+      "outcome": "红25军先于中央红军抵达陕北，创建根据地和补充兵员也是长征过程的一部分。该线不是只有从南向北的单向不停行军。",
+      "geography": "独树镇、庾家河、永坪为三段地域参考；何家冲、七里岗及四坡具体战斗点暂不写坐标。不能把横跨数省的三点同时放进一个小时回合接触计算。",
+      "equipment": "徒步步兵、少量骑传、机枪、卫生和运输分开。出发缺少电台的条件应影响跨军信息获取，而不是默认友军实时共享态势。兵员补充、留守和受伤退出须逐项记账。",
+      "modeling": "分三次教学运行：独树镇突围、庾家河遭遇与重组、北上接续。反事实考察道路侦察、指挥员失能后的替代命令和根据地补给；全线评估用存续、组织、补充与联系建立，不能只比较歼敌。",
+      "uncertainties": [
+        "S15为后出的回顾，13时许、损失分项只作为单源记载，待原战报核对。",
+        "9月15、16、18分别对应抵达、会师、整编，不人为选一个覆盖全部。",
+        "不采纳文内未经交叉核实的极端气温及跨时段财政细节作为算法参数。"
+      ],
+      "points": [
+        "dushu",
+        "yujiahe",
+        "yongping"
+      ],
+      "time_step": "6小时",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "preset_note": "只对所选日期内的局部部队运行几何检查；战略转场以独立快照接续。",
+      "parameter_status": "teaching_estimate"
+    },
+    {
+      "id": "LM10",
+      "name": "红军长征-嘉陵江战役-1935.03.28至1935.04.21",
+      "track": "红四方面军",
+      "kind": "大正面渡河与纵深发展",
+      "scope": "苍溪、阆中渡河后向剑门关、江油等方向发展，是红四方面军战略转移的重要节点；与中央红军四渡赤水在时间上并行。",
+      "aliases": [
+        "嘉陵江战役",
+        "强渡嘉陵江"
+      ],
+      "sources": [
+        "S16",
+        "S01"
+      ],
+      "forces": [
+        {
+          "side": "红军",
+          "unit": "红四方面军",
+          "description": "徐向前总指挥；第一梯队红9、红30、红31军，后续红4军等。红30军第88师承担重点突破，不能把方面军全兵力直接放到一个登陆点。",
+          "sources": [
+            "S16"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "国民党军",
+          "unit": "邓锡侯、田颂尧部等川军",
+          "description": "江防与纵深配置不同；后续江油援兵另记。河岸守备、剑门关守军和江油增援不能重复计为三份新兵力。",
+          "sources": [
+            "S16"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        }
+      ],
+      "events": [
+        {
+          "date": "1935-03-28",
+          "time_label": "晚间",
+          "precision": "时段",
+          "event": "第一梯队分路渡江，红30军第88师在塔子山附近突破，红31军等另点渡江。",
+          "sources": [
+            "S16"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-03-28至1935-04-02",
+          "time_label": "渡江突破后；各部具体日时未载",
+          "precision": "日期范围",
+          "event": "突破之后巩固登陆场，向两翼和纵深发展，后续梯队投入；不补造各军的逐日通过时间。",
+          "sources": [
+            "S16"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-04-02",
+          "time_label": "拂晓",
+          "precision": "时段",
+          "event": "红31军和红30军第88师抵近剑门关，形成多面攻击态势。",
+          "sources": [
+            "S16"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-04-02",
+          "time_label": "11时",
+          "precision": "小时",
+          "event": "发起剑门关攻击，随后攻占要隘；该钟点不等于3月28日渡江开始时间。",
+          "sources": [
+            "S16"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-04-10",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "部队抵达涪江一线并威胁江油，川军调兵增援。",
+          "sources": [
+            "S16"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-04-14至1935-04-15",
+          "time_label": "多日",
+          "precision": "日期范围",
+          "event": "留下部队围江油，主力打击援兵。",
+          "sources": [
+            "S16"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-04-21",
+          "time_label": "截至当日",
+          "precision": "日",
+          "event": "控制地域扩大，战役收束；继续转移另开阶段。",
+          "sources": [
+            "S16"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        }
+      ],
+      "figures": [
+        {
+          "side": "国民党军",
+          "metric": "歼敌战果",
+          "value": 10000,
+          "qualifier": "余人",
+          "scope": "S16全战役口径",
+          "note": "没有完整死亡、受伤、被俘拆分，不称阵亡1万。",
+          "sources": [
+            "S16"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "国民党军",
+          "metric": "被俘",
+          "value": 3000,
+          "qualifier": "余人",
+          "scope": "S16江油以南14至15日战斗",
+          "note": "属于总战果中的阶段数，不再次累加。",
+          "sources": [
+            "S16"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "红军",
+          "metric": "战斗伤亡合计",
+          "value": null,
+          "qualifier": "",
+          "scope": "全战役",
+          "note": "未核得统一损失表。",
+          "sources": [
+            "S16"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {}
+        }
+      ],
+      "outcome": "红四方面军突破嘉陵江防线并向纵深发展，为后续转移创造空间。不同文献将其列入长征起点或前奏的分期差异，不改变战役本身日期。",
+      "geography": "苍溪县城是初始地域参考，塔子山、鸢溪口、剑门关及江油各节点需补充专门地理核验；没有精确点的阶段只做历史与教学分析，不让模型补造战术坐标。",
+      "equipment": "相较仓促抢渡，此役包含事先训练、造船、竹桥构件与支援火力准备。工兵器材、侦察、登陆兵与后续梯队分别记录；“3座桥构件”并不保证3座桥同时建成。",
+      "modeling": "目标是渡江成功后保持后续兵力与保障通过，继而争取纵深节点。反事实比较多路突破或单点集中、保留预备队或立即投入；评估桥头容量、后续抵达和敌援军，而非以攻克县城数量替代战斗力。",
+      "uncertainties": [
+        "宽大战线不能用单一0.5km接触半径代表整个战役，应按渡点和日期分局部快照。",
+        "部分综述所称攻克8座或9座县城不一致，未用于胜负阈值。",
+        "本次未查到各梯队完整的实到兵员和装备名册。"
+      ],
+      "points": [
+        "cangxi"
+      ],
+      "time_step": "1小时",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.7
+      },
+      "preset_note": "只对所选日期内的局部部队运行几何检查；战略转场以独立快照接续。",
+      "parameter_status": "teaching_estimate"
+    },
+    {
+      "id": "LM11",
+      "name": "红军长征-百丈关战役-1935.11",
+      "track": "红四方面军南下线",
+      "kind": "进攻、反击与撤出",
+      "scope": "发生于四川名山百丈及附近地域。日期有11月13日起进攻、21日撤出的叙述，也有19至25日主战阶段；本卡用月份命名，事件按来源并列，不伪造统一日历。",
+      "aliases": [
+        "百丈关战役",
+        "百丈战役"
+      ],
+      "sources": [
+        "S17",
+        "S18",
+        "S11"
+      ],
+      "forces": [
+        {
+          "side": "红军",
+          "unit": "红四方面军红4、红30军等",
+          "description": "南下战略背景下由徐向前等组织战役。亲历者回忆为15个团对敌80个团；草稿17团尚未核实，不把团数直接乘满编人数。",
+          "sources": [
+            "S17",
+            "S18"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "国民党军",
+          "unit": "刘湘所部及川军增援",
+          "description": "川西平原方向防御与反扑力量逐步集中，约80团是战区集结概述，单日战线投入、航空与炮兵实数不全。",
+          "sources": [
+            "S17",
+            "S18"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        }
+      ],
+      "events": [
+        {
+          "date": "1935-11-13",
+          "time_label": "未载钟点；S18时间线",
+          "precision": "日",
+          "event": "红军攻击朱家场、太和场方向，形成向川西平原发展的攻势。",
+          "sources": [
+            "S18"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-11-16",
+          "time_label": "未载钟点；S18时间线",
+          "precision": "日",
+          "event": "攻占百丈并向前发展，战线突出、预备队与补给承受更大压力。",
+          "sources": [
+            "S18"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-11-19",
+          "time_label": "拂晓；S18时间线",
+          "precision": "时段",
+          "event": "川军在航空与炮火支援下多方向反扑，红军转入高强度防御。",
+          "sources": [
+            "S18"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-11-21",
+          "time_label": "撤出记载；S18",
+          "precision": "日",
+          "event": "一组资料记红军撤出百丈。此项与S11的结束日期存在异文，不能同时作为确定事实。",
+          "sources": [
+            "S18"
+          ],
+          "evidence_status": "source_conflict",
+          "variant_group": "baizhang_end",
+          "variant": "S18_21",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-11-19至1935-11-25",
+          "time_label": "另一统计范围；S11",
+          "precision": "日期范围",
+          "event": "军网汇编以此范围概述七昼夜激战，保留为日期异文，不生成两场重复战役。",
+          "sources": [
+            "S11"
+          ],
+          "evidence_status": "source_conflict",
+          "variant_group": "baizhang_end",
+          "variant": "S11_25",
+          "source_locator": {}
+        }
+      ],
+      "figures": [
+        {
+          "side": "红军",
+          "metric": "伤亡合计",
+          "value": 10000,
+          "qualifier": "人左右",
+          "scope": "S11、S18战役概述",
+          "note": "不是阵亡近万人；日期窗口有异文，不能拟合每日损失。",
+          "sources": [
+            "S11",
+            "S18"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "国民党军",
+          "metric": "毙伤",
+          "value": 15000,
+          "qualifier": "余人",
+          "scope": "红军战果回顾口径",
+          "note": "不当作对方独立伤亡核算，也不由此推导双方人数。",
+          "sources": [
+            "S11",
+            "S18"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "红军",
+          "metric": "某交通队阵亡",
+          "value": 17,
+          "qualifier": "人",
+          "scope": "S17秦忠回忆的50余人交通队",
+          "note": "分队个案不能按比例外推整军。",
+          "sources": [
+            "S17"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        }
+      ],
+      "outcome": "红军进攻受挫并撤向川康地区。此役与此后整个南下过程的减员不是同一统计窗口，不能把8万至4万的全阶段变化全归为百丈阵亡。",
+      "geography": "现代百丈镇参考约30.187°N、103.261°E，不能直接沿用草稿30.08°N、103.15°E。水田、山丘、沟谷与通向平原的道路应分别绘制；纪念馆地点也不等于全战役指挥所位置。",
+      "equipment": "步兵、有限机枪炮兵、弹药转运、伤员后送与敌方航空支援分别记录。持续激战中的弹药和可用战斗人员变化，比抽象的“满编”标签更有教学意义。",
+      "modeling": "比较初期突破后停止、调整与继续扩张三种选择。归因至少区分战略方向、敌情估计、集中程度、战场地形和补给，不能把失利确定性地归为某一人。历史因果判断与受限模拟的效应估计分列。",
+      "uncertainties": [
+        "日期冲突未解决；本卡事件表包含异文，初始化必须选定一条来源时间线。",
+        "S18后半评论不作为可验证战史事实；未据其评论构造人物心理参数。",
+        "人员伤亡近万人不是全部阵亡，团数也不是精确实力比。"
+      ],
+      "points": [
+        "baizhang"
+      ],
+      "time_step": "1小时",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.9
+      },
+      "preset_note": "只对所选日期内的局部部队运行几何检查；战略转场以独立快照接续。",
+      "parameter_status": "teaching_estimate"
+    },
+    {
+      "id": "LM12",
+      "name": "红军长征-乌蒙山回旋战-1936.02.27至1936.03.28",
+      "track": "红二、六军团",
+      "kind": "山地机动与摆脱合围",
+      "scope": "从毕节撤出，经黔滇边山地反复机动，至盘县、亦资孔。此时中央红军已经到陕北，不能让毛泽东在同一战区直接指挥每个团。",
+      "aliases": [
+        "乌蒙山回旋战",
+        "乌蒙回旋"
+      ],
+      "sources": [
+        "S19",
+        "S01",
+        "S02"
+      ],
+      "forces": [
+        {
+          "side": "红军",
+          "unit": "红2、红6军团",
+          "description": "贺龙、任弼时与萧克、王震等领导两军团行动；当时尚未在甘孜正式组成红二方面军，教学中可说明后来番号，单位本身仍按当时称谓。",
+          "sources": [
+            "S19",
+            "S02"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "国民党军",
+          "unit": "中央军、川军和滇军追堵部队",
+          "description": "S19以5个纵队、约120团描述合围规模；它是多方向战区压力，不是各次伏击当面守军。",
+          "sources": [
+            "S19"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        }
+      ],
+      "events": [
+        {
+          "date": "1936-02-27",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "红2、红6军团离开毕节，进入乌蒙山区寻求机动空间。",
+          "sources": [
+            "S19"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1936-03-02",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "野马川会议决定继续西进、寻机南行，目标仍包含建立根据地。",
+          "sources": [
+            "S19"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1936-03-04",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "到妈姑、回水塘地区后发现南进道路被切断，调整为西北行动。",
+          "sources": [
+            "S19"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1936-03-06",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "进至奎香地区，利用地域转换摆脱追堵。",
+          "sources": [
+            "S19"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1936-03-08起",
+          "time_label": "连续行动；未载小时",
+          "precision": "日期范围",
+          "event": "由奎香南返，在以则河方向伏击后再转回，继而北、东机动。",
+          "sources": [
+            "S19"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1936-03-28",
+          "time_label": "截至当日",
+          "precision": "日",
+          "event": "进入盘县、亦资孔地区，结束本轮回旋阶段。",
+          "sources": [
+            "S19"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        }
+      ],
+      "figures": [
+        {
+          "side": "红军",
+          "metric": "参战兵力",
+          "value": 10000,
+          "qualifier": "多人",
+          "scope": "S19两军团概述",
+          "note": "不是精确兵员名册；变化包含补充、掉队和伤病。",
+          "sources": [
+            "S19"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "双方",
+          "metric": "全阶段伤亡合计",
+          "value": null,
+          "qualifier": "",
+          "scope": "乌蒙回旋阶段",
+          "note": "没有可统一核算的分项表；“没有蚀本”不是零伤亡。",
+          "sources": [
+            "S19"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {}
+        }
+      ],
+      "outcome": "两军团通过反复机动摆脱合围，为后续北渡金沙江创造条件。反复进入同一地域不应被系统误判为程序失效或无意义重复。",
+      "geography": "赫章、盘县为地域参考，不是可在一个回合相互接触的阵地。山路坡度、村落可供给量及消息传播延迟须另设教学假设，不能把所有回旋解释为直线往返。",
+      "equipment": "轻装徒步、侦察、通信、局部机枪火力、收容医疗与携行粮食分列。战斗后缴获、休整及补充影响下一段行军；不因叙述“未减员”而把人员损耗率固定为零。",
+      "modeling": "目标是主力存续并获得通往新地域的通路。关键转折为3月4日受阻后的改向；反事实改变侦察延迟、敌方堵口速度或己方停留，比较可行通道数量和粮食余量，不能照抄四渡赤水的渡口规则。",
+      "uncertainties": [
+        "本轮资料主要到日级，没有完整小时日志。",
+        "不同概述的敌军师、旅、团数量涉及统计范围，不能互相换算为精确人数。"
+      ],
+      "points": [
+        "hezhang",
+        "panxian"
+      ],
+      "time_step": "6小时",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 2.1
+      },
+      "preset_note": "只对所选日期内的局部部队运行几何检查；战略转场以独立快照接续。",
+      "parameter_status": "teaching_estimate"
+    },
+    {
+      "id": "LM13",
+      "name": "红军长征-红二六军团抢渡金沙江-1936.04.25至1936.04.28",
+      "track": "红二、六军团",
+      "kind": "分渡口渡运与北上",
+      "scope": "云南丽江石鼓及上游渡口群，1936年行动。区别于1935年中央红军皎平渡，不能复制皎平渡的船数、船工数和初始部队。",
+      "aliases": [
+        "红二六军团抢渡金沙江",
+        "红二六军团渡金沙江",
+        "1936年抢渡金沙江",
+        "石鼓渡江"
+      ],
+      "sources": [
+        "S23",
+        "S24",
+        "S25",
+        "S22",
+        "S02"
+      ],
+      "forces": [
+        {
+          "side": "红军",
+          "unit": "红2、红6军团",
+          "description": "贺龙、任弼时、关向应、萧克、王震等领导北上；红2军团第4师为前卫，卢冬生任师长。红6军团后续渡运另记。7月才正式组成红二方面军，不提前套用整编后的单位关系。",
+          "sources": [
+            "S23",
+            "S24",
+            "S02"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "国民党军",
+          "unit": "追击及沿途地方守备",
+          "description": "石鼓先头接触的叙述称当地守备撤离；其他渡点和远方追兵资料不全，不能由一个空据点推断整条江防无人。",
+          "sources": [
+            "S23",
+            "S24"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        }
+      ],
+      "events": [
+        {
+          "date": "1936-04-25",
+          "time_label": "日内；凌晨、中午、下午有异文",
+          "precision": "日",
+          "event": "前卫红4师到石鼓并寻找渡船；只保留日期，暂不选一个确切时段。",
+          "sources": [
+            "S23",
+            "S24",
+            "S25"
+          ],
+          "evidence_status": "source_conflict",
+          "variant_group": "jinsha1936_timing",
+          "source_locator": {}
+        },
+        {
+          "date": "1936-04-26",
+          "time_label": "下午",
+          "precision": "时段",
+          "event": "主力开始从木瓜寨、木取独等处渡江，与先头渡运区别。",
+          "sources": [
+            "S24"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1936-04-27",
+          "time_label": "凌晨及随后",
+          "precision": "时段",
+          "event": "军团直属队与后续师分批过江，红6军团部及部分部队接续。",
+          "sources": [
+            "S24"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1936-04-28",
+          "time_label": "下午；一组叙述的结束窗口",
+          "precision": "时段",
+          "event": "主体资料记渡运完成；另有27日全部完成的概述，暂不伪造各团精确终点。",
+          "sources": [
+            "S23",
+            "S25"
+          ],
+          "evidence_status": "source_conflict",
+          "variant_group": "jinsha1936_timing",
+          "source_locator": {}
+        }
+      ],
+      "figures": [
+        {
+          "side": "红军",
+          "metric": "渡江人数",
+          "value": 18000,
+          "qualifier": "人左右",
+          "scope": "S23、S25全阶段概述",
+          "note": "不表示某渡口或某小时的同时投入。",
+          "sources": [
+            "S23",
+            "S25"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "红军",
+          "metric": "使用渡口数量",
+          "value": 5,
+          "qualifier": "处",
+          "scope": "石鼓至巨甸渡口群",
+          "note": "各渡点能力、启用时刻仍需分别核对。",
+          "sources": [
+            "S23",
+            "S24"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "保障",
+          "metric": "木船",
+          "value": 7,
+          "qualifier": "只",
+          "scope": "S23全阶段概述",
+          "note": "与1935皎平渡7只找到、6只可用不是同一组船。",
+          "sources": [
+            "S23"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "保障",
+          "metric": "船工",
+          "value": 28,
+          "qualifier": "人",
+          "scope": "S23统计口径",
+          "note": "不能和人员伤亡或红军兵力混加。",
+          "sources": [
+            "S23"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "双方",
+          "metric": "战斗与事故损失合计",
+          "value": null,
+          "qualifier": "",
+          "scope": "全阶段",
+          "note": "报道有翻船救援与死亡个案，未形成统一分项总表，不能填零。",
+          "sources": [
+            "S23",
+            "S24"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {}
+        }
+      ],
+      "outcome": "两军团完成渡江并继续北上，衔接甘孜会师。先头抢占、主力连续输送与渡运事故须分别记录；成功通过不等于没有损失。",
+      "geography": "石鼓现代聚落为参考点；五处历史渡点尚未全部可靠定位，不均匀撒点来伪造五个渡口。1935年皎平渡点不得注入本场。",
+      "equipment": "以步兵、渡运、船工协助与运输保障为主。只有核实到同一时段的船只和船工才可计算容量；“抢渡”不能自动理解为所有航次都在敌火下进行。",
+      "modeling": "目标是完成渡江并保存北上能力。课堂可比较单点集中与多点分流的拥堵风险，必须先由教师给定并标记假设容量。史料未完整前，不宣称可复现逐小时历史渡运。",
+      "uncertainties": [
+        "S23称25日下午、S24称25日凌晨、S25称25日中午到石鼓；保留日期，不任意选确切时段。",
+        "S25在正文称27日全部渡完，而其他资料及其所述28日电报对应28日；等待原电报和分队日志核查。",
+        "木筏有十几、几十、20多只等口径；不采用精确筏数或全阶段零伤亡。",
+        "S22源站全文抓取失败，仅作为索引旁证；本卡主要据S23、S24正文。"
+      ],
+      "points": [
+        "shigu"
+      ],
+      "time_step": "1小时",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "preset_note": "只对所选日期内的局部部队运行几何检查；战略转场以独立快照接续。",
+      "parameter_status": "teaching_estimate"
+    },
+    {
+      "id": "LM14",
+      "name": "红军长征-直罗镇战役-1935.11.20至1935.11.24",
+      "track": "中央红军到陕北后的巩固线",
+      "kind": "诱敌进入与阻援围歼",
+      "scope": "陕西富县（当时鄜县）直罗镇及葫芦河谷。中央红军自身长征已结束，但其他方面军仍在长征；本卡作为系列后续巩固场景，不改写中央红军长征终点。",
+      "aliases": [
+        "直罗镇战役",
+        "直罗镇"
+      ],
+      "sources": [
+        "S20",
+        "S21",
+        "S11",
+        "S02"
+      ],
+      "forces": [
+        {
+          "side": "红军",
+          "unit": "红1方面军第1、第15军团",
+          "description": "毛泽东、彭德怀组织作战；第1军团从北、西北方向攻击，第15军团从南侧多方向攻击。红15军团已包含红25、26、27军整编力量，不能重复放入三个原军和一个新军团。",
+          "sources": [
+            "S20",
+            "S21",
+            "S02"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "国民党军",
+          "unit": "东北军第109师及两侧援军",
+          "description": "牛元峰第109师前出；第106、第111师及第117师等从不同方向行动，不能把5个师全部当作直罗镇内被包围的兵力。",
+          "sources": [
+            "S20",
+            "S21"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        }
+      ],
+      "events": [
+        {
+          "date": "1935-11-20",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "第109师进至直罗镇，红军以部队迟滞并引入预设战场。",
+          "sources": [
+            "S20",
+            "S21"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-11-21",
+          "time_label": "拂晓",
+          "precision": "时段",
+          "event": "红1与红15军团由各待机方向发起进攻，阻止敌军退却。",
+          "sources": [
+            "S20",
+            "S21"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-11-21",
+          "time_label": "14时",
+          "precision": "小时",
+          "event": "第109师大部被歼，残部退入东南土寨，红军转入围残部和打援并行。",
+          "sources": [
+            "S20",
+            "S21"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-11-23",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "部分援军西撤，红军追击并在张家湾方向歼敌一部。",
+          "sources": [
+            "S20",
+            "S21"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1935-11-23至1935-11-24",
+          "time_label": "午夜至上午",
+          "precision": "时段",
+          "event": "土寨残部突围，至24日上午战役结束；不能将23日午夜按未说明的时区换成UTC。",
+          "sources": [
+            "S20",
+            "S21"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        }
+      ],
+      "figures": [
+        {
+          "side": "国民党军",
+          "metric": "被俘",
+          "value": 5300,
+          "qualifier": "余人",
+          "scope": "S11全战役战果口径",
+          "note": "S20、S21概述为5000余，不能作为两组独立样本求平均。",
+          "sources": [
+            "S11",
+            "S20",
+            "S21"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "红军",
+          "metric": "战斗伤亡合计",
+          "value": null,
+          "qualifier": "",
+          "scope": "全战役",
+          "note": "草稿800人本轮未找到明确分项依据，不确认为阵亡或伤亡。",
+          "sources": [
+            "S20",
+            "S21"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {}
+        },
+        {
+          "side": "国民党军",
+          "metric": "阵亡",
+          "value": null,
+          "qualifier": "",
+          "scope": "全战役",
+          "note": "不能用歼敌建制或被俘数反推死亡。",
+          "sources": [
+            "S20",
+            "S21"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {}
+        }
+      ],
+      "outcome": "红军巩固了陕甘根据地。先歼前出之敌、围困残部和阻击援军是不同决策阶段，不能把全战役浓缩为一次接触判定。",
+      "geography": "直罗镇现代参考点约35.958°N、109.000°E，与草稿109.10°E不同。镇东南土寨、北山和张家湾战斗点未完成逐点校核；河谷路线与两侧高地须有独立地形证据。",
+      "equipment": "步兵、机枪、侦察、俘虏收容、医疗和缴获补给分开。俘获人员不等于自动变成己方战斗人员；缴获枪械不能直接推定对方全部装备毁坏。",
+      "modeling": "目标是阻止对根据地的进攻并保留兵力。转折点为21日下午围残部与转兵阻援的兵力分配；反事实固定敌方初始序列，改变援军抵达和红军预备队分配，观察突破与包围持续性。",
+      "uncertainties": [
+        "结束日采用24日，与草稿23日修正。",
+        "牛元峰死亡方式在S20、S21中有不同表述，保留“战役中死亡”，不设具体自杀或击毙动画。",
+        "S20背景中会师和整编日期有混写，采用S02及红25军专卡的事件区分。"
+      ],
+      "points": [
+        "zhiluo"
+      ],
+      "time_step": "1小时",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "preset_note": "只对所选日期内的局部部队运行几何检查；战略转场以独立快照接续。",
+      "parameter_status": "teaching_estimate"
+    },
+    {
+      "id": "LM15",
+      "name": "红军长征-甘孜会师至三大主力会师-1936.07.01至1936.10.22",
+      "track": "红二、红四方面军北上与红一方面军接应",
+      "kind": "整编、协同与会合",
+      "scope": "覆盖甘孜集结、正式组建红二方面军和分路北上，至会宁、将台堡会师。中央红军1935年抵陕北不代表所有红军同日结束长征；1936年12月西安事变是后续背景。",
+      "aliases": [
+        "三大主力会师",
+        "甘孜会师",
+        "会宁会师",
+        "将台堡会师"
+      ],
+      "sources": [
+        "S02",
+        "S01",
+        "S11",
+        "S26"
+      ],
+      "forces": [
+        {
+          "side": "红军",
+          "unit": "红2、红6军团及红32军",
+          "description": "7月5日组成红二方面军，贺龙总指挥、任弼时政委；原红32军转隶应保留单位身份，不新增一份同兵员的复制单位。",
+          "sources": [
+            "S02"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "红军",
+          "unit": "红四方面军与红一方面军接应部队",
+          "description": "按各路线分开行军、接应和集结。先头会合、总部到达与庆祝大会不能合为一个万能事件。",
+          "sources": [
+            "S02"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "side": "国民党军",
+          "unit": "甘南及会师通道的堵截力量",
+          "description": "具体阶段有不同敌方部队；会师本身不是双方正面歼灭战，未核到敌情处不生成交战。",
+          "sources": [
+            "S11"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        }
+      ],
+      "events": [
+        {
+          "date": "1936-07-01",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "红2、红6军团集结甘孜地区，前期接触另有日期。",
+          "sources": [
+            "S02"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1936-07-02",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "举行会师庆祝大会，不与前一日集结和5日整编混同。",
+          "sources": [
+            "S02"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1936-07-05",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "红2、红6军团与红32军合编红二方面军。",
+          "sources": [
+            "S02"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1936-08-05至1936-09-07",
+          "time_label": "多日",
+          "precision": "日期范围",
+          "event": "红四方面军在红二方面军策应下进行岷洮西固方向作战，创造北进条件。",
+          "sources": [
+            "S11"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1936-10-09",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "红军总部、红四方面军总指挥部到会宁，与红一方面军部队会师。",
+          "sources": [
+            "S02"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1936-10-10",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "会宁举行庆祝活动；不把大会时间当作各部首次接触。",
+          "sources": [
+            "S02"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        },
+        {
+          "date": "1936-10-22",
+          "time_label": "未载钟点",
+          "precision": "日",
+          "event": "红二方面军总指挥部及第2军团与红一方面军主力会师将台堡，系列核心范围收束。",
+          "sources": [
+            "S02"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {}
+        }
+      ],
+      "figures": [
+        {
+          "side": "红军",
+          "metric": "三军会师时点总人数",
+          "value": null,
+          "qualifier": "",
+          "scope": "1936年10月会宁与将台堡等",
+          "note": "各部时间、地点不同，本卡不捏合一个同时同地精确总数。",
+          "sources": [
+            "S02"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {}
+        },
+        {
+          "side": "双方",
+          "metric": "会师阶段战斗伤亡合计",
+          "value": null,
+          "qualifier": "",
+          "scope": "7月至10月转移和接应",
+          "note": "会师事件无直接战损不等于全阶段零伤亡。",
+          "sources": [
+            "S02",
+            "S11"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {}
+        }
+      ],
+      "outcome": "三大主力完成会师，标志系列核心叙事结束。红一、红四在会宁会师和红一、红二在将台堡会师应在地图与时间线中分开。",
+      "geography": "甘孜、会宁为参考聚落。将台堡位置尚未纳入可靠历史锚点，本卡明确留空，不能借用甘肃另一“将台”同名点；也不能把两地会师都放在会宁。",
+      "equipment": "通信联络、先头接应、后续到达、粮食分配和整编是重点。人员、武器、伤病与携行物资按原单位保留后再做转隶，不能通过“会师”恢复为满编。",
+      "modeling": "目标是形成可持续协同和会合条件，记录联系建立、通道保障及到达批次。反事实可以改变联络延迟、路线通行和补给调拨，不能把政治会合变成“消灭指定敌师”式胜负目标。",
+      "uncertainties": [
+        "不把1936年12月12日作为本系列长征结束日。",
+        "各军不同地点的先头接触、本部会合及庆祝大会可能有不同日期，必须保留事件类型。",
+        "自动态势继承和多战线同步尚非本次数据新增所实现的功能。"
+      ],
+      "points": [
+        "ganzi",
+        "huining"
+      ],
+      "time_step": "6小时",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "preset_note": "只对所选日期内的局部部队运行几何检查；战略转场以独立快照接续。",
+      "parameter_status": "teaching_estimate"
+    }
+  ],
+  "evidence_levels": {
+    "published_account": "公开文献记载；未核原始命令或逐人名册",
+    "source_conflict": "来源有异文；不得并作唯一事实",
+    "teaching_window": "教学窗口；不是已核定历史时刻",
+    "unverified": "未核得；不得填零或反推确数"
+  }
+}

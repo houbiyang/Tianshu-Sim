@@ -1,0 +1,3877 @@
+{
+  "schema_version": 2,
+  "title": "抗日战争系列（全民族抗战选题）",
+  "checked": "2026-10-22",
+  "use": "教学研究；公开文献参考，不是全战争名录、完整作战序列或强制历史事件脚本。",
+  "evidence_levels": {
+    "published_account": "公开文献记载；未核原始命令或逐人名册",
+    "source_conflict": "来源有异文；不得并作唯一事实",
+    "teaching_window": "教学窗口；不是已核定历史时刻",
+    "unverified": "未核得；不得填零或反推确数"
+  },
+  "preset_note": "note: 教学几何工作估计；不实现铁路修复、地下存续、空中遮断或战役继承算法",
+  "scenarios": [
+    {
+      "id": "AJ01",
+      "name": "抗日战争-淞沪会战-1937.08.13至1937.11.12",
+      "phase": "战略防御",
+      "theater": "正面",
+      "local_posture": "城市攻防与抗登陆",
+      "parent_id": "",
+      "track": "战略防御／正面／城市攻防与抗登陆",
+      "kind": "会战或局部战斗",
+      "scope": "上海市区与北郊、杭州湾方向；1932年一二八淞沪抗战不在本卡。",
+      "aliases": [
+        "淞沪会战"
+      ],
+      "sources": [
+        "A01",
+        "A02",
+        "A03",
+        "A39",
+        "A40"
+      ],
+      "forces": [
+        {
+          "side": "中国",
+          "unit": "第9集团军第87、第88师等",
+          "description": "张治中指挥初期作战；后续增援须按日期区分，不能等同全部会战序列。",
+          "sources": [
+            "A39"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A39": "张治中、87/88师、松井石根及11月8日撤离"
+          }
+        },
+        {
+          "side": "中国",
+          "unit": "第88师及各参战部队",
+          "description": "谢晋元率第524团第1营等守四行仓库；兵力逐次到达，不能一次性铺满地图。",
+          "sources": [
+            "A02",
+            "A03"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A02": "淞沪开战时段、四行仓库、金山卫登陆",
+            "A03": "会战投入兵力"
+          }
+        },
+        {
+          "side": "日本",
+          "unit": "驻沪海军陆战队、第10军等",
+          "description": "驻沪部队先交战，后续陆军登陆；11月金山卫登陆构成侧背威胁。",
+          "sources": [
+            "A02"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A02": "淞沪开战时段、四行仓库、金山卫登陆"
+          }
+        },
+        {
+          "side": "日本",
+          "unit": "上海派遣军",
+          "description": "松井石根指挥，初期调两个师团，9—10月继续增兵。",
+          "sources": [
+            "A39"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A39": "张治中、87/88师、松井石根及11月8日撤离"
+          }
+        }
+      ],
+      "events": [
+        {
+          "date": "1937-08-13",
+          "time_label": "9时30分",
+          "precision": "小时",
+          "event": "上海北站至北四川路发生交战。",
+          "sources": [
+            "A02"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A02": "淞沪开战时段、四行仓库、金山卫登陆"
+          }
+        },
+        {
+          "date": "1937-08-13",
+          "time_label": "16时",
+          "precision": "小时",
+          "event": "驻沪日军海军陆战队下令扩大进攻，中国守军还击。",
+          "sources": [
+            "A02"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A02": "淞沪开战时段、四行仓库、金山卫登陆"
+          }
+        },
+        {
+          "date": "1937-08-14",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "中国政府发表自卫抗战声明，调集陆空军。",
+          "sources": [
+            "A02"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A02": "淞沪开战时段、四行仓库、金山卫登陆"
+          }
+        },
+        {
+          "date": "1937-10-26",
+          "time_label": "深夜",
+          "precision": "时段",
+          "event": "谢晋元等部进入四行仓库承担留守任务。",
+          "sources": [
+            "A02"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A02": "淞沪开战时段、四行仓库、金山卫登陆"
+          }
+        },
+        {
+          "date": "1937-11-05",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "日军第10军在金山卫一带登陆，撤退通路受威胁。",
+          "sources": [
+            "A02"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A02": "淞沪开战时段、四行仓库、金山卫登陆"
+          }
+        },
+        {
+          "date": "1937-11-08",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "中国军队开始撤离上海，保存主力。",
+          "sources": [
+            "A39"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A39": "张治中、87/88师、松井石根及11月8日撤离"
+          }
+        },
+        {
+          "date": "1937-11-11",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "A39记上海于此日失守；与A02、A40的12日并列保留，待核撤军与占城定义。",
+          "sources": [
+            "A39"
+          ],
+          "evidence_status": "source_conflict",
+          "variant_group": "shanghai_end",
+          "variant": "1937-11-11",
+          "source_locator": {
+            "A39": "张治中、87/88师、松井石根及11月8日撤离"
+          }
+        },
+        {
+          "date": "1937-11-12",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "A02、A40记上海失守及会战结束，本卡目录采用这一日期。",
+          "sources": [
+            "A02",
+            "A40"
+          ],
+          "evidence_status": "source_conflict",
+          "variant_group": "shanghai_end",
+          "variant": "1937-11-12",
+          "source_locator": {
+            "A02": "淞沪开战时段、四行仓库、金山卫登陆",
+            "A40": "淞沪累计兵力、11月12日和公开伤亡统计"
+          }
+        }
+      ],
+      "figures": [
+        {
+          "side": "中国",
+          "metric": "累计投入兵力",
+          "value": 700000,
+          "qualifier": "余",
+          "scope": "全会战陆续参战",
+          "note": "不是8月13日的初始实力。",
+          "sources": [
+            "A03"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A03": "会战投入兵力"
+          }
+        },
+        {
+          "side": "日本",
+          "metric": "累计投入兵力",
+          "value": 250000,
+          "qualifier": "约",
+          "scope": "该报道的9个师团口径",
+          "note": "另有更广口径；不与增援人数叠加。",
+          "sources": [
+            "A03"
+          ],
+          "evidence_status": "source_conflict",
+          "source_locator": {
+            "A03": "会战投入兵力"
+          }
+        },
+        {
+          "side": "日本",
+          "metric": "累计投入兵力",
+          "value": 300000,
+          "qualifier": "近",
+          "scope": "A40全会战口径",
+          "note": "与A03约25万并列，不相加、不取中值。",
+          "sources": [
+            "A40"
+          ],
+          "evidence_status": "source_conflict",
+          "source_locator": {
+            "A40": "淞沪累计兵力、11月12日和公开伤亡统计"
+          }
+        },
+        {
+          "side": "中国",
+          "metric": "公开报道伤亡",
+          "value": 300000,
+          "qualifier": "约",
+          "scope": "A40全会战",
+          "note": "不是全部阵亡；未逐单位核对，与草稿27万不强行合并。",
+          "sources": [
+            "A40"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A40": "淞沪累计兵力、11月12日和公开伤亡统计"
+          }
+        },
+        {
+          "side": "日本",
+          "metric": "中方所报毙伤",
+          "value": 60000,
+          "qualifier": "余",
+          "scope": "A40全会战",
+          "note": "非日方自报；不作为不带口径的确定损失。",
+          "sources": [
+            "A40"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A40": "淞沪累计兵力、11月12日和公开伤亡统计"
+          }
+        }
+      ],
+      "points": [
+        "shanghai"
+      ],
+      "outcome": "历史结果供复盘对照；推演可出现不同结果。A02、A40记上海失守及会战结束，本卡目录采用这一日期。",
+      "geography": "上海锚点只供区域定位；旧市街、苏州河河岸与1937年海岸线须用历史图配准，城市中心不代表四行仓库。",
+      "equipment": "以当期步兵、机枪、迫击炮及实际配属的炮兵为基础；运输、工兵、通信、医疗单列。坦克、飞机、舰艇须有具体配属证据，不按师团番号默认添加。武器型号、可用数量、弹药与油料未知时明确待考，不以满编代实到。",
+      "modeling": "记录增援抵达、登陆预警、撤退命令与主力撤出比例；比较提前撤退和继续坚守的人员保存、掩护时间及后方转移效果。 这些是教师设置的比较变量和评估指标，尚非独立自动裁决模块；固定初态与随机种子再比较反事实，不能由一次模型叙述证明因果。",
+      "uncertainties": [
+        "A03误把四行仓库写在苏州河南岸，本包不采用该方位。",
+        "70万人是累计投入；伤亡与部队满编率仍需实力表。",
+        "开战钟点来自纪念馆叙述，未核原始作战日志。",
+        "11月11日与12日终点存在来源异文；目录选择不代表其他口径已证伪。"
+      ],
+      "time_step": "1日",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "parameter_status": "teaching_estimate",
+      "preset_note": "日级用于讲授进程，实际推演只选一个局部时空切片；不得把整场累计投入当作同时在场兵力。"
+    },
+    {
+      "id": "AJ02",
+      "name": "抗日战争-太原会战-1937.09至1937.11",
+      "phase": "战略防御",
+      "theater": "正面与敌后协同",
+      "local_posture": "山地防御与交通袭扰",
+      "parent_id": "",
+      "track": "战略防御／正面与敌后协同／山地防御与交通袭扰",
+      "kind": "会战或局部战斗",
+      "scope": "含平型关方向、忻口、娘子关及太原保卫战；8月南口是前史，不能把其伤亡自动并入。",
+      "aliases": [
+        "太原会战"
+      ],
+      "sources": [
+        "A04",
+        "A05"
+      ],
+      "forces": [
+        {
+          "side": "中国",
+          "unit": "忻口守军与八路军各部",
+          "description": "郝梦龄第9军等承担正面防御；115、120、129师在各自方向配合作战。",
+          "sources": [
+            "A04"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A04": "会战组成、正面与侧后协同、娘子关和太原失守"
+          }
+        },
+        {
+          "side": "日本",
+          "unit": "北路与正太路进攻部队",
+          "description": "两路最终合围太原；不同方向兵力不能合并为单个接触单位。",
+          "sources": [
+            "A04"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A04": "会战组成、正面与侧后协同、娘子关和太原失守"
+          }
+        }
+      ],
+      "events": [
+        {
+          "date": "1937-09-25",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "115师在平型关方向伏击，配合正面防御。",
+          "sources": [
+            "A05"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A05": "115师、9月25日伏击、战果"
+          }
+        },
+        {
+          "date": "1937-10-13",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "忻口正面遭猛烈进攻，进入持续攻守。",
+          "sources": [
+            "A04"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A04": "会战组成、正面与侧后协同、娘子关和太原失守"
+          }
+        },
+        {
+          "date": "1937年10月",
+          "time_label": "月内",
+          "precision": "日期范围",
+          "event": "雁门关交通袭扰与阳明堡机场袭击配合正面。",
+          "sources": [
+            "A04"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A04": "会战组成、正面与侧后协同、娘子关和太原失守"
+          }
+        },
+        {
+          "date": "1937-10-26",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "娘子关失守，太原侧后形势恶化。",
+          "sources": [
+            "A04"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A04": "会战组成、正面与侧后协同、娘子关和太原失守"
+          }
+        },
+        {
+          "date": "1937-11-07",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "东、北两路日军抵近会合，围攻太原。",
+          "sources": [
+            "A04"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A04": "会战组成、正面与侧后协同、娘子关和太原失守"
+          }
+        },
+        {
+          "date": "1937-11-08",
+          "time_label": "夜",
+          "precision": "时段",
+          "event": "按该报道，守军撤离后太原于当夜失守。",
+          "sources": [
+            "A04"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A04": "会战组成、正面与侧后协同、娘子关和太原失守"
+          }
+        }
+      ],
+      "figures": [
+        {
+          "side": "中国",
+          "metric": "全会战战斗伤亡",
+          "value": null,
+          "qualifier": "",
+          "scope": "太原会战",
+          "note": "草稿10万未核得同一部队与时间范围。",
+          "sources": [
+            "A04"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {
+            "A04": "会战组成、正面与侧后协同、娘子关和太原失守"
+          }
+        },
+        {
+          "side": "日本",
+          "metric": "中方所报歼敌",
+          "value": 20000,
+          "qualifier": "余",
+          "scope": "忻口方向",
+          "note": "不是全会战日方阵亡或日方自报。",
+          "sources": [
+            "A04"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A04": "会战组成、正面与侧后协同、娘子关和太原失守"
+          }
+        }
+      ],
+      "points": [
+        "taiyuan",
+        "yangquan",
+        "lingqiu"
+      ],
+      "outcome": "历史结果供复盘对照；推演可出现不同结果。按该报道，守军撤离后太原于当夜失守。",
+      "geography": "以太原、阳泉、灵丘作区域参照；忻口阵地、雁门关与乔沟伏击区须另定，不能沿城市连线推定山路。",
+      "equipment": "以当期步兵、机枪、迫击炮及实际配属的炮兵为基础；运输、工兵、通信、医疗单列。坦克、飞机、舰艇须有具体配属证据，不按师团番号默认添加。武器型号、可用数量、弹药与油料未知时明确待考，不以满编代实到。",
+      "modeling": "分别记录正面坚持时间、侧翼通道状态、物资转移量与袭扰造成的增援延迟；不要把袭扰战果直接换成正面固定加成。 这些是教师设置的比较变量和评估指标，尚非独立自动裁决模块；固定初态与随机种子再比较反事实，不能由一次模型叙述证明因果。",
+      "uncertainties": [
+        "采用A04的11月8日夜口径；其他材料的9日需核对占城与撤军定义。",
+        "平型关子卡属于本会战背景，其战果不能再加进总数。"
+      ],
+      "time_step": "1日",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "parameter_status": "teaching_estimate",
+      "preset_note": "日级用于讲授进程，实际推演只选一个局部时空切片；不得把整场累计投入当作同时在场兵力。"
+    },
+    {
+      "id": "AJ03",
+      "name": "抗日战争-平型关伏击战-1937.09.25",
+      "phase": "战略防御",
+      "theater": "敌后配合正面",
+      "local_posture": "山地伏击",
+      "parent_id": "AJ02",
+      "track": "战略防御／敌后配合正面／山地伏击",
+      "kind": "会战或局部战斗",
+      "scope": "限定115师乔沟公路伏击，不等于整个平型关防御战。",
+      "aliases": [
+        "平型关伏击战",
+        "平型关大捷"
+      ],
+      "sources": [
+        "A05",
+        "A06"
+      ],
+      "forces": [
+        {
+          "side": "中国",
+          "unit": "八路军第115师",
+          "description": "林彪、聂荣臻指挥所属部队实施伏击。",
+          "sources": [
+            "A05"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A05": "115师、9月25日伏击、战果"
+          }
+        },
+        {
+          "side": "日本",
+          "unit": "第5师团第21旅团一部及运输队",
+          "description": "目标包括行军与辎重车辆，不能改写成歼灭整个师团。",
+          "sources": [
+            "A05"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A05": "115师、9月25日伏击、战果"
+          }
+        }
+      ],
+      "events": [
+        {
+          "date": "1937年9月",
+          "time_label": "战前",
+          "precision": "日期范围",
+          "event": "115师向平型关方向急进，配合守关部队。",
+          "sources": [
+            "A05"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A05": "115师、9月25日伏击、战果"
+          }
+        },
+        {
+          "date": "1937-09-25",
+          "time_label": "晨",
+          "precision": "时段",
+          "event": "日军一部与辎重车辆进入灵丘至平型关公路。",
+          "sources": [
+            "A05"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A05": "115师、9月25日伏击、战果"
+          }
+        },
+        {
+          "date": "1937-09-25",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "115师在公路两侧实施伏击。",
+          "sources": [
+            "A05"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A05": "115师、9月25日伏击、战果"
+          }
+        },
+        {
+          "date": "1937-09-25",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "经当日交战取得胜利，牵制第5师团进攻。",
+          "sources": [
+            "A05"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A05": "115师、9月25日伏击、战果"
+          }
+        }
+      ],
+      "figures": [
+        {
+          "side": "中国",
+          "metric": "伤亡合计",
+          "value": 600,
+          "qualifier": "余",
+          "scope": "115师该战",
+          "note": "含阵亡和负伤，不能全部算阵亡。",
+          "sources": [
+            "A06"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A06": "平型关伤亡与阵亡量级"
+          }
+        },
+        {
+          "side": "中国",
+          "metric": "阵亡",
+          "value": 200,
+          "qualifier": "余",
+          "scope": "该战报道",
+          "note": "是伤亡中的子项，不能再加600。",
+          "sources": [
+            "A06"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A06": "平型关伤亡与阵亡量级"
+          }
+        },
+        {
+          "side": "日本",
+          "metric": "中方所报歼敌",
+          "value": 1000,
+          "qualifier": "余",
+          "scope": "伏击战口径",
+          "note": "日方240人的草稿数未核到原始统计，不造统一区间。",
+          "sources": [
+            "A05"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A05": "115师、9月25日伏击、战果"
+          }
+        }
+      ],
+      "points": [
+        "lingqiu"
+      ],
+      "outcome": "历史结果供复盘对照；推演可出现不同结果。经当日交战取得胜利，牵制第5师团进攻。",
+      "geography": "灵丘是县城参考点，距离乔沟战场较远；未经配准不能将部队吸附县城当伏击部署。",
+      "equipment": "以当期步兵、机枪、迫击炮及实际配属的炮兵为基础；运输、工兵、通信、医疗单列。坦克、飞机、舰艇须有具体配属证据，不按师团番号默认添加。武器型号、可用数量、弹药与油料未知时明确待考，不以满编代实到。",
+      "modeling": "以运输线中断时间、伏击部队完整撤离及当地正面支援效果比较方案；地图须先核定公路和实际伏击区。 这些是教师设置的比较变量和评估指标，尚非独立自动裁决模块；固定初态与随机种子再比较反事实，不能由一次模型叙述证明因果。",
+      "uncertainties": [
+        "伏击战与平型关战役范围不同；不直接比较两者伤亡。",
+        "双方损失均未取得逐人名册；不把报道数量作为强制扣血值。"
+      ],
+      "time_step": "30分钟",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "parameter_status": "teaching_estimate",
+      "preset_note": "日级用于讲授进程，实际推演只选一个局部时空切片；不得把整场累计投入当作同时在场兵力。"
+    },
+    {
+      "id": "AJ04",
+      "name": "抗日战争-徐州会战总览-1938.01至1938.05",
+      "phase": "战略防御",
+      "theater": "正面",
+      "local_posture": "铁路枢纽多方向防御",
+      "parent_id": "",
+      "track": "战略防御／正面／铁路枢纽多方向防御",
+      "kind": "阶段教学总览",
+      "scope": "教学取1938年1—5月主会战，起讫存在1937年12月起及延至6月等口径；含台儿庄子战斗。",
+      "aliases": [
+        "徐州会战总览",
+        "徐州会战"
+      ],
+      "sources": [
+        "A07",
+        "A09",
+        "A36"
+      ],
+      "forces": [
+        {
+          "side": "中国",
+          "unit": "第五战区",
+          "description": "李宗仁指挥；台儿庄守军与禹王山滇军分别承担局部战斗。",
+          "sources": [
+            "A07"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A07": "徐州战役背景、台儿庄与禹王山"
+          }
+        },
+        {
+          "side": "日本",
+          "unit": "南北两线日军",
+          "description": "沿铁路方向夹击徐州；台儿庄第5、第10师团相关部队见子卡。",
+          "sources": [
+            "A07",
+            "A09"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A07": "徐州战役背景、台儿庄与禹王山",
+            "A09": "孙连仲与汤恩伯部署、3月31日包围、4月3日反攻"
+          }
+        }
+      ],
+      "events": [
+        {
+          "date": "1938年初",
+          "time_label": "阶段",
+          "precision": "日期范围",
+          "event": "徐州及苏北、鲁南成为主要会战地域。",
+          "sources": [
+            "A07",
+            "A36"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A07": "徐州战役背景、台儿庄与禹王山",
+            "A36": "徐州会战起讫存在多种划分"
+          }
+        },
+        {
+          "date": "1938-03-23",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "台儿庄战斗开始。",
+          "sources": [
+            "A07"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A07": "徐州战役背景、台儿庄与禹王山"
+          }
+        },
+        {
+          "date": "1938-04-07",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "台儿庄取得胜利；全会战仍未结束。",
+          "sources": [
+            "A07"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A07": "徐州战役背景、台儿庄与禹王山"
+          }
+        },
+        {
+          "date": "1938年4—5月",
+          "time_label": "阶段",
+          "precision": "日期范围",
+          "event": "禹王山等地持续阻击，主力面临日军合围压力。",
+          "sources": [
+            "A07"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A07": "徐州战役背景、台儿庄与禹王山"
+          }
+        },
+        {
+          "date": "1938年5月",
+          "time_label": "月内",
+          "precision": "日期范围",
+          "event": "中国主力转移，徐州失守；目录只界定到月，不补造统一终战小时。",
+          "sources": [
+            "A07",
+            "A36"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A07": "徐州战役背景、台儿庄与禹王山",
+            "A36": "徐州会战起讫存在多种划分"
+          }
+        }
+      ],
+      "figures": [
+        {
+          "side": "双方",
+          "metric": "全会战同口径伤亡",
+          "value": null,
+          "qualifier": "",
+          "scope": "徐州各方向合计",
+          "note": "台儿庄与禹王山报道不能拼接为完整统计。",
+          "sources": [
+            "A07",
+            "A36"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {
+            "A07": "徐州战役背景、台儿庄与禹王山",
+            "A36": "徐州会战起讫存在多种划分"
+          }
+        }
+      ],
+      "points": [
+        "xuzhou",
+        "taierzhuang",
+        "linyi"
+      ],
+      "outcome": "历史结果供复盘对照；推演可出现不同结果。中国主力转移，徐州失守；目录只界定到月，不补造统一终战小时。",
+      "geography": "徐州、台儿庄、临沂是三个独立区域参考点；需按当时津浦路、陇海路、运河及支线校图。",
+      "equipment": "以当期步兵、机枪、迫击炮及实际配属的炮兵为基础；运输、工兵、通信、医疗单列。坦克、飞机、舰艇须有具体配属证据，不按师团番号默认添加。武器型号、可用数量、弹药与油料未知时明确待考，不以满编代实到。",
+      "modeling": "把守城、外围阻击和撤离通路分开评分，考察台儿庄获胜后是否及时调整集中与撤离计划。 这些是教师设置的比较变量和评估指标，尚非独立自动裁决模块；固定初态与随机种子再比较反事实，不能由一次模型叙述证明因果。",
+      "uncertainties": [
+        "不是所有统计都从同一天开始；延续至兰封的口径须另设范围。",
+        "子战斗和总览不构成可相加的独立损失集。"
+      ],
+      "time_step": "1日",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "parameter_status": "teaching_estimate",
+      "preset_note": "日级用于讲授进程，实际推演只选一个局部时空切片；不得把整场累计投入当作同时在场兵力。"
+    },
+    {
+      "id": "AJ05",
+      "name": "抗日战争-台儿庄战役-1938.03.23至1938.04.07",
+      "phase": "战略防御",
+      "theater": "正面",
+      "local_posture": "城镇坚守与外围反击",
+      "parent_id": "AJ04",
+      "track": "战略防御／正面／城镇坚守与外围反击",
+      "kind": "会战或局部战斗",
+      "scope": "限定台儿庄核心战斗；滕县、临沂是前置与侧翼条件，不将其损失默认为城内损失。",
+      "aliases": [
+        "台儿庄战役",
+        "台儿庄大捷"
+      ],
+      "sources": [
+        "A07",
+        "A08",
+        "A09"
+      ],
+      "forces": [
+        {
+          "side": "中国",
+          "unit": "第2集团军、第31师及外围汤恩伯部",
+          "description": "孙连仲部坚守，汤恩伯部参与外围行动；李宗仁统筹。",
+          "sources": [
+            "A08",
+            "A09"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A08": "3月23日至4月7日进程、窄口径参战及伤亡失踪",
+            "A09": "孙连仲与汤恩伯部署、3月31日包围、4月3日反攻"
+          }
+        },
+        {
+          "side": "日本",
+          "unit": "第10师团濑谷支队及第5师团坂本支队一部",
+          "description": "不等于两个完整师团全部进入台儿庄城。",
+          "sources": [
+            "A09"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A09": "孙连仲与汤恩伯部署、3月31日包围、4月3日反攻"
+          }
+        }
+      ],
+      "events": [
+        {
+          "date": "1938-03-23",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "濑谷支队向台儿庄推进。",
+          "sources": [
+            "A08"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A08": "3月23日至4月7日进程、窄口径参战及伤亡失踪"
+          }
+        },
+        {
+          "date": "1938-03-24",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "第31师在城镇接敌。",
+          "sources": [
+            "A08"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A08": "3月23日至4月7日进程、窄口径参战及伤亡失踪"
+          }
+        },
+        {
+          "date": "1938-03-27",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "日军突入北门，展开反复巷战。",
+          "sources": [
+            "A08"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A08": "3月23日至4月7日进程、窄口径参战及伤亡失踪"
+          }
+        },
+        {
+          "date": "1938-03-31",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "中国部队形成外围包围态势。",
+          "sources": [
+            "A09"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A09": "孙连仲与汤恩伯部署、3月31日包围、4月3日反攻"
+          }
+        },
+        {
+          "date": "1938-04-03",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "反攻展开，但城内仍反复争夺。",
+          "sources": [
+            "A09"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A09": "孙连仲与汤恩伯部署、3月31日包围、4月3日反攻"
+          }
+        },
+        {
+          "date": "1938-04-06",
+          "time_label": "夜",
+          "precision": "时段",
+          "event": "中国军队全线攻击。",
+          "sources": [
+            "A08"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A08": "3月23日至4月7日进程、窄口径参战及伤亡失踪"
+          }
+        },
+        {
+          "date": "1938-04-07",
+          "time_label": "凌晨",
+          "precision": "时段",
+          "event": "日军残部撤退，台儿庄核心战斗告捷。",
+          "sources": [
+            "A08"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A08": "3月23日至4月7日进程、窄口径参战及伤亡失踪"
+          }
+        }
+      ],
+      "figures": [
+        {
+          "side": "中国",
+          "metric": "参战人数",
+          "value": 46000,
+          "qualifier": "",
+          "scope": "A08核心战斗统计",
+          "note": "建制覆盖未列完整，不作唯一初态。",
+          "sources": [
+            "A08"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A08": "3月23日至4月7日进程、窄口径参战及伤亡失踪"
+          }
+        },
+        {
+          "side": "中国",
+          "metric": "伤亡失踪",
+          "value": 7500,
+          "qualifier": "",
+          "scope": "A08核心战斗统计",
+          "note": "与A07所称3万捐躯冲突，不能强行用范围解释。",
+          "sources": [
+            "A08"
+          ],
+          "evidence_status": "source_conflict",
+          "source_locator": {
+            "A08": "3月23日至4月7日进程、窄口径参战及伤亡失踪"
+          }
+        },
+        {
+          "side": "中国",
+          "metric": "报道所称捐躯",
+          "value": 30000,
+          "qualifier": "",
+          "scope": "A07台儿庄叙述，覆盖不清",
+          "note": "保留冲突，不把捐躯改成伤亡以迎合其他数值。",
+          "sources": [
+            "A07"
+          ],
+          "evidence_status": "source_conflict",
+          "source_locator": {
+            "A07": "徐州战役背景、台儿庄与禹王山"
+          }
+        },
+        {
+          "side": "日本",
+          "metric": "中方所报歼敌",
+          "value": 10000,
+          "qualifier": "余",
+          "scope": "台儿庄及周边",
+          "note": "包括不同结果类别，不能改写为阵亡。",
+          "sources": [
+            "A09"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A09": "孙连仲与汤恩伯部署、3月31日包围、4月3日反攻"
+          }
+        }
+      ],
+      "points": [
+        "taierzhuang",
+        "linyi"
+      ],
+      "outcome": "历史结果供复盘对照；推演可出现不同结果。日军残部撤退，台儿庄核心战斗告捷。",
+      "geography": "台儿庄为现代聚落点；1938年运河、浮桥与街巷范围需独立配准；临沂不与城内共用战术网格。",
+      "equipment": "以当期步兵、机枪、迫击炮及实际配属的炮兵为基础；运输、工兵、通信、医疗单列。坦克、飞机、舰艇须有具体配属证据，不按师团番号默认添加。武器型号、可用数量、弹药与油料未知时明确待考，不以满编代实到。",
+      "modeling": "比较守军坚持时间与外围部队抵达时间；将临沂方向援军是否到达作为显式条件，而不是事后给胜者加成。 这些是教师设置的比较变量和评估指标，尚非独立自动裁决模块；固定初态与随机种子再比较反事实，不能由一次模型叙述证明因果。",
+      "uncertainties": [
+        "不采纳草稿4月7日1时作为已核实发起时刻，现有证据只到凌晨。",
+        "7500伤亡失踪与3万捐躯保留异文，不自动求均值。",
+        "日方两师团整段损失不可全部记到城内。"
+      ],
+      "time_step": "1小时",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "parameter_status": "teaching_estimate",
+      "preset_note": "日级用于讲授进程，实际推演只选一个局部时空切片；不得把整场累计投入当作同时在场兵力。"
+    },
+    {
+      "id": "AJ06",
+      "name": "抗日战争-武汉会战-1938.06至1938.10",
+      "phase": "战略防御",
+      "theater": "正面",
+      "local_posture": "广域迟滞与战略转移",
+      "parent_id": "",
+      "track": "战略防御／正面／广域迟滞与战略转移",
+      "kind": "会战或局部战斗",
+      "scope": "安徽、江西、河南、湖北多方向会战；不把10月25日撤离日视为全部作战同时结束。",
+      "aliases": [
+        "武汉会战"
+      ],
+      "sources": [
+        "A10",
+        "A11"
+      ],
+      "forces": [
+        {
+          "side": "中国",
+          "unit": "武汉外围中国陆军与中苏航空力量",
+          "description": "各方向逐步投入，航空支援、舰艇和地面部队独立记账。",
+          "sources": [
+            "A10"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A10": "6—10月会战、双方投入、万家岭、9月田家镇、10月24日中山舰"
+          }
+        },
+        {
+          "side": "日本",
+          "unit": "沿长江及大别山方向进攻部队",
+          "description": "海空与陆军配合作战，兵力为全会战累计口径。",
+          "sources": [
+            "A10"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A10": "6—10月会战、双方投入、万家岭、9月田家镇、10月24日中山舰"
+          }
+        }
+      ],
+      "events": [
+        {
+          "date": "1938年6月",
+          "time_label": "月内",
+          "precision": "日期范围",
+          "event": "日军向武汉外围展开进攻。",
+          "sources": [
+            "A11"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A11": "6月进攻与10月25日撤离"
+          }
+        },
+        {
+          "date": "1938年9月",
+          "time_label": "月内",
+          "precision": "日期范围",
+          "event": "田家镇保卫战迟滞溯江推进，不应写为10月才开始。",
+          "sources": [
+            "A10"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A10": "6—10月会战、双方投入、万家岭、9月田家镇、10月24日中山舰"
+          }
+        },
+        {
+          "date": "1938年9—10月",
+          "time_label": "阶段",
+          "precision": "日期范围",
+          "event": "万家岭形成局部包围战。",
+          "sources": [
+            "A10"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A10": "6—10月会战、双方投入、万家岭、9月田家镇、10月24日中山舰"
+          }
+        },
+        {
+          "date": "1938-10-24",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "中山舰在金口水域遭空袭后沉没。",
+          "sources": [
+            "A10"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A10": "6—10月会战、双方投入、万家岭、9月田家镇、10月24日中山舰"
+          }
+        },
+        {
+          "date": "1938-10-25",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "中国军队按计划撤离武汉，后方转移成为结果的重要部分。",
+          "sources": [
+            "A11"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A11": "6月进攻与10月25日撤离"
+          }
+        }
+      ],
+      "figures": [
+        {
+          "side": "中国",
+          "metric": "投入兵力",
+          "value": 1000000,
+          "qualifier": "约",
+          "scope": "会战多方向",
+          "note": "报道约数，不作为单日战场人数。",
+          "sources": [
+            "A10"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A10": "6—10月会战、双方投入、万家岭、9月田家镇、10月24日中山舰"
+          }
+        },
+        {
+          "side": "日本",
+          "metric": "投入兵力",
+          "value": 350000,
+          "qualifier": "约",
+          "scope": "会战多方向",
+          "note": "同文口径，不能和其他报道的师团数直接换算。",
+          "sources": [
+            "A10"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A10": "6—10月会战、双方投入、万家岭、9月田家镇、10月24日中山舰"
+          }
+        },
+        {
+          "side": "中国",
+          "metric": "中山舰阵亡官兵",
+          "value": 25,
+          "qualifier": "",
+          "scope": "10月24日舰艇损失",
+          "note": "不代表会战总伤亡。",
+          "sources": [
+            "A10"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A10": "6—10月会战、双方投入、万家岭、9月田家镇、10月24日中山舰"
+          }
+        },
+        {
+          "side": "双方",
+          "metric": "全会战可比伤亡",
+          "value": null,
+          "qualifier": "",
+          "scope": "战斗与疫病需分开",
+          "note": "草稿“19,7439”格式异常，未核出对应统计，不推定为197439或19743。",
+          "sources": [
+            "A10",
+            "A11"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {
+            "A10": "6—10月会战、双方投入、万家岭、9月田家镇、10月24日中山舰",
+            "A11": "6月进攻与10月25日撤离"
+          }
+        }
+      ],
+      "points": [
+        "wuhan",
+        "jiujiang",
+        "dean"
+      ],
+      "outcome": "历史结果供复盘对照；推演可出现不同结果。中国军队按计划撤离武汉，后方转移成为结果的重要部分。",
+      "geography": "现代城市锚点仅供大区定位；长江航道、当年湖沼和堤岸不能用直线连点代替。",
+      "equipment": "步炮兵、工兵、河防舰艇、航空与运输分开。中苏航空援助不能使用1945年中美航空配置；舰艇损失用艘，人员用人，航空用架与架次分别记录。",
+      "modeling": "分别评价拖延时间、工业与机关转移、主力保存；将战斗伤亡、疫病、补给困难分开观察，万家岭子卡不重复结算。 这些是教师设置的比较变量和评估指标，尚非独立自动裁决模块；固定初态与随机种子再比较反事实，不能由一次模型叙述证明因果。",
+      "uncertainties": [
+        "剔除“19,7439”异常数，不用猜测修复。",
+        "田家镇在9月已有战斗，具体失守日需另核。",
+        "万家岭歼敌不代表第106师团全员阵亡。"
+      ],
+      "time_step": "1日",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "parameter_status": "teaching_estimate",
+      "preset_note": "日级用于讲授进程，实际推演只选一个局部时空切片；不得把整场累计投入当作同时在场兵力。"
+    },
+    {
+      "id": "AJ07",
+      "name": "抗日战争-万家岭战役-1938.09下旬至1938.10",
+      "phase": "战略防御",
+      "theater": "正面",
+      "local_posture": "山地合围与阻援",
+      "parent_id": "AJ06",
+      "track": "战略防御／正面／山地合围与阻援",
+      "kind": "会战或局部战斗",
+      "scope": "武汉会战中的局部战役；目录采用月份窗口，10月10日前后主攻结束不等于所有外围战斗结束。",
+      "aliases": [
+        "万家岭战役",
+        "万家岭大捷"
+      ],
+      "sources": [
+        "A10",
+        "A12"
+      ],
+      "forces": [
+        {
+          "side": "中国",
+          "unit": "第九战区第1兵团相关部队",
+          "description": "薛岳指挥第4、第66、第74军等；第32军等承担阻援。",
+          "sources": [
+            "A12"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A12": "参战部队、9月下旬包围、10月7日总攻及10月16日详报范围"
+          }
+        },
+        {
+          "side": "日本",
+          "unit": "第106师团及第27师团增援部队",
+          "description": "区分被围主力、未进入包围圈部分与援军。",
+          "sources": [
+            "A12"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A12": "参战部队、9月下旬包围、10月7日总攻及10月16日详报范围"
+          }
+        }
+      ],
+      "events": [
+        {
+          "date": "1938年9月下旬",
+          "time_label": "旬",
+          "precision": "日期范围",
+          "event": "第106师团进入万家岭，中国部队由侧后形成包围。",
+          "sources": [
+            "A12"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A12": "参战部队、9月下旬包围、10月7日总攻及10月16日详报范围"
+          }
+        },
+        {
+          "date": "1938年10月初",
+          "time_label": "旬",
+          "precision": "日期范围",
+          "event": "第27师团部分援军在白水街方向受阻。",
+          "sources": [
+            "A12"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A12": "参战部队、9月下旬包围、10月7日总攻及10月16日详报范围"
+          }
+        },
+        {
+          "date": "1938-10-07",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "中国部队发起总攻，连续激战。",
+          "sources": [
+            "A12"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A12": "参战部队、9月下旬包围、10月7日总攻及10月16日详报范围"
+          }
+        },
+        {
+          "date": "1938年10月",
+          "time_label": "月内",
+          "precision": "日期范围",
+          "event": "被围部队遭重创，中国军队收复万家岭等阵地。",
+          "sources": [
+            "A12"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A12": "参战部队、9月下旬包围、10月7日总攻及10月16日详报范围"
+          }
+        }
+      ],
+      "figures": [
+        {
+          "side": "日本",
+          "metric": "中方所报歼敌",
+          "value": 10000,
+          "qualifier": "余",
+          "scope": "万家岭报道",
+          "note": "未细分毙伤俘；不能写全歼师团。",
+          "sources": [
+            "A10"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A10": "6—10月会战、双方投入、万家岭、9月田家镇、10月24日中山舰"
+          }
+        },
+        {
+          "side": "中国",
+          "metric": "战斗伤亡",
+          "value": null,
+          "qualifier": "",
+          "scope": "万家岭及阻援",
+          "note": "不得用武汉总伤亡按兵力比例分摊。",
+          "sources": [
+            "A12"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {
+            "A12": "参战部队、9月下旬包围、10月7日总攻及10月16日详报范围"
+          }
+        }
+      ],
+      "points": [
+        "dean"
+      ],
+      "outcome": "历史结果供复盘对照；推演可出现不同结果。被围部队遭重创，中国军队收复万家岭等阵地。",
+      "geography": "德安县城仅是区域参照，不是万家岭阵地；白水街、甘木关及被围地域需历史战图定位。",
+      "equipment": "以当期步兵、机枪、迫击炮及实际配属的炮兵为基础；运输、工兵、通信、医疗单列。坦克、飞机、舰艇须有具体配属证据，不按师团番号默认添加。武器型号、可用数量、弹药与油料未知时明确待考，不以满编代实到。",
+      "modeling": "分开观察包围形成、补给隔绝、阻援持续与突围通道；比较阻援兵力抽调是否使包围失效。 这些是教师设置的比较变量和评估指标，尚非独立自动裁决模块；固定初态与随机种子再比较反事实，不能由一次模型叙述证明因果。",
+      "uncertainties": [
+        "不采纳导言中“遗尸数万”为确定阵亡数。",
+        "档案目录覆盖9月25日至10月16日，不能把全部归入三天总攻。"
+      ],
+      "time_step": "1日",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "parameter_status": "teaching_estimate",
+      "preset_note": "日级用于讲授进程，实际推演只选一个局部时空切片；不得把整场累计投入当作同时在场兵力。"
+    },
+    {
+      "id": "AJ08",
+      "name": "抗日战争-第一次长沙会战-1939.09.14至1939.10",
+      "phase": "战略相持",
+      "theater": "正面",
+      "local_posture": "逐次防御与外线反击",
+      "parent_id": "",
+      "track": "战略相持／正面／逐次防御与外线反击",
+      "kind": "会战或局部战斗",
+      "scope": "湘北、鄂南、赣北三方向；收束采用月精度，经过要图至10月6日，其他记载延至8日或中旬。",
+      "aliases": [
+        "第一次长沙会战"
+      ],
+      "sources": [
+        "A13",
+        "A14",
+        "A15"
+      ],
+      "forces": [
+        {
+          "side": "中国",
+          "unit": "第九战区",
+          "description": "薛岳组织作战，关麟征、罗卓英等分方向指挥。",
+          "sources": [
+            "A13",
+            "A15"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A13": "三次长沙分期、指挥与退军日期",
+            "A15": "首次会战兵力与9月14日—10月6日经过要图"
+          }
+        },
+        {
+          "side": "日本",
+          "unit": "第11军",
+          "description": "冈村宁次指挥；不能使用后两次的阿南惟几。",
+          "sources": [
+            "A14",
+            "A15"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A14": "冈村与阿南的分别指挥、兵力、第三次第10军与岳麓山炮兵",
+            "A15": "首次会战兵力与9月14日—10月6日经过要图"
+          }
+        }
+      ],
+      "events": [
+        {
+          "date": "1939-09-14",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "赣北、鄂南方向开始进攻。",
+          "sources": [
+            "A13"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A13": "三次长沙分期、指挥与退军日期"
+          }
+        },
+        {
+          "date": "1939-09-18",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "日军在湘北方向发动攻势。",
+          "sources": [
+            "A13"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A13": "三次长沙分期、指挥与退军日期"
+          }
+        },
+        {
+          "date": "1939-09-28",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "日军抵近长沙外围，中国部队争取外线态势。",
+          "sources": [
+            "A13"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A13": "三次长沙分期、指挥与退军日期"
+          }
+        },
+        {
+          "date": "1939-10-01",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "日军开始回撤，中国部队追击。",
+          "sources": [
+            "A13"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A13": "三次长沙分期、指挥与退军日期"
+          }
+        },
+        {
+          "date": "1939年10月",
+          "time_label": "上中旬",
+          "precision": "日期范围",
+          "event": "恢复战前态势；收束日期按来源所用范围分别记录。",
+          "sources": [
+            "A13",
+            "A15"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A13": "三次长沙分期、指挥与退军日期",
+            "A15": "首次会战兵力与9月14日—10月6日经过要图"
+          }
+        }
+      ],
+      "figures": [
+        {
+          "side": "中国",
+          "metric": "参战兵力",
+          "value": 240000,
+          "qualifier": "余",
+          "scope": "第九战区30多个师等",
+          "note": "累计参战口径。",
+          "sources": [
+            "A15"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A15": "首次会战兵力与9月14日—10月6日经过要图"
+          }
+        },
+        {
+          "side": "日本",
+          "metric": "投入兵力",
+          "value": 100000,
+          "qualifier": "余",
+          "scope": "第11军相关部队",
+          "note": "不等于日军同时在长沙城下人数。",
+          "sources": [
+            "A15"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A15": "首次会战兵力与9月14日—10月6日经过要图"
+          }
+        },
+        {
+          "side": "双方",
+          "metric": "同范围战斗伤亡",
+          "value": null,
+          "qualifier": "",
+          "scope": "第一次长沙",
+          "note": "未用第三次统计回填。",
+          "sources": [
+            "A13",
+            "A15"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {
+            "A13": "三次长沙分期、指挥与退军日期",
+            "A15": "首次会战兵力与9月14日—10月6日经过要图"
+          }
+        }
+      ],
+      "points": [
+        "changsha",
+        "yueyang"
+      ],
+      "outcome": "历史结果供复盘对照；推演可出现不同结果。恢复战前态势；收束日期按来源所用范围分别记录。",
+      "geography": "长沙和岳阳为现代城市参考；新墙河、汨罗江和当时渡口需另核。",
+      "equipment": "以当期步兵、机枪、迫击炮及实际配属的炮兵为基础；运输、工兵、通信、医疗单列。坦克、飞机、舰艇须有具体配属证据，不按师团番号默认添加。武器型号、可用数量、弹药与油料未知时明确待考，不以满编代实到。",
+      "modeling": "评估前沿迟滞、外线转移和追击时机，比较过早撤退与过久固守对主力保存及包围形成的影响。 这些是教师设置的比较变量和评估指标，尚非独立自动裁决模块；固定初态与随机种子再比较反事实，不能由一次模型叙述证明因果。",
+      "uncertainties": [
+        "起点9月14日有依据；结束6日、8日或中旬属不同范围，不统一为精确小时。",
+        "本次指挥与战果不能沿用第三次。"
+      ],
+      "time_step": "1日",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "parameter_status": "teaching_estimate",
+      "preset_note": "日级用于讲授进程，实际推演只选一个局部时空切片；不得把整场累计投入当作同时在场兵力。"
+    },
+    {
+      "id": "AJ09",
+      "name": "抗日战争-第二次长沙会战-1941.09.07至1941.10.09",
+      "phase": "战略相持",
+      "theater": "正面",
+      "local_posture": "防御失利后的反击",
+      "parent_id": "",
+      "track": "战略相持／正面／防御失利后的反击",
+      "kind": "会战或局部战斗",
+      "scope": "湘北至长沙、株洲方向；日军一度进入长沙，不包装成全程守住城市。",
+      "aliases": [
+        "第二次长沙会战"
+      ],
+      "sources": [
+        "A13",
+        "A14"
+      ],
+      "forces": [
+        {
+          "side": "中国",
+          "unit": "第九战区",
+          "description": "薛岳指挥；部队部署与第一次、第三次不能合并。",
+          "sources": [
+            "A13"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A13": "三次长沙分期、指挥与退军日期"
+          }
+        },
+        {
+          "side": "日本",
+          "unit": "第11军",
+          "description": "阿南惟几集中兵力进攻。",
+          "sources": [
+            "A13",
+            "A14"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A13": "三次长沙分期、指挥与退军日期",
+            "A14": "冈村与阿南的分别指挥、兵力、第三次第10军与岳麓山炮兵"
+          }
+        }
+      ],
+      "events": [
+        {
+          "date": "1941-09-07",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "会战开始。",
+          "sources": [
+            "A13"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A13": "三次长沙分期、指挥与退军日期"
+          }
+        },
+        {
+          "date": "1941-09-26",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "日军对长沙展开主要进攻。",
+          "sources": [
+            "A13"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A13": "三次长沙分期、指挥与退军日期"
+          }
+        },
+        {
+          "date": "1941年9月下旬",
+          "time_label": "旬",
+          "precision": "日期范围",
+          "event": "日军一度进入长沙并推进至株洲，中国军队反击。",
+          "sources": [
+            "A13"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A13": "三次长沙分期、指挥与退军日期"
+          }
+        },
+        {
+          "date": "1941-10-01",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "日军北撤。",
+          "sources": [
+            "A13"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A13": "三次长沙分期、指挥与退军日期"
+          }
+        },
+        {
+          "date": "1941-10-09",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "双方大体恢复战前态势。",
+          "sources": [
+            "A13"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A13": "三次长沙分期、指挥与退军日期"
+          }
+        }
+      ],
+      "figures": [
+        {
+          "side": "日本",
+          "metric": "投入兵力",
+          "value": 120000,
+          "qualifier": "约",
+          "scope": "该次进攻",
+          "note": "报道概数。",
+          "sources": [
+            "A14"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A14": "冈村与阿南的分别指挥、兵力、第三次第10军与岳麓山炮兵"
+          }
+        },
+        {
+          "side": "双方",
+          "metric": "同范围战斗伤亡",
+          "value": null,
+          "qualifier": "",
+          "scope": "第二次长沙",
+          "note": "不能以日军撤回原线推断中方损失很小。",
+          "sources": [
+            "A13",
+            "A14"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {
+            "A13": "三次长沙分期、指挥与退军日期",
+            "A14": "冈村与阿南的分别指挥、兵力、第三次第10军与岳麓山炮兵"
+          }
+        }
+      ],
+      "points": [
+        "changsha",
+        "yueyang"
+      ],
+      "outcome": "历史结果供复盘对照；推演可出现不同结果。双方大体恢复战前态势。",
+      "geography": "湘北到长沙仅为区域轴线；不能把现代高速公路速度用于当时地面机动。",
+      "equipment": "以当期步兵、机枪、迫击炮及实际配属的炮兵为基础；运输、工兵、通信、医疗单列。坦克、飞机、舰艇须有具体配属证据，不按师团番号默认添加。武器型号、可用数量、弹药与油料未知时明确待考，不以满编代实到。",
+      "modeling": "同时考察城市被占时长、主力损失与战线恢复，比较敌情判断和增援时机，避免以最终边界掩盖过程损失。 这些是教师设置的比较变量和评估指标，尚非独立自动裁决模块；固定初态与随机种子再比较反事实，不能由一次模型叙述证明因果。",
+      "uncertainties": [
+        "本次一度失守长沙；不得套用第三次第10军守城全过程。",
+        "双方实际投入及损失仍需同一窗口报告。"
+      ],
+      "time_step": "1日",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "parameter_status": "teaching_estimate",
+      "preset_note": "日级用于讲授进程，实际推演只选一个局部时空切片；不得把整场累计投入当作同时在场兵力。"
+    },
+    {
+      "id": "AJ10",
+      "name": "抗日战争-第三次长沙会战-1941.12.24至1942.01.16",
+      "phase": "战略相持",
+      "theater": "正面",
+      "local_posture": "城防与外翼合围",
+      "parent_id": "",
+      "track": "战略相持／正面／城防与外翼合围",
+      "kind": "会战或局部战斗",
+      "scope": "新墙河至长沙；选用A13主力攻击与退过新墙河的日期边界。",
+      "aliases": [
+        "第三次长沙会战"
+      ],
+      "sources": [
+        "A13",
+        "A14"
+      ],
+      "forces": [
+        {
+          "side": "中国",
+          "unit": "第九战区、第10军等",
+          "description": "薛岳统筹，李玉堂第10军守城，岳麓山炮兵支援；第20、第58军承担前沿阻击。",
+          "sources": [
+            "A13",
+            "A14"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A13": "三次长沙分期、指挥与退军日期",
+            "A14": "冈村与阿南的分别指挥、兵力、第三次第10军与岳麓山炮兵"
+          }
+        },
+        {
+          "side": "日本",
+          "unit": "第11军",
+          "description": "阿南惟几指挥，向长沙进攻。",
+          "sources": [
+            "A14"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A14": "冈村与阿南的分别指挥、兵力、第三次第10军与岳麓山炮兵"
+          }
+        }
+      ],
+      "events": [
+        {
+          "date": "1941-12-24",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "日军主力开始沿岳阳至长沙方向进攻。",
+          "sources": [
+            "A13"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A13": "三次长沙分期、指挥与退军日期"
+          }
+        },
+        {
+          "date": "1941年12月下旬",
+          "time_label": "旬",
+          "precision": "日期范围",
+          "event": "中国前沿部队阻击，主力向外线转移。",
+          "sources": [
+            "A13",
+            "A14"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A13": "三次长沙分期、指挥与退军日期",
+            "A14": "冈村与阿南的分别指挥、兵力、第三次第10军与岳麓山炮兵"
+          }
+        },
+        {
+          "date": "1942-01-01",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "日军开始连续进攻长沙城。",
+          "sources": [
+            "A13"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A13": "三次长沙分期、指挥与退军日期"
+          }
+        },
+        {
+          "date": "1942-01-04",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "第九战区转入全线反击，日军北撤。",
+          "sources": [
+            "A13"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A13": "三次长沙分期、指挥与退军日期"
+          }
+        },
+        {
+          "date": "1942-01-16",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "日军退过新墙河，战线恢复。",
+          "sources": [
+            "A13"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A13": "三次长沙分期、指挥与退军日期"
+          }
+        }
+      ],
+      "figures": [
+        {
+          "side": "日本",
+          "metric": "中方所报歼敌",
+          "value": 50000,
+          "qualifier": "余",
+          "scope": "第三次会战综合报道",
+          "note": "不是日方自报，也未分毙伤俘。",
+          "sources": [
+            "A14"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A14": "冈村与阿南的分别指挥、兵力、第三次第10军与岳麓山炮兵"
+          }
+        },
+        {
+          "side": "中国",
+          "metric": "伤亡失踪",
+          "value": null,
+          "qualifier": "",
+          "scope": "第三次会战",
+          "note": "草稿29849及军官士兵分项尚未核到原表。",
+          "sources": [
+            "A13",
+            "A14"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {
+            "A13": "三次长沙分期、指挥与退军日期",
+            "A14": "冈村与阿南的分别指挥、兵力、第三次第10军与岳麓山炮兵"
+          }
+        }
+      ],
+      "points": [
+        "changsha",
+        "yueyang"
+      ],
+      "outcome": "历史结果供复盘对照；推演可出现不同结果。日军退过新墙河，战线恢复。",
+      "geography": "岳麓山炮兵位置与射界不能从长沙中心点推出；地形折减不等于真实火炮射界。",
+      "equipment": "以当期步兵、机枪、迫击炮及实际配属的炮兵为基础；运输、工兵、通信、医疗单列。坦克、飞机、舰艇须有具体配属证据，不按师团番号默认添加。武器型号、可用数量、弹药与油料未知时明确待考，不以满编代实到。",
+      "modeling": "以守城时间与外翼部队到达是否匹配为比较核心，跟踪日军补给与撤退通路，不把“天炉”当作必中规则。 这些是教师设置的比较变量和评估指标，尚非独立自动裁决模块；固定初态与随机种子再比较反事实，不能由一次模型叙述证明因果。",
+      "uncertainties": [
+        "不能把三次会战总战果写成第三次的阵亡数。",
+        "严禁将1938年文夕大火放进本次作战时间线。"
+      ],
+      "time_step": "1日",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "parameter_status": "teaching_estimate",
+      "preset_note": "日级用于讲授进程，实际推演只选一个局部时空切片；不得把整场累计投入当作同时在场兵力。"
+    },
+    {
+      "id": "AJ11",
+      "name": "抗日战争-桂南会战与昆仑关攻坚-1939.11至1940.01",
+      "phase": "战略相持",
+      "theater": "正面",
+      "local_posture": "国际交通线争夺与山地攻坚",
+      "parent_id": "",
+      "track": "战略相持／正面／国际交通线争夺与山地攻坚",
+      "kind": "会战或局部战斗",
+      "scope": "桂南会战背景下，重点复现1939年12月昆仑关反攻；桂南后续作战不由12月31日夺关自动终止。",
+      "aliases": [
+        "桂南会战与昆仑关攻坚",
+        "桂南会战",
+        "昆仑关战役",
+        "昆仑关大捷"
+      ],
+      "sources": [
+        "A16",
+        "A17"
+      ],
+      "forces": [
+        {
+          "side": "中国",
+          "unit": "第5军及相关增援",
+          "description": "杜聿明指挥攻关，需区分正面攻坚与阻援部队；不把中方全部损失只记在第5军。",
+          "sources": [
+            "A16"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A16": "12月4、18、28、31日节点与白崇禧报告口径"
+          }
+        },
+        {
+          "side": "日本",
+          "unit": "第5师团第21旅团等",
+          "description": "中村正雄旅团等参战；番号仍需按具体日配属。",
+          "sources": [
+            "A17"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A17": "桂越交通背景、参战第5师团与中村旅团"
+          }
+        }
+      ],
+      "events": [
+        {
+          "date": "1939年11月",
+          "time_label": "月内",
+          "precision": "日期范围",
+          "event": "日军争夺桂南交通线，形成南宁方向战局。",
+          "sources": [
+            "A17"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A17": "桂越交通背景、参战第5师团与中村旅团"
+          }
+        },
+        {
+          "date": "1939-12-04",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "昆仑关被日军占领。",
+          "sources": [
+            "A16"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A16": "12月4、18、28、31日节点与白崇禧报告口径"
+          }
+        },
+        {
+          "date": "1939-12-17",
+          "time_label": "晚",
+          "precision": "时段",
+          "event": "回忆转述将反攻发起记在当晚。",
+          "sources": [
+            "A17"
+          ],
+          "evidence_status": "source_conflict",
+          "variant_group": "kunlun_start",
+          "variant": "1939-12-17",
+          "source_locator": {
+            "A17": "桂越交通背景、参战第5师团与中村旅团"
+          }
+        },
+        {
+          "date": "1939-12-18",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "档案馆历史今天将第5军正面进攻记在此日。",
+          "sources": [
+            "A16"
+          ],
+          "evidence_status": "source_conflict",
+          "variant_group": "kunlun_start",
+          "variant": "1939-12-18",
+          "source_locator": {
+            "A16": "12月4、18、28、31日节点与白崇禧报告口径"
+          }
+        },
+        {
+          "date": "1939-12-28",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "中国军队再向关口发动主要攻击。",
+          "sources": [
+            "A16"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A16": "12月4、18、28、31日节点与白崇禧报告口径"
+          }
+        },
+        {
+          "date": "1939-12-31",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "中国军队夺回昆仑关，日军残部退向九塘。",
+          "sources": [
+            "A16"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A16": "12月4、18、28、31日节点与白崇禧报告口径"
+          }
+        }
+      ],
+      "figures": [
+        {
+          "side": "中国",
+          "metric": "伤亡合计",
+          "value": 14000,
+          "qualifier": "余",
+          "scope": "A16“中国军队”口径",
+          "note": "不能未经核对缩成第5军单一建制损失。",
+          "sources": [
+            "A16"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A16": "12月4、18、28、31日节点与白崇禧报告口径"
+          }
+        },
+        {
+          "side": "日本",
+          "metric": "白崇禧报告所称毙敌",
+          "value": 4000,
+          "qualifier": "余",
+          "scope": "昆仑关作战",
+          "note": "中方报告数，不标作日方确认阵亡。",
+          "sources": [
+            "A16"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A16": "12月4、18、28、31日节点与白崇禧报告口径"
+          }
+        }
+      ],
+      "points": [
+        "nanning",
+        "binyang"
+      ],
+      "outcome": "历史结果供复盘对照；推演可出现不同结果。中国军队夺回昆仑关，日军残部退向九塘。",
+      "geography": "南宁和宾阳提供战区位置，不是昆仑关顶、九塘阻援点；山路与高地须配准。",
+      "equipment": "以当期步兵、机枪、迫击炮及实际配属的炮兵为基础；运输、工兵、通信、医疗单列。坦克、飞机、舰艇须有具体配属证据，不按师团番号默认添加。武器型号、可用数量、弹药与油料未知时明确待考，不以满编代实到。",
+      "modeling": "比较攻关部队与阻援部队配置对夺关时间、弹药消耗和续战能力的影响；夺关与长期控制分别评估。 这些是教师设置的比较变量和评估指标，尚非独立自动裁决模块；固定初态与随机种子再比较反事实，不能由一次模型叙述证明因果。",
+      "uncertainties": [
+        "反攻17日晚与18日异文保留，不能顺序执行成两次独立总攻。",
+        "“旅团几乎全灭”不证明全建制永久消灭；85%损失指标缺名册与分母。",
+        "第5军有装甲支援不等于全军全员机械化，更不等于1945年全美械。"
+      ],
+      "time_step": "1日",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "parameter_status": "teaching_estimate",
+      "preset_note": "日级用于讲授进程，实际推演只选一个局部时空切片；不得把整场累计投入当作同时在场兵力。"
+    },
+    {
+      "id": "AJ12",
+      "name": "抗日战争-豫湘桂战役总览-1944.04至1944.12",
+      "phase": "局部反攻与相持并存",
+      "theater": "正面",
+      "local_posture": "应对日军战略进攻",
+      "parent_id": "",
+      "track": "局部反攻与相持并存／正面／应对日军战略进攻",
+      "kind": "阶段教学总览",
+      "scope": "教学窗口按河南、长衡、桂柳三段组织；另有延至1945年1月的口径，不能从全局反攻标签推定本战场也在进攻。",
+      "aliases": [
+        "豫湘桂战役总览",
+        "豫湘桂战役",
+        "豫湘桂会战"
+      ],
+      "sources": [
+        "A18",
+        "A19",
+        "A37"
+      ],
+      "forces": [
+        {
+          "side": "中国",
+          "unit": "豫、湘、桂各战区部队",
+          "description": "跨战区部署与指挥须分段，不能把全国总兵力当投入兵力。",
+          "sources": [
+            "A18",
+            "A19"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A18": "豫湘桂进程与缅北滇西两路反攻",
+            "A19": "1944年4—12月范围及撤退中的平民处境"
+          }
+        },
+        {
+          "side": "日本",
+          "unit": "实施一号作战的部队",
+          "description": "沿平汉、粤汉、湘桂铁路推进，目标涉及交通与航空基地。",
+          "sources": [
+            "A18"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A18": "豫湘桂进程与缅北滇西两路反攻"
+          }
+        }
+      ],
+      "events": [
+        {
+          "date": "1944年4月中旬",
+          "time_label": "旬",
+          "precision": "日期范围",
+          "event": "日军开始打通大陆交通线的进攻。",
+          "sources": [
+            "A18"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A18": "豫湘桂进程与缅北滇西两路反攻"
+          }
+        },
+        {
+          "date": "1944年4—5月",
+          "time_label": "阶段",
+          "precision": "日期范围",
+          "event": "河南方向作战，郑州、许昌、洛阳等地相继失守。",
+          "sources": [
+            "A18"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A18": "豫湘桂进程与缅北滇西两路反攻"
+          }
+        },
+        {
+          "date": "1944年6—8月",
+          "time_label": "阶段",
+          "precision": "日期范围",
+          "event": "长沙、衡阳方向作战；衡阳孤城防御见子卡。",
+          "sources": [
+            "A18"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A18": "豫湘桂进程与缅北滇西两路反攻"
+          }
+        },
+        {
+          "date": "1944年11月",
+          "time_label": "月内",
+          "precision": "日期范围",
+          "event": "桂林、柳州、南宁相继失守，部分日军推进至独山。",
+          "sources": [
+            "A18"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A18": "豫湘桂进程与缅北滇西两路反攻"
+          }
+        },
+        {
+          "date": "1944年12月",
+          "time_label": "月内",
+          "precision": "日期范围",
+          "event": "本教学总览收束；撤退造成大量平民流离与交通压力。",
+          "sources": [
+            "A19"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A19": "1944年4—12月范围及撤退中的平民处境"
+          }
+        }
+      ],
+      "figures": [
+        {
+          "side": "日本",
+          "metric": "投入兵力",
+          "value": 400000,
+          "qualifier": "余",
+          "scope": "A18八个月战役口径",
+          "note": "不等同单一战区或同日在场。",
+          "sources": [
+            "A18"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A18": "豫湘桂进程与缅北滇西两路反攻"
+          }
+        },
+        {
+          "side": "中国",
+          "metric": "综合兵力损失",
+          "value": 500000,
+          "qualifier": "余",
+          "scope": "A37延至1945年1月口径",
+          "note": "不是阵亡；不与8个月统计直接相减或算交换比。",
+          "sources": [
+            "A37"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A37": "豫湘桂50余万兵力损失的综合口径"
+          }
+        },
+        {
+          "side": "中国",
+          "metric": "丧失城市",
+          "value": 146,
+          "qualifier": "",
+          "scope": "A19综合地域统计",
+          "note": "城市数不是战斗次数。",
+          "sources": [
+            "A19"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A19": "1944年4—12月范围及撤退中的平民处境"
+          }
+        },
+        {
+          "side": "日本",
+          "metric": "同范围战斗伤亡",
+          "value": null,
+          "qualifier": "",
+          "scope": "整场",
+          "note": "草稿10—12万尚未核出原始统计边界。",
+          "sources": [
+            "A18",
+            "A19"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {
+            "A18": "豫湘桂进程与缅北滇西两路反攻",
+            "A19": "1944年4—12月范围及撤退中的平民处境"
+          }
+        }
+      ],
+      "points": [
+        "zhengzhou",
+        "changsha",
+        "hengyang",
+        "guilin",
+        "liuzhou",
+        "nanning"
+      ],
+      "outcome": "历史结果供复盘对照；推演可出现不同结果。本教学总览收束；撤退造成大量平民流离与交通压力。",
+      "geography": "纵跨多个省份的总览不能用一个接触半径同时交战；铁路运输能力也不由城市间直线距离决定。",
+      "equipment": "以当期步兵、机枪、迫击炮及实际配属的炮兵为基础；运输、工兵、通信、医疗单列。坦克、飞机、舰艇须有具体配属证据，不按师团番号默认添加。武器型号、可用数量、弹药与油料未知时明确待考，不以满编代实到。",
+      "modeling": "分别观察各战区命令延迟、补给中断、单位实际可用兵力和撤退通路；比较某项协调改善是否有助局部保存实力，不用人数比直接解释全局结果。 这些是教师设置的比较变量和评估指标，尚非独立自动裁决模块；固定初态与随机种子再比较反事实，不能由一次模型叙述证明因果。",
+      "uncertainties": [
+        "50余万综合兵力损失不是阵亡。",
+        "A18中6.7万是缅北滇西伤亡，不能错移到本卡。",
+        "衡阳子卡与总览存在包含关系，禁止简单相加。"
+      ],
+      "time_step": "1日",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "parameter_status": "teaching_estimate",
+      "preset_note": "日级用于讲授进程，实际推演只选一个局部时空切片；不得把整场累计投入当作同时在场兵力。"
+    },
+    {
+      "id": "AJ13",
+      "name": "抗日战争-衡阳保卫战-1944.06至1944.08.08",
+      "phase": "局部反攻与相持并存",
+      "theater": "正面",
+      "local_posture": "孤城防御",
+      "parent_id": "AJ12",
+      "track": "局部反攻与相持并存／正面／孤城防御",
+      "kind": "会战或局部战斗",
+      "scope": "豫湘桂长衡段的局部战斗；起点6月22、23日及47、48天记法存在差异，目录不强定某一起点。",
+      "aliases": [
+        "衡阳保卫战"
+      ],
+      "sources": [
+        "A20",
+        "A21"
+      ],
+      "forces": [
+        {
+          "side": "中国",
+          "unit": "第10军",
+          "description": "方先觉指挥；番号与师数不证明满编，需实到人数、伤员和后送表。",
+          "sources": [
+            "A20"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A20": "第10军方先觉、6月22日至8月8日口径"
+          }
+        },
+        {
+          "side": "日本",
+          "unit": "衡阳进攻部队",
+          "description": "实际攻城部队、外围阻援及后续增援须分别核证。",
+          "sources": [
+            "A20"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A20": "第10军方先觉、6月22日至8月8日口径"
+          }
+        }
+      ],
+      "events": [
+        {
+          "date": "1944-06-22",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "A20将本次战斗起点列为6月22日。",
+          "sources": [
+            "A20"
+          ],
+          "evidence_status": "source_conflict",
+          "variant_group": "hengyang_start",
+          "variant": "1944-06-22",
+          "source_locator": {
+            "A20": "第10军方先觉、6月22日至8月8日口径"
+          }
+        },
+        {
+          "date": "1944-06-23",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "地方纪念活动采用6月23日为保卫战纪念起点。",
+          "sources": [
+            "A21"
+          ],
+          "evidence_status": "source_conflict",
+          "variant_group": "hengyang_start",
+          "variant": "1944-06-23",
+          "source_locator": {
+            "A21": "6月23日地方纪念起点"
+          }
+        },
+        {
+          "date": "1944年6—8月",
+          "time_label": "阶段",
+          "precision": "日期范围",
+          "event": "第10军持续城防作战，粮弹、救治与外援成为关键问题。",
+          "sources": [
+            "A20"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A20": "第10军方先觉、6月22日至8月8日口径"
+          }
+        },
+        {
+          "date": "1944-08-08",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "衡阳防御结束，守军遭重大损失并被俘；不把被俘人数计为阵亡。",
+          "sources": [
+            "A20"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A20": "第10军方先觉、6月22日至8月8日口径"
+          }
+        }
+      ],
+      "figures": [
+        {
+          "side": "中国",
+          "metric": "准确参战实力与伤亡",
+          "value": null,
+          "qualifier": "",
+          "scope": "第10军该战",
+          "note": "需区分战死、负伤、被俘及后续逃脱，不按满编师数估算。",
+          "sources": [
+            "A20",
+            "A21"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {
+            "A20": "第10军方先觉、6月22日至8月8日口径",
+            "A21": "6月23日地方纪念起点"
+          }
+        },
+        {
+          "side": "日本",
+          "metric": "战斗伤亡",
+          "value": null,
+          "qualifier": "",
+          "scope": "城内攻防与外围应分别统计",
+          "note": "不采纳未经同口径查证的唯一交换比。",
+          "sources": [
+            "A20"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {
+            "A20": "第10军方先觉、6月22日至8月8日口径"
+          }
+        }
+      ],
+      "points": [
+        "hengyang"
+      ],
+      "outcome": "历史结果供复盘对照；推演可出现不同结果。衡阳防御结束，守军遭重大损失并被俘；不把被俘人数计为阵亡。",
+      "geography": "衡阳现代城市点不是张家山或阵地壕线，旧城与湘江交通需历史图。",
+      "equipment": "以当期步兵、机枪、迫击炮及实际配属的炮兵为基础；运输、工兵、通信、医疗单列。坦克、飞机、舰艇须有具体配属证据，不按师团番号默认添加。武器型号、可用数量、弹药与油料未知时明确待考，不以满编代实到。",
+      "modeling": "对比救援抵达时间、医疗后送、粮弹与防线保持；用可用人员状态和伤员存续衡量结果，不能以守城天数代替所有评价。 这些是教师设置的比较变量和评估指标，尚非独立自动裁决模块；固定初态与随机种子再比较反事实，不能由一次模型叙述证明因果。",
+      "uncertainties": [
+        "6月22、23日是异文选项，不作为两次开战。",
+        "不写“日军伤亡唯一高于中方的一战”，这种跨全战争断言不可靠。"
+      ],
+      "time_step": "1小时",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "parameter_status": "teaching_estimate",
+      "preset_note": "日级用于讲授进程，实际推演只选一个局部时空切片；不得把整场累计投入当作同时在场兵力。"
+    },
+    {
+      "id": "AJ14",
+      "name": "抗日战争-百团大战-1940.08.20至1941.01.24",
+      "phase": "战略相持",
+      "theater": "敌后",
+      "local_posture": "交通破袭与反扫荡",
+      "parent_id": "",
+      "track": "战略相持／敌后／交通破袭与反扫荡",
+      "kind": "会战或局部战斗",
+      "scope": "采用纪念馆扩展窗口；A22战绩只到1940年12月5日，后续阶段不自动继承同一累计数。",
+      "aliases": [
+        "百团大战"
+      ],
+      "sources": [
+        "A22",
+        "A23",
+        "A24"
+      ],
+      "forces": [
+        {
+          "side": "中国",
+          "unit": "八路军总部及晋察冀、第120、第129师等",
+          "description": "彭德怀、左权等组织；105个团是陆续参战，不是105个满编团同场。",
+          "sources": [
+            "A22"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A22": "命令与三阶段、105团、战果分类"
+          }
+        },
+        {
+          "side": "日本及伪军",
+          "unit": "华北铁路守备与增援、扫荡部队",
+          "description": "日军与伪军在损失、俘虏、投降及反正中分别记账。",
+          "sources": [
+            "A22"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A22": "命令与三阶段、105团、战果分类"
+          }
+        }
+      ],
+      "events": [
+        {
+          "date": "1940-07-22",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "总部下达战役预备命令并上报军委。",
+          "sources": [
+            "A22"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A22": "命令与三阶段、105团、战果分类"
+          }
+        },
+        {
+          "date": "1940-08-08",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "战役行动命令明确发动日期。",
+          "sources": [
+            "A22"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A22": "命令与三阶段、105团、战果分类"
+          }
+        },
+        {
+          "date": "1940-08-20",
+          "time_label": "夜",
+          "precision": "时段",
+          "event": "交通总破袭开始。",
+          "sources": [
+            "A22"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A22": "命令与三阶段、105团、战果分类"
+          }
+        },
+        {
+          "date": "1940-09-20",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "第二阶段扩大据点与交通线作战。",
+          "sources": [
+            "A22"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A22": "命令与三阶段、105团、战果分类"
+          }
+        },
+        {
+          "date": "1940-10-06",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "进入反扫荡阶段；10月19日总部命令调整任务。",
+          "sources": [
+            "A22"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A22": "命令与三阶段、105团、战果分类"
+          }
+        },
+        {
+          "date": "1940-12-05",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "A22使用的三阶段统计窗口截止。",
+          "sources": [
+            "A22"
+          ],
+          "evidence_status": "source_conflict",
+          "variant_group": "hundred_end",
+          "variant": "1940-12-05",
+          "source_locator": {
+            "A22": "命令与三阶段、105团、战果分类"
+          }
+        },
+        {
+          "date": "1941-01-24",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "纪念馆扩展口径在此收束；不是另一次战役结束事件。",
+          "sources": [
+            "A23"
+          ],
+          "evidence_status": "source_conflict",
+          "variant_group": "hundred_end",
+          "variant": "1941-01-24",
+          "source_locator": {
+            "A23": "百团大战扩展至1941年1月24日的展陈口径"
+          }
+        }
+      ],
+      "figures": [
+        {
+          "side": "中国",
+          "metric": "陆续参战团数",
+          "value": 105,
+          "qualifier": "",
+          "scope": "全役兵力组织",
+          "note": "团数不折算满编人员。",
+          "sources": [
+            "A22"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A22": "命令与三阶段、105团、战果分类"
+          }
+        },
+        {
+          "side": "中国",
+          "metric": "伤亡",
+          "value": 17000,
+          "qualifier": "约",
+          "scope": "A24的1940年战绩叙述",
+          "note": "不外推到扩展窗口。",
+          "sources": [
+            "A24"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A24": "17000伤亡、1940年战绩与后续困难的多因素解释"
+          }
+        },
+        {
+          "side": "日本",
+          "metric": "中方所报毙伤",
+          "value": 20645,
+          "qualifier": "",
+          "scope": "A22所述1940年8月20日至12月5日战绩口径",
+          "note": "伤亡不含其另列俘虏和投降。",
+          "sources": [
+            "A22"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A22": "命令与三阶段、105团、战果分类"
+          }
+        },
+        {
+          "side": "伪军",
+          "metric": "中方所报毙伤",
+          "value": 5155,
+          "qualifier": "",
+          "scope": "A22所述1940年8月20日至12月5日战绩口径",
+          "note": "不得与反正混同。",
+          "sources": [
+            "A22"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A22": "命令与三阶段、105团、战果分类"
+          }
+        },
+        {
+          "side": "日本",
+          "metric": "俘虏",
+          "value": 281,
+          "qualifier": "",
+          "scope": "A22所述1940年8月20日至12月5日战绩口径",
+          "note": "与投降47另列。",
+          "sources": [
+            "A22"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A22": "命令与三阶段、105团、战果分类"
+          }
+        },
+        {
+          "side": "伪军",
+          "metric": "俘虏",
+          "value": 18407,
+          "qualifier": "",
+          "scope": "A22所述1940年8月20日至12月5日战绩口径",
+          "note": "与反正1845另列，草稿此值确为俘虏口径。",
+          "sources": [
+            "A22"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A22": "命令与三阶段、105团、战果分类"
+          }
+        },
+        {
+          "side": "交通",
+          "metric": "破坏铁路长度（公里）",
+          "value": 474,
+          "qualifier": "",
+          "scope": "A22所述1940年8月20日至12月5日战绩口径",
+          "note": "破坏长度不是铁路持续停运天数。",
+          "sources": [
+            "A22"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A22": "命令与三阶段、105团、战果分类"
+          }
+        }
+      ],
+      "points": [
+        "shijiazhuang",
+        "yangquan",
+        "taiyuan"
+      ],
+      "outcome": "历史结果供复盘对照；推演可出现不同结果。纪念馆扩展口径在此收束；不是另一次战役结束事件。",
+      "geography": "正太线沿太行山区穿行，不是北纬38度上的直线；站、桥、隧道应为独立目标，现代铁路不完全等于1940年线位。",
+      "equipment": "以当期步兵、机枪、迫击炮及实际配属的炮兵为基础；运输、工兵、通信、医疗单列。坦克、飞机、舰艇须有具体配属证据，不按师团番号默认添加。武器型号、可用数量、弹药与油料未知时明确待考，不以满编代实到。",
+      "modeling": "记录分段可通行状态、修复时间、警戒兵力及根据地损失；比较攻据点与破交通投入。后续扫荡受政策、情报、兵力和灾荒共同影响，不能设为破路越多便线性报复越强。 这些是教师设置的比较变量和评估指标，尚非独立自动裁决模块；固定初态与随机种子再比较反事实，不能由一次模型叙述证明因果。",
+      "uncertainties": [
+        "12月5日与次年1月24日窗口并存，数量按来源绑定。",
+        "原文公路1500多公里，不擅自改成1502；未核据点2993。",
+        "不把战役列名为铁路破袭就忽略其中攻坚、阻援和反扫荡。"
+      ],
+      "time_step": "1日",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "parameter_status": "teaching_estimate",
+      "preset_note": "日级用于讲授进程，实际推演只选一个局部时空切片；不得把整场累计投入当作同时在场兵力。"
+    },
+    {
+      "id": "AJ15",
+      "name": "抗日战争-冀中五一反扫荡-1942.05.01至1942.06.20",
+      "phase": "战略相持",
+      "theater": "敌后",
+      "local_posture": "组织存续与突围",
+      "parent_id": "",
+      "track": "战略相持／敌后／组织存续与突围",
+      "kind": "会战或局部战斗",
+      "scope": "用一场有明确地域和时段的反扫荡代表战术体系，不能把1938—1945年所有地道、地雷、麻雀战混成一次战役。",
+      "aliases": [
+        "冀中五一反扫荡",
+        "五一反扫荡",
+        "冀中反扫荡"
+      ],
+      "sources": [
+        "A25",
+        "A26"
+      ],
+      "forces": [
+        {
+          "side": "中国",
+          "unit": "冀中军区、地方武装与机关",
+          "description": "吕正操等领导；作战部队、机关、伤员与平民分开保护和记账。",
+          "sources": [
+            "A25",
+            "A26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A25": "1942年5月1日—6月20日、地道体系发展限制",
+            "A26": "5月29日转外线、6月1日夜越石德路、6月12日掌史村"
+          }
+        },
+        {
+          "side": "日本及伪军",
+          "unit": "华北方面军相关部队",
+          "description": "冈村宁次组织封锁扫荡；参战兵力范围有不同统计。",
+          "sources": [
+            "A26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A26": "5月29日转外线、6月1日夜越石德路、6月12日掌史村"
+          }
+        }
+      ],
+      "events": [
+        {
+          "date": "1942-05-01",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "日军大规模扫荡开始。",
+          "sources": [
+            "A25",
+            "A26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A25": "1942年5月1日—6月20日、地道体系发展限制",
+            "A26": "5月29日转外线、6月1日夜越石德路、6月12日掌史村"
+          }
+        },
+        {
+          "date": "1942-05-29",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "冀中领导机关根据局势转向外线。",
+          "sources": [
+            "A26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A26": "5月29日转外线、6月1日夜越石德路、6月12日掌史村"
+          }
+        },
+        {
+          "date": "1942-06-01",
+          "time_label": "夜",
+          "precision": "时段",
+          "event": "机关与主力于龙华以西越过石德路。",
+          "sources": [
+            "A26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A26": "5月29日转外线、6月1日夜越石德路、6月12日掌史村"
+          }
+        },
+        {
+          "date": "1942-06-12",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "部队到掌史村，随后发生阻击作战。",
+          "sources": [
+            "A26"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A26": "5月29日转外线、6月1日夜越石德路、6月12日掌史村"
+          }
+        },
+        {
+          "date": "1942-06-20",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "采用A25的大扫荡时间窗口收束；根据地困难与恢复仍延续。",
+          "sources": [
+            "A25"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A25": "1942年5月1日—6月20日、地道体系发展限制"
+          }
+        }
+      ],
+      "figures": [
+        {
+          "side": "双方",
+          "metric": "同范围战斗伤亡",
+          "value": null,
+          "qualifier": "",
+          "scope": "5—6月冀中",
+          "note": "地方军民遇害、主力损失及转移不等同战斗伤亡。",
+          "sources": [
+            "A25",
+            "A26"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {
+            "A25": "1942年5月1日—6月20日、地道体系发展限制",
+            "A26": "5月29日转外线、6月1日夜越石德路、6月12日掌史村"
+          }
+        },
+        {
+          "side": "日本",
+          "metric": "核定投入兵力",
+          "value": null,
+          "qualifier": "",
+          "scope": "需区分日军、日伪合计及参加轮次",
+          "note": "1.7万与常见5万口径尚不能直接比。",
+          "sources": [
+            "A25",
+            "A26"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {
+            "A25": "1942年5月1日—6月20日、地道体系发展限制",
+            "A26": "5月29日转外线、6月1日夜越石德路、6月12日掌史村"
+          }
+        }
+      ],
+      "points": [
+        "hengshui",
+        "renqiu"
+      ],
+      "outcome": "历史结果供复盘对照；推演可出现不同结果。采用A25的大扫荡时间窗口收束；根据地困难与恢复仍延续。",
+      "geography": "冀中平原参考点不代表封锁沟边界；据点网络、村庄与隐蔽设施须有专门资料，不能画想象的地道连通图。",
+      "equipment": "以当期步兵、机枪、迫击炮及实际配属的炮兵为基础；运输、工兵、通信、医疗单列。坦克、飞机、舰艇须有具体配属证据，不按师团番号默认添加。武器型号、可用数量、弹药与油料未知时明确待考，不以满编代实到。",
+      "modeling": "跟踪机关存续、通信恢复、平民避难、可用作战力量与交通连通。地表控制与地下组织可分开记录，但当前内核没有地下存续算法；不提供爆炸物制作或部署操作。 这些是教师设置的比较变量和评估指标，尚非独立自动裁决模块；固定初态与随机种子再比较反事实，不能由一次模型叙述证明因果。",
+      "uncertainties": [
+        "1942年的地道网络尚在发展，不能套用后期影视中的完整网络。",
+        "来源记掌史村6月12日，本卡未将局部歼敌数扩大为全役。"
+      ],
+      "time_step": "1日",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "parameter_status": "teaching_estimate",
+      "preset_note": "日级用于讲授进程，实际推演只选一个局部时空切片；不得把整场累计投入当作同时在场兵力。"
+    },
+    {
+      "id": "AJ16",
+      "name": "抗日战争-敌后局部反攻总览-1944",
+      "phase": "局部反攻与相持并存",
+      "theater": "敌后",
+      "local_posture": "分区进攻与根据地扩展",
+      "parent_id": "",
+      "track": "局部反攻与相持并存／敌后／分区进攻与根据地扩展",
+      "kind": "阶段教学总览",
+      "scope": "华北、华中、华南并行，年度概览不生成一张全国单位同时接触的战术态势。",
+      "aliases": [
+        "敌后局部反攻总览"
+      ],
+      "sources": [
+        "A27"
+      ],
+      "forces": [
+        {
+          "side": "中国",
+          "unit": "八路军、新四军及华南抗日武装",
+          "description": "分地区实施攻势，并保留分散游击与根据地工作。",
+          "sources": [
+            "A27"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A27": "1944各地并行攻势与各区域年度统计"
+          }
+        },
+        {
+          "side": "日本及伪军",
+          "unit": "各地守备与机动部队",
+          "description": "地区与时段不同，不假定全国已同时撤退。",
+          "sources": [
+            "A27"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A27": "1944各地并行攻势与各区域年度统计"
+          }
+        }
+      ],
+      "events": [
+        {
+          "date": "1944年1—2月",
+          "time_label": "阶段",
+          "precision": "日期范围",
+          "event": "苏中军民攻取若干据点。",
+          "sources": [
+            "A27"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A27": "1944各地并行攻势与各区域年度统计"
+          }
+        },
+        {
+          "date": "1944年3月",
+          "time_label": "来源所述时段",
+          "precision": "日期范围",
+          "event": "车桥作战改善苏中与邻近根据地联系。",
+          "sources": [
+            "A27"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A27": "1944各地并行攻势与各区域年度统计"
+          }
+        },
+        {
+          "date": "1944-04-12",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "中共中央强调发展力量并重视城市与交通线工作。",
+          "sources": [
+            "A27"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A27": "1944各地并行攻势与各区域年度统计"
+          }
+        },
+        {
+          "date": "1944-09-04",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "中共中央要求加强城市工作组织。",
+          "sources": [
+            "A27"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A27": "1944各地并行攻势与各区域年度统计"
+          }
+        },
+        {
+          "date": "1944年末",
+          "time_label": "年度回顾",
+          "precision": "日期范围",
+          "event": "各根据地通过攻势扩大联系，但总体敌强我弱的约束仍存在。",
+          "sources": [
+            "A27"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A27": "1944各地并行攻势与各区域年度统计"
+          }
+        }
+      ],
+      "figures": [
+        {
+          "side": "中国",
+          "metric": "华中新四军作战次数",
+          "value": 6500,
+          "qualifier": "余",
+          "scope": "1944年华中",
+          "note": "不等于全国，不能再加车桥一次而重复。",
+          "sources": [
+            "A27"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A27": "1944各地并行攻势与各区域年度统计"
+          }
+        },
+        {
+          "side": "日伪军",
+          "metric": "中方所报歼敌",
+          "value": 50000,
+          "qualifier": "余",
+          "scope": "1944年华中新四军",
+          "note": "不是日军单独阵亡，包含车桥等局部战果。",
+          "sources": [
+            "A27"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A27": "1944各地并行攻势与各区域年度统计"
+          }
+        },
+        {
+          "side": "中国",
+          "metric": "年度同口径战斗伤亡",
+          "value": null,
+          "qualifier": "",
+          "scope": "各地需分别统计",
+          "note": "不以歼敌倒推己方损失。",
+          "sources": [
+            "A27"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {
+            "A27": "1944各地并行攻势与各区域年度统计"
+          }
+        }
+      ],
+      "points": [
+        "shijiazhuang",
+        "huaian"
+      ],
+      "outcome": "历史结果供复盘对照；推演可出现不同结果。各根据地通过攻势扩大联系，但总体敌强我弱的约束仍存在。",
+      "geography": "仅给华北、华中区域参考；华南方向未加入未经核实的战术部署坐标，教学必须选定区域。",
+      "equipment": "以当期步兵、机枪、迫击炮及实际配属的炮兵为基础；运输、工兵、通信、医疗单列。坦克、飞机、舰艇须有具体配属证据，不按师团番号默认添加。武器型号、可用数量、弹药与油料未知时明确待考，不以满编代实到。",
+      "modeling": "比较集中攻坚与维持分散存续之间的资源分配，评价据点控制的持续性、区域连通和群众保护；与豫湘桂总览做并行时间比较。 这些是教师设置的比较变量和评估指标，尚非独立自动裁决模块；固定初态与随机种子再比较反事实，不能由一次模型叙述证明因果。",
+      "uncertainties": [
+        "1944年地方反攻不是全国所有战场同时进攻。",
+        "不能把各区域的毙伤、歼敌、俘虏、反正直接混加为全国阵亡总数。"
+      ],
+      "time_step": "1日",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "parameter_status": "teaching_estimate",
+      "preset_note": "日级用于讲授进程，实际推演只选一个局部时空切片；不得把整场累计投入当作同时在场兵力。"
+    },
+    {
+      "id": "AJ17",
+      "name": "抗日战争-车桥战役-1944.03.05至1944.03.06",
+      "phase": "局部反攻与相持并存",
+      "theater": "敌后",
+      "local_posture": "据点攻坚与打援",
+      "parent_id": "AJ16",
+      "track": "局部反攻与相持并存／敌后／据点攻坚与打援",
+      "kind": "会战或局部战斗",
+      "scope": "淮安东南车桥及芦家滩；属于苏中1944年局部反攻，不与年度战果重复累加。本卡主窗口为3月5—6日核心战斗，A30将扩展战果记至3月13日，另列后续节点。",
+      "aliases": [
+        "车桥战役"
+      ],
+      "sources": [
+        "A28",
+        "A29",
+        "A30"
+      ],
+      "forces": [
+        {
+          "side": "中国",
+          "unit": "新四军第1师兼苏中军区",
+          "description": "粟裕组织，参战第1、第7、第52团及地方部队；团数非满编人数。",
+          "sources": [
+            "A28",
+            "A29"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A28": "3月5—6日、攻坚打援、465与483含俘口径",
+            "A29": "3月5日1时50分、增援过程、粟裕战役经过转述"
+          }
+        },
+        {
+          "side": "日本及伪军",
+          "unit": "车桥守备与周边增援部队",
+          "description": "守点与援军分开记录；日军和伪军不合为单一民族单位。",
+          "sources": [
+            "A28",
+            "A30"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A28": "3月5—6日、攻坚打援、465与483含俘口径",
+            "A30": "3月5日1时50分、6日晨及扩展至13日的战果窗口、战役命令目录"
+          }
+        }
+      ],
+      "events": [
+        {
+          "date": "1944-03-05",
+          "time_label": "1时50分",
+          "precision": "小时",
+          "event": "主攻部队向车桥据点发起攻击。",
+          "sources": [
+            "A29",
+            "A30"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A29": "3月5日1时50分、增援过程、粟裕战役经过转述",
+            "A30": "3月5日1时50分、6日晨及扩展至13日的战果窗口、战役命令目录"
+          }
+        },
+        {
+          "date": "1944-03-05",
+          "time_label": "夜间至晨",
+          "precision": "时段",
+          "event": "突入镇内并包围核心工事。",
+          "sources": [
+            "A30"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A30": "3月5日1时50分、6日晨及扩展至13日的战果窗口、战役命令目录"
+          }
+        },
+        {
+          "date": "1944-03-05",
+          "time_label": "午后",
+          "precision": "时段",
+          "event": "周边日伪军分批增援，在芦家滩方向遭阻击。",
+          "sources": [
+            "A28",
+            "A29"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A28": "3月5—6日、攻坚打援、465与483含俘口径",
+            "A29": "3月5日1时50分、增援过程、粟裕战役经过转述"
+          }
+        },
+        {
+          "date": "1944-03-06",
+          "time_label": "晨",
+          "precision": "时段",
+          "event": "车桥残余日军于晨间撤逃，核心攻坚与打援战斗收束。",
+          "sources": [
+            "A28",
+            "A30"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A28": "3月5—6日、攻坚打援、465与483含俘口径",
+            "A30": "3月5日1时50分、6日晨及扩展至13日的战果窗口、战役命令目录"
+          }
+        },
+        {
+          "date": "1944-03-13",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "扩展战果窗口：A30记至此日收复周边12处据点后战役结束，不把这些日期挤入5—6日。",
+          "sources": [
+            "A30"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A30": "3月5日1时50分、6日晨及扩展至13日的战果窗口、战役命令目录"
+          }
+        }
+      ],
+      "figures": [
+        {
+          "side": "日本",
+          "metric": "中方所报歼敌（含俘24）",
+          "value": 465,
+          "qualifier": "",
+          "scope": "A28全役",
+          "note": "与A29“毙伤465另俘24”冲突，不重复加24。",
+          "sources": [
+            "A28"
+          ],
+          "evidence_status": "source_conflict",
+          "source_locator": {
+            "A28": "3月5—6日、攻坚打援、465与483含俘口径"
+          }
+        },
+        {
+          "side": "日本",
+          "metric": "中方所报毙伤（另列俘24）",
+          "value": 465,
+          "qualifier": "",
+          "scope": "A29转述",
+          "note": "与A28是替代解释，不能合计两行。",
+          "sources": [
+            "A29"
+          ],
+          "evidence_status": "source_conflict",
+          "source_locator": {
+            "A29": "3月5日1时50分、增援过程、粟裕战役经过转述"
+          }
+        },
+        {
+          "side": "伪军",
+          "metric": "中方所报歼敌（含俘168）",
+          "value": 483,
+          "qualifier": "",
+          "scope": "A28全役",
+          "note": "不能再加168。",
+          "sources": [
+            "A28"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A28": "3月5—6日、攻坚打援、465与483含俘口径"
+          }
+        },
+        {
+          "side": "中国",
+          "metric": "战斗伤亡",
+          "value": null,
+          "qualifier": "",
+          "scope": "车桥与打援全役",
+          "note": "没有从敌方损失比例反推。",
+          "sources": [
+            "A28",
+            "A30"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {
+            "A28": "3月5—6日、攻坚打援、465与483含俘口径",
+            "A30": "3月5日1时50分、6日晨及扩展至13日的战果窗口、战役命令目录"
+          }
+        }
+      ],
+      "points": [
+        "cheqiao",
+        "huaian"
+      ],
+      "outcome": "历史结果供复盘对照；推演可出现不同结果。扩展战果窗口：A30记至此日收复周边12处据点后战役结束，不把这些日期挤入5—6日。",
+      "geography": "车桥同名地点很多，锚点限定江苏淮安；芦家滩、韩庄需另核，不能拿江西车桥替代。",
+      "equipment": "以当期步兵、机枪、迫击炮及实际配属的炮兵为基础；运输、工兵、通信、医疗单列。坦克、飞机、舰艇须有具体配属证据，不按师团番号默认添加。武器型号、可用数量、弹药与油料未知时明确待考，不以满编代实到。",
+      "modeling": "比较攻坚与打援任务分配对援军抵达和守点部队撤逃的影响，区分拔除据点与歼灭全部守军。 这些是教师设置的比较变量和评估指标，尚非独立自动裁决模块；固定初态与随机种子再比较反事实，不能由一次模型叙述证明因果。",
+      "uncertainties": [
+        "465是否包含俘虏有来源冲突；保留两条替代口径。",
+        "小时记录来自公开叙述，未核原始报时系统。",
+        "5—6日核心战斗与延至13日扩展战果的统计范围不同；采用战果数字前需核其覆盖窗口。"
+      ],
+      "time_step": "30分钟",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "parameter_status": "teaching_estimate",
+      "preset_note": "日级用于讲授进程，实际推演只选一个局部时空切片；不得把整场累计投入当作同时在场兵力。"
+    },
+    {
+      "id": "AJ18",
+      "name": "抗日战争-湘西会战-1945.04.09至1945.06.07",
+      "phase": "局部反攻与相持并存",
+      "theater": "正面",
+      "local_posture": "山地防御转反击",
+      "parent_id": "",
+      "track": "局部反攻与相持并存／正面／山地防御转反击",
+      "kind": "会战或局部战斗",
+      "scope": "雪峰山及芷江方向；防御反击并存，不因1945年而默认双方均进攻。",
+      "aliases": [
+        "湘西会战",
+        "雪峰山战役",
+        "芷江作战"
+      ],
+      "sources": [
+        "A31",
+        "A32"
+      ],
+      "forces": [
+        {
+          "side": "中国",
+          "unit": "陆军第四方面军等",
+          "description": "何应钦统筹，王耀武部为主，中美航空力量支援。",
+          "sources": [
+            "A32"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A32": "何应钦与王耀武、作战过程、1.9万及2.8万口径"
+          }
+        },
+        {
+          "side": "日本",
+          "unit": "第20军",
+          "description": "向芷江航空基地推进；兵力与损失采用具体报道范围。",
+          "sources": [
+            "A32"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A32": "何应钦与王耀武、作战过程、1.9万及2.8万口径"
+          }
+        }
+      ],
+      "events": [
+        {
+          "date": "1945-04-09",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "湘西会战开始。",
+          "sources": [
+            "A31"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A31": "4月9日—6月7日与芷江机场目标"
+          }
+        },
+        {
+          "date": "1945年4月",
+          "time_label": "月内",
+          "precision": "日期范围",
+          "event": "中国部队依托雪峰山组织逐次阻击。",
+          "sources": [
+            "A32"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A32": "何应钦与王耀武、作战过程、1.9万及2.8万口径"
+          }
+        },
+        {
+          "date": "1945-04-24",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "何应钦报告各部任务分配；档案目录列有该电。",
+          "sources": [
+            "A32"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A32": "何应钦与王耀武、作战过程、1.9万及2.8万口径"
+          }
+        },
+        {
+          "date": "1945年会战后期",
+          "time_label": "阶段",
+          "precision": "日期范围",
+          "event": "中美空军加强支援，中国军队转入反击。",
+          "sources": [
+            "A32"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A32": "何应钦与王耀武、作战过程、1.9万及2.8万口径"
+          }
+        },
+        {
+          "date": "1945-06-07",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "会战结束，中方收复失地并保住芷江基地。",
+          "sources": [
+            "A31",
+            "A32"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A31": "4月9日—6月7日与芷江机场目标",
+            "A32": "何应钦与王耀武、作战过程、1.9万及2.8万口径"
+          }
+        }
+      ],
+      "figures": [
+        {
+          "side": "中国",
+          "metric": "伤亡",
+          "value": 19000,
+          "qualifier": "余",
+          "scope": "A32导言口径",
+          "note": "与草稿20660/2.7万不强行统一；须核伤亡统计表。",
+          "sources": [
+            "A32"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A32": "何应钦与王耀武、作战过程、1.9万及2.8万口径"
+          }
+        },
+        {
+          "side": "日本",
+          "metric": "中方所报歼敌",
+          "value": 28000,
+          "qualifier": "余",
+          "scope": "A32导言口径",
+          "note": "不是日方自报，不能改名为阵亡。",
+          "sources": [
+            "A32"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A32": "何应钦与王耀武、作战过程、1.9万及2.8万口径"
+          }
+        },
+        {
+          "side": "中国",
+          "metric": "所调集兵力",
+          "value": 110000,
+          "qualifier": "余",
+          "scope": "A32导言所述部队",
+          "note": "不能当成全部后勤和配属累计人数。",
+          "sources": [
+            "A32"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A32": "何应钦与王耀武、作战过程、1.9万及2.8万口径"
+          }
+        },
+        {
+          "side": "日本",
+          "metric": "集结兵力",
+          "value": 80000,
+          "qualifier": "余",
+          "scope": "A32进攻部队口径",
+          "note": "概数，非所有单位满编值。",
+          "sources": [
+            "A32"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A32": "何应钦与王耀武、作战过程、1.9万及2.8万口径"
+          }
+        }
+      ],
+      "points": [
+        "zhijiang",
+        "dongkou"
+      ],
+      "outcome": "历史结果供复盘对照；推演可出现不同结果。会战结束，中方收复失地并保住芷江基地。",
+      "geography": "芷江县城参考点不是1945年机场跑道；洞口与雪峰山隘路须另核高程和道路。",
+      "equipment": "以当期步兵、机枪、迫击炮及实际配属的炮兵为基础；运输、工兵、通信、医疗单列。坦克、飞机、舰艇须有具体配属证据，不按师团番号默认添加。武器型号、可用数量、弹药与油料未知时明确待考，不以满编代实到。",
+      "modeling": "分别观察日军补给可达、山地延迟、中美航空支援和反击时机；可比较撤销某项支援的教学分支，但不能宣称空中遮断已在几何内核计算。 这些是教师设置的比较变量和评估指标，尚非独立自动裁决模块；固定初态与随机种子再比较反事实，不能由一次模型叙述证明因果。",
+      "uncertainties": [
+        "A32有伤亡统计表目录，尚未逐栏核验，不直接采纳草稿35805。",
+        "“唯一中方损失小于日方的决定性胜利”等跨战役绝对说法不采纳。"
+      ],
+      "time_step": "1日",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "parameter_status": "teaching_estimate",
+      "preset_note": "日级用于讲授进程，实际推演只选一个局部时空切片；不得把整场累计投入当作同时在场兵力。"
+    },
+    {
+      "id": "AJ19",
+      "name": "抗日战争-缅北滇西反攻总览-1943.10至1945.03",
+      "phase": "局部反攻与相持并存",
+      "theater": "西南跨境协同",
+      "local_posture": "攻坚与国际交通线恢复",
+      "parent_id": "",
+      "track": "局部反攻与相持并存／西南跨境协同／攻坚与国际交通线恢复",
+      "kind": "阶段教学总览",
+      "scope": "中国驻印军缅北、远征军滇西两路并行；1945年1月芒友会师是节点，广义作战延至3月。",
+      "aliases": [
+        "缅北滇西反攻总览",
+        "缅北滇西反攻",
+        "滇西缅北反攻"
+      ],
+      "sources": [
+        "A18",
+        "A33",
+        "A38"
+      ],
+      "forces": [
+        {
+          "side": "中国及盟军",
+          "unit": "中国驻印军、远征军及协同力量",
+          "description": "两路出发地、补给与指挥不同，不能合成一个驻地或一个军团。",
+          "sources": [
+            "A18",
+            "A38"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A18": "豫湘桂进程与缅北滇西两路反攻",
+            "A38": "缅北滇西作战广义至1945年3月"
+          }
+        },
+        {
+          "side": "日本",
+          "unit": "缅北与滇西守备部队",
+          "description": "据点、河谷和城市分别核定投入，不推定全战区同时在松山。",
+          "sources": [
+            "A18"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A18": "豫湘桂进程与缅北滇西两路反攻"
+          }
+        }
+      ],
+      "events": [
+        {
+          "date": "1943年10月",
+          "time_label": "月内",
+          "precision": "日期范围",
+          "event": "驻印军开始缅北反攻。",
+          "sources": [
+            "A18"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A18": "豫湘桂进程与缅北滇西两路反攻"
+          }
+        },
+        {
+          "date": "1944年5月",
+          "time_label": "月内",
+          "precision": "日期范围",
+          "event": "远征军渡怒江展开滇西反攻。",
+          "sources": [
+            "A33"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A33": "1944年5月渡怒江、1945年1月27日芒友会师"
+          }
+        },
+        {
+          "date": "1944年",
+          "time_label": "年内",
+          "precision": "日期范围",
+          "event": "两路攻取缅北河谷及滇西腾冲、松山等据点。",
+          "sources": [
+            "A18"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A18": "豫湘桂进程与缅北滇西两路反攻"
+          }
+        },
+        {
+          "date": "1945-01-27",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "两路部队在芒友会师。",
+          "sources": [
+            "A33"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A33": "1944年5月渡怒江、1945年1月27日芒友会师"
+          }
+        },
+        {
+          "date": "1945年3月",
+          "time_label": "月内",
+          "precision": "日期范围",
+          "event": "广义缅北滇西反攻作战任务完成，国际陆路运输恢复。",
+          "sources": [
+            "A38"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A38": "缅北滇西作战广义至1945年3月"
+          }
+        }
+      ],
+      "figures": [
+        {
+          "side": "中国",
+          "metric": "伤亡",
+          "value": 67000,
+          "qualifier": "近",
+          "scope": "两路一年半作战合计",
+          "note": "不是松山单一战斗，也不是豫湘桂损失。",
+          "sources": [
+            "A18"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A18": "豫湘桂进程与缅北滇西两路反攻"
+          }
+        },
+        {
+          "side": "日本",
+          "metric": "中方所报毙伤俘",
+          "value": 50000,
+          "qualifier": "近",
+          "scope": "两路作战合计",
+          "note": "包含俘虏，不改写为阵亡。",
+          "sources": [
+            "A18"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A18": "豫湘桂进程与缅北滇西两路反攻"
+          }
+        }
+      ],
+      "points": [
+        "tengchong",
+        "longling"
+      ],
+      "outcome": "历史结果供复盘对照；推演可出现不同结果。广义缅北滇西反攻作战任务完成，国际陆路运输恢复。",
+      "geography": "本包仅给滇西现代地名点；没有将中国GeoNames数据伪作缅甸芒友或密支那坐标，跨境节点待另核。",
+      "equipment": "以当期步兵、机枪、迫击炮及实际配属的炮兵为基础；运输、工兵、通信、医疗单列。坦克、飞机、舰艇须有具体配属证据，不按师团番号默认添加。武器型号、可用数量、弹药与油料未知时明确待考，不以满编代实到。",
+      "modeling": "以陆路恢复的时间、可持续运输能力和两路会合为指标，比较攻坚延迟、天气与后勤条件；跨境总览须选一个局部场景才进入地图推演。 这些是教师设置的比较变量和评估指标，尚非独立自动裁决模块；固定初态与随机种子再比较反事实，不能由一次模型叙述证明因果。",
+      "uncertainties": [
+        "会师不等于所有战斗立即结束。",
+        "缅北战术锚点尚缺，不能由中文译名编经纬度。"
+      ],
+      "time_step": "1日",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "parameter_status": "teaching_estimate",
+      "preset_note": "日级用于讲授进程，实际推演只选一个局部时空切片；不得把整场累计投入当作同时在场兵力。"
+    },
+    {
+      "id": "AJ20",
+      "name": "抗日战争-全面反攻与受降总览-1945.08至1945.09",
+      "phase": "全面反攻",
+      "theater": "敌后与受降协同",
+      "local_posture": "反攻、停火与接收",
+      "parent_id": "",
+      "track": "全面反攻／敌后与受降协同／反攻、停火与接收",
+      "kind": "阶段教学总览",
+      "scope": "以华北及张家口为局部示例，区分日本宣布投降、战场停火、缴械与正式签字。",
+      "aliases": [
+        "全面反攻与受降总览"
+      ],
+      "sources": [
+        "A01",
+        "A34",
+        "A35"
+      ],
+      "forces": [
+        {
+          "side": "中国",
+          "unit": "八路军、新四军及各抗日部队",
+          "description": "各解放区分别推进，张家口由晋察冀军区冀察部队收复。",
+          "sources": [
+            "A34",
+            "A35"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A34": "8月9—11日命令、8月15日后继续作战、150座城市",
+            "A35": "1945年8月23日冀察部队收复张家口"
+          }
+        },
+        {
+          "side": "日本及伪军",
+          "unit": "各地驻军",
+          "description": "宣布投降后各驻军执行不一，不默认全部立刻缴械或继续作战。",
+          "sources": [
+            "A34"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A34": "8月9—11日命令、8月15日后继续作战、150座城市"
+          }
+        }
+      ],
+      "events": [
+        {
+          "date": "1945-08-09",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "发布对日最后一战声明，要求组织反攻。",
+          "sources": [
+            "A34"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A34": "8月9—11日命令、8月15日后继续作战、150座城市"
+          }
+        },
+        {
+          "date": "1945年8月10—11日",
+          "time_label": "两日内",
+          "precision": "日期范围",
+          "event": "朱德连续发布受降与反攻命令。",
+          "sources": [
+            "A34"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A34": "8月9—11日命令、8月15日后继续作战、150座城市"
+          }
+        },
+        {
+          "date": "1945-08-15",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "日本宣布投降，但各地停火、缴械仍需实际执行。",
+          "sources": [
+            "A34"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A34": "8月9—11日命令、8月15日后继续作战、150座城市"
+          }
+        },
+        {
+          "date": "1945-08-23",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "冀察部队收复张家口。",
+          "sources": [
+            "A35"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A35": "1945年8月23日冀察部队收复张家口"
+          }
+        },
+        {
+          "date": "1945-09-02",
+          "time_label": "当日",
+          "precision": "日",
+          "event": "日本正式签署投降书；受降接收与秩序恢复继续。",
+          "sources": [
+            "A01"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A01": "阶段框架、两大战场、局部与全面反攻"
+          }
+        }
+      ],
+      "figures": [
+        {
+          "side": "中国",
+          "metric": "收复县以上城市",
+          "value": 150,
+          "qualifier": "",
+          "scope": "A34所列8月11日至9月2日",
+          "note": "城市接收数量不是杀伤数，也不是全部城市都由战斗夺取。",
+          "sources": [
+            "A34"
+          ],
+          "evidence_status": "published_account",
+          "source_locator": {
+            "A34": "8月9—11日命令、8月15日后继续作战、150座城市"
+          }
+        },
+        {
+          "side": "双方",
+          "metric": "本教学总览战斗伤亡",
+          "value": null,
+          "qualifier": "",
+          "scope": "不同地区分别统计",
+          "note": "不能将受降缴械人数作阵亡。",
+          "sources": [
+            "A34",
+            "A35"
+          ],
+          "evidence_status": "unverified",
+          "source_locator": {
+            "A34": "8月9—11日命令、8月15日后继续作战、150座城市",
+            "A35": "1945年8月23日冀察部队收复张家口"
+          }
+        }
+      ],
+      "points": [
+        "zhangjiakou"
+      ],
+      "outcome": "历史结果供复盘对照；推演可出现不同结果。日本正式签署投降书；受降接收与秩序恢复继续。",
+      "geography": "张家口只作华北局部案例参考；全国受降不能作为一个城市的地面接触战。",
+      "equipment": "以当期步兵、机枪、迫击炮及实际配属的炮兵为基础；运输、工兵、通信、医疗单列。坦克、飞机、舰艇须有具体配属证据，不按师团番号默认添加。武器型号、可用数量、弹药与油料未知时明确待考，不以满编代实到。",
+      "modeling": "评估命令送达、是否停火、缴械登记、平民保护与交通秩序；将受降权限、接收时间列为外生教学条件，不把日本投降日设成所有单位状态归零。 这些是教师设置的比较变量和评估指标，尚非独立自动裁决模块；固定初态与随机种子再比较反事实，不能由一次模型叙述证明因果。",
+      "uncertainties": [
+        "8月15日不是所有地方实际停止交火的同一时刻。",
+        "9月2日签字与具体地区受降日期不可合并。"
+      ],
+      "time_step": "1日",
+      "geometry": {
+        "contact_km": 0.5,
+        "control_radius_km": 0.4,
+        "encircle_radius_km": 3,
+        "retreat_check_km": 5,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "parameter_status": "teaching_estimate",
+      "preset_note": "日级用于讲授进程，实际推演只选一个局部时空切片；不得把整场累计投入当作同时在场兵力。"
+    }
+  ]
+}

@@ -16,7 +16,7 @@ EQUIPMENT_FIELDS = ("committed", "operational", "damaged", "destroyed")
 CAPABILITY_NOTE = """【工程能力边界】涉及本系统如何计算时，以此为准：界面“战斗减员率”=casualties/committed，
 “非战斗减员率”=noncombat_losses/committed；装备“永久损失率”=destroyed/committed，“待修率”=damaged/committed，
 “可用率”=operational/committed。战斗与非战斗减员、装备待修与永久损失分别统计，不能相加后冒充其中任一比率。
-没有确定性伤亡、工事毁伤、弹道命中、DEM视线遮挡或运输吞吐算法。不能声称系统已计算这些修正。
+普通模型生成模式没有确定性伤亡或运输吞吐算法。仅mission固定局部教学模式按版本系数计算战损、库存、行动预算和目标；这些是合成教学假设，不是历史标定。所有模式均无工事毁伤、弹道命中或DEM视线遮挡算法。
 几何内核只近似计算机动、补给连通和包围；射程圈不是杀伤半径。战场影响可作推演分析，但须与已经执行的软件计算区分。
 未知计数不补成0或确数，模型给出的估计不是经核实的史实。"""
 

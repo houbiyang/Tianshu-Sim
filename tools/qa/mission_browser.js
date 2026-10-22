@@ -1,0 +1,42 @@
+async page => {
+  const assert=(v,m)=>{if(!v)throw new Error(m);};
+  const errors=[];page.on('pageerror',e=>errors.push(String(e)));
+  await page.setViewportSize({width:1530,height:980});
+  await page.goto('http://127.0.0.1:8791', {waitUntil:'domcontentloaded'});
+  await page.getByRole('textbox',{name:'搜索战役'}).fill('冀中五一');
+  await page.locator('.battle-option').click();
+  await page.getByRole('button',{name:'继续配置'}).click();
+  assert(await page.locator('#draft-step').inputValue()==='1天','suggested interval');
+  await page.locator('#draft-mode').selectOption('replay');
+  assert(await page.locator('#draft-mission').count()===0,'replay cannot select deterministic mission');
+  await page.locator('#draft-mode').selectOption('open');
+  await page.locator('#draft-mission').selectOption('AJ15-local-v1');
+  assert(await page.locator('#draft-step').inputValue()==='30分钟','fixed interval');
+  assert(await page.locator('#draft-step').isDisabled(),'fixed duration locked');
+  await page.screenshot({path:'.cache/qa/missions/launch-wide.png'});
+  await page.getByRole('button',{name:'创建并进入推演'}).click();
+  await page.getByTestId('mission-panel').waitFor();
+  const next=page.getByRole('button',{name:'⏩ 下一轮推演',exact:true});
+  await page.locator('#turn-instruction').fill('红方隐藏保存组织');
+  await next.click();
+  await page.waitForFunction(()=>document.querySelector('[data-testid=mission-panel]')?.textContent.includes('1 / 4'));
+  assert(await page.locator('#turn-instruction').inputValue()==='','successful instruction clears');
+  await page.getByText('目标进度、补给账与重放凭据',{exact:true}).click();
+  await page.getByRole('button',{name:'对照上一轮：红方全部原地待命',exact:true}).click();
+  await page.getByTestId('mission-panel').getByText('待命对照',{exact:true}).waitFor();
+  assert((await page.getByTestId('mission-panel').innerText()).includes('-15'),'organization intervention');
+  await page.screenshot({path:'.cache/qa/missions/workspace-wide.png'});
+  const map=await page.locator('.map-wrap').boundingBox();assert(map && map.height>=220,'map retains usable row');
+  for(let i=2;i<=4;i++) { await next.click(); await page.waitForFunction(n=>document.querySelector('[data-testid=mission-panel]')?.textContent.includes(n+' / 4'),i); }
+  assert(await next.isDisabled(),'terminal next disabled');
+  assert((await page.getByTestId('mission-panel').innerText()).includes('程序目标达成'),'computed winner');
+  await page.reload({waitUntil:'domcontentloaded'});
+  await page.getByRole('button',{name:'返回当前战局',exact:true}).click();
+  await page.getByTestId('mission-panel').waitFor();assert(await next.isDisabled(),'terminal restore');
+  await page.setViewportSize({width:390,height:844});
+  await page.getByTestId('mission-panel').scrollIntoViewIfNeeded();
+  await page.screenshot({path:'.cache/qa/missions/workspace-narrow.png'});
+  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'narrow overflow');
+  assert(errors.length===0,'page errors '+errors.join(';'));
+  return {fixed_initial:true, modes:true,clock:true,orders:true,counterfactual:true,computed_goal:true,terminal_guard:true,restore:true,narrow:true,errors};
+}

@@ -1,0 +1,5856 @@
+{
+  "version": 1,
+  "notice": "合成局部教学演习；不是历史战场精确复原",
+  "missions": [
+    {
+      "id": "AJ01-local-v1",
+      "battle": "抗日战争-淞沪会战-1937.08.13至1937.11.12",
+      "title": "抗日战争-淞沪会战-1937.08.13至1937.11.12／局部教学演习",
+      "profile": "delay",
+      "source_ids": [
+        "A01",
+        "A02",
+        "A03",
+        "A39",
+        "A40"
+      ],
+      "assumptions": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+      "time_step": "30分钟",
+      "deadline_turn": 4,
+      "required_turns": 2,
+      "ceasefire_turn": 2,
+      "map_center": {
+        "lat": 31.22222,
+        "lng": 121.45806
+      },
+      "map_radius_km": 4,
+      "objective": {
+        "lat": 31.22222,
+        "lng": 121.45806
+      },
+      "exit": {
+        "lat": 31.22222,
+        "lng": 121.443354
+      },
+      "goal_radius_km": 0.45,
+      "goal": "坚持至截止回合，红方至少两个编组仍有人员，蓝方未进入后方出口600米内",
+      "rules": {
+        "move_km": 0.8,
+        "damage": 12,
+        "cover": 0.8
+      },
+      "geometry": {
+        "contact_km": 0.1,
+        "control_radius_km": 0.25,
+        "encircle_radius_km": 2,
+        "retreat_check_km": 2,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "initial_state": {
+        "center": [
+          31.22222,
+          121.45806
+        ],
+        "current_time": "1937-08-13 08:00",
+        "era": "抗日战争局部教学假设",
+        "current_terrain": "丘陵森林",
+        "red_units": [
+          {
+            "name": "红方教学编组1",
+            "type": "步兵",
+            "lat": 31.219076,
+            "lng": 121.449656,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组2",
+            "type": "步兵",
+            "lat": 31.22222,
+            "lng": 121.449656,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组3",
+            "type": "工兵",
+            "lat": 31.225364,
+            "lng": 121.449656,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "blue_units": [
+          {
+            "name": "蓝方教学编组1",
+            "type": "步兵",
+            "lat": 31.219076,
+            "lng": 121.461211,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组2",
+            "type": "步兵",
+            "lat": 31.22222,
+            "lng": 121.461211,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组3",
+            "type": "工兵",
+            "lat": 31.225364,
+            "lng": 121.461211,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "engagements": [],
+        "terrain_features": [],
+        "supply_nodes": [
+          {
+            "id": "red-depot",
+            "name": "red教学补给点",
+            "team": "red",
+            "lat": 31.22222,
+            "lng": 121.437051,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          },
+          {
+            "id": "blue-depot",
+            "name": "blue教学补给点",
+            "team": "blue",
+            "lat": 31.22222,
+            "lng": 121.479069,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          }
+        ],
+        "supply_routes": [],
+        "source_note": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+        "situation_report": "固定局部教学编组已经部署，目标和截止时间由程序记录。"
+      }
+    },
+    {
+      "id": "AJ02-local-v1",
+      "battle": "抗日战争-太原会战-1937.09至1937.11",
+      "title": "抗日战争-太原会战-1937.09至1937.11／局部教学演习",
+      "profile": "delay",
+      "source_ids": [
+        "A04",
+        "A05"
+      ],
+      "assumptions": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+      "time_step": "30分钟",
+      "deadline_turn": 4,
+      "required_turns": 2,
+      "ceasefire_turn": 2,
+      "map_center": {
+        "lat": 37.86944,
+        "lng": 112.56028
+      },
+      "map_radius_km": 4,
+      "objective": {
+        "lat": 37.86944,
+        "lng": 112.56028
+      },
+      "exit": {
+        "lat": 37.86944,
+        "lng": 112.544349
+      },
+      "goal_radius_km": 0.45,
+      "goal": "坚持至截止回合，红方至少两个编组仍有人员，蓝方未进入后方出口600米内",
+      "rules": {
+        "move_km": 0.8,
+        "damage": 12,
+        "cover": 0.8
+      },
+      "geometry": {
+        "contact_km": 0.1,
+        "control_radius_km": 0.25,
+        "encircle_radius_km": 2,
+        "retreat_check_km": 2,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "initial_state": {
+        "center": [
+          37.86944,
+          112.56028
+        ],
+        "current_time": "1937-09-25 08:00",
+        "era": "抗日战争局部教学假设",
+        "current_terrain": "丘陵森林",
+        "red_units": [
+          {
+            "name": "红方教学编组1",
+            "type": "步兵",
+            "lat": 37.866296,
+            "lng": 112.551176,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组2",
+            "type": "步兵",
+            "lat": 37.86944,
+            "lng": 112.551176,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组3",
+            "type": "工兵",
+            "lat": 37.872584,
+            "lng": 112.551176,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "blue_units": [
+          {
+            "name": "蓝方教学编组1",
+            "type": "步兵",
+            "lat": 37.866296,
+            "lng": 112.563694,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组2",
+            "type": "步兵",
+            "lat": 37.86944,
+            "lng": 112.563694,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组3",
+            "type": "工兵",
+            "lat": 37.872584,
+            "lng": 112.563694,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "engagements": [],
+        "terrain_features": [],
+        "supply_nodes": [
+          {
+            "id": "red-depot",
+            "name": "red教学补给点",
+            "team": "red",
+            "lat": 37.86944,
+            "lng": 112.537521,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          },
+          {
+            "id": "blue-depot",
+            "name": "blue教学补给点",
+            "team": "blue",
+            "lat": 37.86944,
+            "lng": 112.583039,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          }
+        ],
+        "supply_routes": [],
+        "source_note": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+        "situation_report": "固定局部教学编组已经部署，目标和截止时间由程序记录。"
+      }
+    },
+    {
+      "id": "AJ03-local-v1",
+      "battle": "抗日战争-平型关伏击战-1937.09.25",
+      "title": "抗日战争-平型关伏击战-1937.09.25／局部教学演习",
+      "profile": "assault",
+      "source_ids": [
+        "A05",
+        "A06"
+      ],
+      "assumptions": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+      "time_step": "30分钟",
+      "deadline_turn": 4,
+      "required_turns": 2,
+      "ceasefire_turn": 2,
+      "map_center": {
+        "lat": 39.46799,
+        "lng": 114.14843
+      },
+      "map_radius_km": 4,
+      "objective": {
+        "lat": 39.46799,
+        "lng": 114.14843
+      },
+      "exit": {
+        "lat": 39.46799,
+        "lng": 114.132139
+      },
+      "goal_radius_km": 0.45,
+      "goal": "红方控制目标区，蓝方无可用编组在区内，连续保持两轮",
+      "rules": {
+        "move_km": 0.6,
+        "damage": 20,
+        "cover": 0.6
+      },
+      "geometry": {
+        "contact_km": 0.1,
+        "control_radius_km": 0.25,
+        "encircle_radius_km": 2,
+        "retreat_check_km": 2,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "initial_state": {
+        "center": [
+          39.46799,
+          114.14843
+        ],
+        "current_time": "1937-09-25 08:00",
+        "era": "抗日战争局部教学假设",
+        "current_terrain": "城市地带",
+        "red_units": [
+          {
+            "name": "红方教学编组1",
+            "type": "步兵",
+            "lat": 39.464846,
+            "lng": 114.139121,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组2",
+            "type": "步兵",
+            "lat": 39.46799,
+            "lng": 114.139121,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组3",
+            "type": "工兵",
+            "lat": 39.471134,
+            "lng": 114.139121,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "blue_units": [
+          {
+            "name": "蓝方教学编组1",
+            "type": "步兵",
+            "lat": 39.464846,
+            "lng": 114.151921,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组2",
+            "type": "步兵",
+            "lat": 39.46799,
+            "lng": 114.151921,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组3",
+            "type": "工兵",
+            "lat": 39.471134,
+            "lng": 114.151921,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "engagements": [],
+        "terrain_features": [],
+        "supply_nodes": [
+          {
+            "id": "red-depot",
+            "name": "red教学补给点",
+            "team": "red",
+            "lat": 39.46799,
+            "lng": 114.125157,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          },
+          {
+            "id": "blue-depot",
+            "name": "blue教学补给点",
+            "team": "blue",
+            "lat": 39.46799,
+            "lng": 114.171703,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          }
+        ],
+        "supply_routes": [],
+        "source_note": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+        "situation_report": "固定局部教学编组已经部署，目标和截止时间由程序记录。"
+      }
+    },
+    {
+      "id": "AJ04-local-v1",
+      "battle": "抗日战争-徐州会战总览-1938.01至1938.05",
+      "title": "抗日战争-徐州会战总览-1938.01至1938.05／局部教学演习",
+      "profile": "breakout",
+      "source_ids": [
+        "A07",
+        "A09",
+        "A36"
+      ],
+      "assumptions": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+      "time_step": "30分钟",
+      "deadline_turn": 4,
+      "required_turns": 2,
+      "ceasefire_turn": 2,
+      "map_center": {
+        "lat": 34.20442,
+        "lng": 117.28386
+      },
+      "map_radius_km": 4,
+      "objective": {
+        "lat": 34.20442,
+        "lng": 117.28386
+      },
+      "exit": {
+        "lat": 34.20442,
+        "lng": 117.268653
+      },
+      "goal_radius_km": 0.45,
+      "goal": "红方至少两个编组到达出口，连续保持两轮",
+      "rules": {
+        "move_km": 0.8,
+        "damage": 12,
+        "cover": 0.8
+      },
+      "geometry": {
+        "contact_km": 0.1,
+        "control_radius_km": 0.25,
+        "encircle_radius_km": 2,
+        "retreat_check_km": 2,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "initial_state": {
+        "center": [
+          34.20442,
+          117.28386
+        ],
+        "current_time": "1938-03-23 08:00",
+        "era": "抗日战争局部教学假设",
+        "current_terrain": "丘陵森林",
+        "red_units": [
+          {
+            "name": "红方教学编组1",
+            "type": "步兵",
+            "lat": 34.201276,
+            "lng": 117.275171,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组2",
+            "type": "步兵",
+            "lat": 34.20442,
+            "lng": 117.275171,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组3",
+            "type": "工兵",
+            "lat": 34.207564,
+            "lng": 117.275171,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "blue_units": [
+          {
+            "name": "蓝方教学编组1",
+            "type": "步兵",
+            "lat": 34.201276,
+            "lng": 117.287119,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组2",
+            "type": "步兵",
+            "lat": 34.20442,
+            "lng": 117.287119,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组3",
+            "type": "工兵",
+            "lat": 34.207564,
+            "lng": 117.287119,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "engagements": [],
+        "terrain_features": [],
+        "supply_nodes": [
+          {
+            "id": "red-depot",
+            "name": "red教学补给点",
+            "team": "red",
+            "lat": 34.20442,
+            "lng": 117.262136,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          },
+          {
+            "id": "blue-depot",
+            "name": "blue教学补给点",
+            "team": "blue",
+            "lat": 34.20442,
+            "lng": 117.305584,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          }
+        ],
+        "supply_routes": [],
+        "source_note": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+        "situation_report": "固定局部教学编组已经部署，目标和截止时间由程序记录。"
+      }
+    },
+    {
+      "id": "AJ05-local-v1",
+      "battle": "抗日战争-台儿庄战役-1938.03.23至1938.04.07",
+      "title": "抗日战争-台儿庄战役-1938.03.23至1938.04.07／局部教学演习",
+      "profile": "assault",
+      "source_ids": [
+        "A07",
+        "A08",
+        "A09"
+      ],
+      "assumptions": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+      "time_step": "30分钟",
+      "deadline_turn": 4,
+      "required_turns": 2,
+      "ceasefire_turn": 2,
+      "map_center": {
+        "lat": 34.55528,
+        "lng": 117.73917
+      },
+      "map_radius_km": 4,
+      "objective": {
+        "lat": 34.55528,
+        "lng": 117.73917
+      },
+      "exit": {
+        "lat": 34.55528,
+        "lng": 117.7239
+      },
+      "goal_radius_km": 0.45,
+      "goal": "红方控制目标区，蓝方无可用编组在区内，连续保持两轮",
+      "rules": {
+        "move_km": 0.6,
+        "damage": 20,
+        "cover": 0.6
+      },
+      "geometry": {
+        "contact_km": 0.1,
+        "control_radius_km": 0.25,
+        "encircle_radius_km": 2,
+        "retreat_check_km": 2,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "initial_state": {
+        "center": [
+          34.55528,
+          117.73917
+        ],
+        "current_time": "1938-03-23 08:00",
+        "era": "抗日战争局部教学假设",
+        "current_terrain": "城市地带",
+        "red_units": [
+          {
+            "name": "红方教学编组1",
+            "type": "步兵",
+            "lat": 34.552136,
+            "lng": 117.730444,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组2",
+            "type": "步兵",
+            "lat": 34.55528,
+            "lng": 117.730444,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组3",
+            "type": "工兵",
+            "lat": 34.558424,
+            "lng": 117.730444,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "blue_units": [
+          {
+            "name": "蓝方教学编组1",
+            "type": "步兵",
+            "lat": 34.552136,
+            "lng": 117.742442,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组2",
+            "type": "步兵",
+            "lat": 34.55528,
+            "lng": 117.742442,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组3",
+            "type": "工兵",
+            "lat": 34.558424,
+            "lng": 117.742442,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "engagements": [],
+        "terrain_features": [],
+        "supply_nodes": [
+          {
+            "id": "red-depot",
+            "name": "red教学补给点",
+            "team": "red",
+            "lat": 34.55528,
+            "lng": 117.717355,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          },
+          {
+            "id": "blue-depot",
+            "name": "blue教学补给点",
+            "team": "blue",
+            "lat": 34.55528,
+            "lng": 117.760985,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          }
+        ],
+        "supply_routes": [],
+        "source_note": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+        "situation_report": "固定局部教学编组已经部署，目标和截止时间由程序记录。"
+      }
+    },
+    {
+      "id": "AJ06-local-v1",
+      "battle": "抗日战争-武汉会战-1938.06至1938.10",
+      "title": "抗日战争-武汉会战-1938.06至1938.10／局部教学演习",
+      "profile": "delay",
+      "source_ids": [
+        "A10",
+        "A11"
+      ],
+      "assumptions": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+      "time_step": "30分钟",
+      "deadline_turn": 4,
+      "required_turns": 2,
+      "ceasefire_turn": 2,
+      "map_center": {
+        "lat": 30.58333,
+        "lng": 114.26667
+      },
+      "map_radius_km": 4,
+      "objective": {
+        "lat": 30.58333,
+        "lng": 114.26667
+      },
+      "exit": {
+        "lat": 30.58333,
+        "lng": 114.252061
+      },
+      "goal_radius_km": 0.45,
+      "goal": "坚持至截止回合，红方至少两个编组仍有人员，蓝方未进入后方出口600米内",
+      "rules": {
+        "move_km": 0.8,
+        "damage": 12,
+        "cover": 0.8
+      },
+      "geometry": {
+        "contact_km": 0.1,
+        "control_radius_km": 0.25,
+        "encircle_radius_km": 2,
+        "retreat_check_km": 2,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "initial_state": {
+        "center": [
+          30.58333,
+          114.26667
+        ],
+        "current_time": "1938-10-24 08:00",
+        "era": "抗日战争局部教学假设",
+        "current_terrain": "丘陵森林",
+        "red_units": [
+          {
+            "name": "红方教学编组1",
+            "type": "步兵",
+            "lat": 30.580186,
+            "lng": 114.258322,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组2",
+            "type": "步兵",
+            "lat": 30.58333,
+            "lng": 114.258322,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组3",
+            "type": "工兵",
+            "lat": 30.586474,
+            "lng": 114.258322,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "blue_units": [
+          {
+            "name": "蓝方教学编组1",
+            "type": "步兵",
+            "lat": 30.580186,
+            "lng": 114.2698,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组2",
+            "type": "步兵",
+            "lat": 30.58333,
+            "lng": 114.2698,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组3",
+            "type": "工兵",
+            "lat": 30.586474,
+            "lng": 114.2698,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "engagements": [],
+        "terrain_features": [],
+        "supply_nodes": [
+          {
+            "id": "red-depot",
+            "name": "red教学补给点",
+            "team": "red",
+            "lat": 30.58333,
+            "lng": 114.245801,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          },
+          {
+            "id": "blue-depot",
+            "name": "blue教学补给点",
+            "team": "blue",
+            "lat": 30.58333,
+            "lng": 114.287539,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          }
+        ],
+        "supply_routes": [],
+        "source_note": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+        "situation_report": "固定局部教学编组已经部署，目标和截止时间由程序记录。"
+      }
+    },
+    {
+      "id": "AJ07-local-v1",
+      "battle": "抗日战争-万家岭战役-1938.09下旬至1938.10",
+      "title": "抗日战争-万家岭战役-1938.09下旬至1938.10／局部教学演习",
+      "profile": "assault",
+      "source_ids": [
+        "A10",
+        "A12"
+      ],
+      "assumptions": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+      "time_step": "30分钟",
+      "deadline_turn": 4,
+      "required_turns": 2,
+      "ceasefire_turn": 2,
+      "map_center": {
+        "lat": 29.32997,
+        "lng": 115.75574
+      },
+      "map_radius_km": 4,
+      "objective": {
+        "lat": 29.32997,
+        "lng": 115.75574
+      },
+      "exit": {
+        "lat": 29.32997,
+        "lng": 115.741314
+      },
+      "goal_radius_km": 0.45,
+      "goal": "红方控制目标区，蓝方无可用编组在区内，连续保持两轮",
+      "rules": {
+        "move_km": 0.6,
+        "damage": 20,
+        "cover": 0.6
+      },
+      "geometry": {
+        "contact_km": 0.1,
+        "control_radius_km": 0.25,
+        "encircle_radius_km": 2,
+        "retreat_check_km": 2,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "initial_state": {
+        "center": [
+          29.32997,
+          115.75574
+        ],
+        "current_time": "1938-10-07 08:00",
+        "era": "抗日战争局部教学假设",
+        "current_terrain": "城市地带",
+        "red_units": [
+          {
+            "name": "红方教学编组1",
+            "type": "步兵",
+            "lat": 29.326826,
+            "lng": 115.747497,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组2",
+            "type": "步兵",
+            "lat": 29.32997,
+            "lng": 115.747497,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组3",
+            "type": "工兵",
+            "lat": 29.333114,
+            "lng": 115.747497,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "blue_units": [
+          {
+            "name": "蓝方教学编组1",
+            "type": "步兵",
+            "lat": 29.326826,
+            "lng": 115.758831,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组2",
+            "type": "步兵",
+            "lat": 29.32997,
+            "lng": 115.758831,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组3",
+            "type": "工兵",
+            "lat": 29.333114,
+            "lng": 115.758831,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "engagements": [],
+        "terrain_features": [],
+        "supply_nodes": [
+          {
+            "id": "red-depot",
+            "name": "red教学补给点",
+            "team": "red",
+            "lat": 29.32997,
+            "lng": 115.735132,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          },
+          {
+            "id": "blue-depot",
+            "name": "blue教学补给点",
+            "team": "blue",
+            "lat": 29.32997,
+            "lng": 115.776348,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          }
+        ],
+        "supply_routes": [],
+        "source_note": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+        "situation_report": "固定局部教学编组已经部署，目标和截止时间由程序记录。"
+      }
+    },
+    {
+      "id": "AJ08-local-v1",
+      "battle": "抗日战争-第一次长沙会战-1939.09.14至1939.10",
+      "title": "抗日战争-第一次长沙会战-1939.09.14至1939.10／局部教学演习",
+      "profile": "delay",
+      "source_ids": [
+        "A13",
+        "A14",
+        "A15"
+      ],
+      "assumptions": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+      "time_step": "30分钟",
+      "deadline_turn": 4,
+      "required_turns": 2,
+      "ceasefire_turn": 2,
+      "map_center": {
+        "lat": 28.19874,
+        "lng": 112.97087
+      },
+      "map_radius_km": 4,
+      "objective": {
+        "lat": 28.19874,
+        "lng": 112.97087
+      },
+      "exit": {
+        "lat": 28.19874,
+        "lng": 112.9566
+      },
+      "goal_radius_km": 0.45,
+      "goal": "坚持至截止回合，红方至少两个编组仍有人员，蓝方未进入后方出口600米内",
+      "rules": {
+        "move_km": 0.8,
+        "damage": 12,
+        "cover": 0.8
+      },
+      "geometry": {
+        "contact_km": 0.1,
+        "control_radius_km": 0.25,
+        "encircle_radius_km": 2,
+        "retreat_check_km": 2,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "initial_state": {
+        "center": [
+          28.19874,
+          112.97087
+        ],
+        "current_time": "1939-09-14 08:00",
+        "era": "抗日战争局部教学假设",
+        "current_terrain": "丘陵森林",
+        "red_units": [
+          {
+            "name": "红方教学编组1",
+            "type": "步兵",
+            "lat": 28.195596,
+            "lng": 112.962716,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组2",
+            "type": "步兵",
+            "lat": 28.19874,
+            "lng": 112.962716,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组3",
+            "type": "工兵",
+            "lat": 28.201884,
+            "lng": 112.962716,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "blue_units": [
+          {
+            "name": "蓝方教学编组1",
+            "type": "步兵",
+            "lat": 28.195596,
+            "lng": 112.973928,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组2",
+            "type": "步兵",
+            "lat": 28.19874,
+            "lng": 112.973928,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组3",
+            "type": "工兵",
+            "lat": 28.201884,
+            "lng": 112.973928,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "engagements": [],
+        "terrain_features": [],
+        "supply_nodes": [
+          {
+            "id": "red-depot",
+            "name": "red教学补给点",
+            "team": "red",
+            "lat": 28.19874,
+            "lng": 112.950484,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          },
+          {
+            "id": "blue-depot",
+            "name": "blue教学补给点",
+            "team": "blue",
+            "lat": 28.19874,
+            "lng": 112.991256,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          }
+        ],
+        "supply_routes": [],
+        "source_note": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+        "situation_report": "固定局部教学编组已经部署，目标和截止时间由程序记录。"
+      }
+    },
+    {
+      "id": "AJ09-local-v1",
+      "battle": "抗日战争-第二次长沙会战-1941.09.07至1941.10.09",
+      "title": "抗日战争-第二次长沙会战-1941.09.07至1941.10.09／局部教学演习",
+      "profile": "breakout",
+      "source_ids": [
+        "A13",
+        "A14"
+      ],
+      "assumptions": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+      "time_step": "30分钟",
+      "deadline_turn": 4,
+      "required_turns": 2,
+      "ceasefire_turn": 2,
+      "map_center": {
+        "lat": 28.19874,
+        "lng": 112.97087
+      },
+      "map_radius_km": 4,
+      "objective": {
+        "lat": 28.19874,
+        "lng": 112.97087
+      },
+      "exit": {
+        "lat": 28.19874,
+        "lng": 112.9566
+      },
+      "goal_radius_km": 0.45,
+      "goal": "红方至少两个编组到达出口，连续保持两轮",
+      "rules": {
+        "move_km": 0.8,
+        "damage": 12,
+        "cover": 0.8
+      },
+      "geometry": {
+        "contact_km": 0.1,
+        "control_radius_km": 0.25,
+        "encircle_radius_km": 2,
+        "retreat_check_km": 2,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "initial_state": {
+        "center": [
+          28.19874,
+          112.97087
+        ],
+        "current_time": "1941-09-07 08:00",
+        "era": "抗日战争局部教学假设",
+        "current_terrain": "丘陵森林",
+        "red_units": [
+          {
+            "name": "红方教学编组1",
+            "type": "步兵",
+            "lat": 28.195596,
+            "lng": 112.962716,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组2",
+            "type": "步兵",
+            "lat": 28.19874,
+            "lng": 112.962716,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组3",
+            "type": "工兵",
+            "lat": 28.201884,
+            "lng": 112.962716,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "blue_units": [
+          {
+            "name": "蓝方教学编组1",
+            "type": "步兵",
+            "lat": 28.195596,
+            "lng": 112.973928,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组2",
+            "type": "步兵",
+            "lat": 28.19874,
+            "lng": 112.973928,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组3",
+            "type": "工兵",
+            "lat": 28.201884,
+            "lng": 112.973928,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "engagements": [],
+        "terrain_features": [],
+        "supply_nodes": [
+          {
+            "id": "red-depot",
+            "name": "red教学补给点",
+            "team": "red",
+            "lat": 28.19874,
+            "lng": 112.950484,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          },
+          {
+            "id": "blue-depot",
+            "name": "blue教学补给点",
+            "team": "blue",
+            "lat": 28.19874,
+            "lng": 112.991256,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          }
+        ],
+        "supply_routes": [],
+        "source_note": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+        "situation_report": "固定局部教学编组已经部署，目标和截止时间由程序记录。"
+      }
+    },
+    {
+      "id": "AJ10-local-v1",
+      "battle": "抗日战争-第三次长沙会战-1941.12.24至1942.01.16",
+      "title": "抗日战争-第三次长沙会战-1941.12.24至1942.01.16／局部教学演习",
+      "profile": "assault",
+      "source_ids": [
+        "A13",
+        "A14"
+      ],
+      "assumptions": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+      "time_step": "30分钟",
+      "deadline_turn": 4,
+      "required_turns": 2,
+      "ceasefire_turn": 2,
+      "map_center": {
+        "lat": 28.19874,
+        "lng": 112.97087
+      },
+      "map_radius_km": 4,
+      "objective": {
+        "lat": 28.19874,
+        "lng": 112.97087
+      },
+      "exit": {
+        "lat": 28.19874,
+        "lng": 112.9566
+      },
+      "goal_radius_km": 0.45,
+      "goal": "红方控制目标区，蓝方无可用编组在区内，连续保持两轮",
+      "rules": {
+        "move_km": 0.6,
+        "damage": 20,
+        "cover": 0.6
+      },
+      "geometry": {
+        "contact_km": 0.1,
+        "control_radius_km": 0.25,
+        "encircle_radius_km": 2,
+        "retreat_check_km": 2,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "initial_state": {
+        "center": [
+          28.19874,
+          112.97087
+        ],
+        "current_time": "1941-12-24 08:00",
+        "era": "抗日战争局部教学假设",
+        "current_terrain": "城市地带",
+        "red_units": [
+          {
+            "name": "红方教学编组1",
+            "type": "步兵",
+            "lat": 28.195596,
+            "lng": 112.962716,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组2",
+            "type": "步兵",
+            "lat": 28.19874,
+            "lng": 112.962716,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组3",
+            "type": "工兵",
+            "lat": 28.201884,
+            "lng": 112.962716,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "blue_units": [
+          {
+            "name": "蓝方教学编组1",
+            "type": "步兵",
+            "lat": 28.195596,
+            "lng": 112.973928,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组2",
+            "type": "步兵",
+            "lat": 28.19874,
+            "lng": 112.973928,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组3",
+            "type": "工兵",
+            "lat": 28.201884,
+            "lng": 112.973928,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "engagements": [],
+        "terrain_features": [],
+        "supply_nodes": [
+          {
+            "id": "red-depot",
+            "name": "red教学补给点",
+            "team": "red",
+            "lat": 28.19874,
+            "lng": 112.950484,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          },
+          {
+            "id": "blue-depot",
+            "name": "blue教学补给点",
+            "team": "blue",
+            "lat": 28.19874,
+            "lng": 112.991256,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          }
+        ],
+        "supply_routes": [],
+        "source_note": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+        "situation_report": "固定局部教学编组已经部署，目标和截止时间由程序记录。"
+      }
+    },
+    {
+      "id": "AJ11-local-v1",
+      "battle": "抗日战争-桂南会战与昆仑关攻坚-1939.11至1940.01",
+      "title": "抗日战争-桂南会战与昆仑关攻坚-1939.11至1940.01／局部教学演习",
+      "profile": "assault",
+      "source_ids": [
+        "A16",
+        "A17"
+      ],
+      "assumptions": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+      "time_step": "30分钟",
+      "deadline_turn": 4,
+      "required_turns": 2,
+      "ceasefire_turn": 2,
+      "map_center": {
+        "lat": 22.81667,
+        "lng": 108.31667
+      },
+      "map_radius_km": 4,
+      "objective": {
+        "lat": 22.81667,
+        "lng": 108.31667
+      },
+      "exit": {
+        "lat": 22.81667,
+        "lng": 108.303026
+      },
+      "goal_radius_km": 0.45,
+      "goal": "红方控制目标区，蓝方无可用编组在区内，连续保持两轮",
+      "rules": {
+        "move_km": 0.6,
+        "damage": 20,
+        "cover": 0.6
+      },
+      "geometry": {
+        "contact_km": 0.1,
+        "control_radius_km": 0.25,
+        "encircle_radius_km": 2,
+        "retreat_check_km": 2,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "initial_state": {
+        "center": [
+          22.81667,
+          108.31667
+        ],
+        "current_time": "1939-12-04 08:00",
+        "era": "抗日战争局部教学假设",
+        "current_terrain": "城市地带",
+        "red_units": [
+          {
+            "name": "红方教学编组1",
+            "type": "步兵",
+            "lat": 22.813526,
+            "lng": 108.308873,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组2",
+            "type": "步兵",
+            "lat": 22.81667,
+            "lng": 108.308873,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组3",
+            "type": "工兵",
+            "lat": 22.819814,
+            "lng": 108.308873,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "blue_units": [
+          {
+            "name": "蓝方教学编组1",
+            "type": "步兵",
+            "lat": 22.813526,
+            "lng": 108.319594,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组2",
+            "type": "步兵",
+            "lat": 22.81667,
+            "lng": 108.319594,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组3",
+            "type": "工兵",
+            "lat": 22.819814,
+            "lng": 108.319594,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "engagements": [],
+        "terrain_features": [],
+        "supply_nodes": [
+          {
+            "id": "red-depot",
+            "name": "red教学补给点",
+            "team": "red",
+            "lat": 22.81667,
+            "lng": 108.297179,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          },
+          {
+            "id": "blue-depot",
+            "name": "blue教学补给点",
+            "team": "blue",
+            "lat": 22.81667,
+            "lng": 108.336161,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          }
+        ],
+        "supply_routes": [],
+        "source_note": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+        "situation_report": "固定局部教学编组已经部署，目标和截止时间由程序记录。"
+      }
+    },
+    {
+      "id": "AJ12-local-v1",
+      "battle": "抗日战争-豫湘桂战役总览-1944.04至1944.12",
+      "title": "抗日战争-豫湘桂战役总览-1944.04至1944.12／局部教学演习",
+      "profile": "breakout",
+      "source_ids": [
+        "A18",
+        "A19",
+        "A37"
+      ],
+      "assumptions": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+      "time_step": "30分钟",
+      "deadline_turn": 4,
+      "required_turns": 2,
+      "ceasefire_turn": 2,
+      "map_center": {
+        "lat": 34.75778,
+        "lng": 113.64861
+      },
+      "map_radius_km": 4,
+      "objective": {
+        "lat": 34.75778,
+        "lng": 113.64861
+      },
+      "exit": {
+        "lat": 34.75778,
+        "lng": 113.633302
+      },
+      "goal_radius_km": 0.45,
+      "goal": "红方至少两个编组到达出口，连续保持两轮",
+      "rules": {
+        "move_km": 0.8,
+        "damage": 12,
+        "cover": 0.8
+      },
+      "geometry": {
+        "contact_km": 0.1,
+        "control_radius_km": 0.25,
+        "encircle_radius_km": 2,
+        "retreat_check_km": 2,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "initial_state": {
+        "center": [
+          34.75778,
+          113.64861
+        ],
+        "current_time": "1944-01-01 08:00",
+        "era": "抗日战争局部教学假设",
+        "current_terrain": "丘陵森林",
+        "red_units": [
+          {
+            "name": "红方教学编组1",
+            "type": "步兵",
+            "lat": 34.754636,
+            "lng": 113.639863,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组2",
+            "type": "步兵",
+            "lat": 34.75778,
+            "lng": 113.639863,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组3",
+            "type": "工兵",
+            "lat": 34.760924,
+            "lng": 113.639863,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "blue_units": [
+          {
+            "name": "蓝方教学编组1",
+            "type": "步兵",
+            "lat": 34.754636,
+            "lng": 113.65189,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组2",
+            "type": "步兵",
+            "lat": 34.75778,
+            "lng": 113.65189,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组3",
+            "type": "工兵",
+            "lat": 34.760924,
+            "lng": 113.65189,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "engagements": [],
+        "terrain_features": [],
+        "supply_nodes": [
+          {
+            "id": "red-depot",
+            "name": "red教学补给点",
+            "team": "red",
+            "lat": 34.75778,
+            "lng": 113.626742,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          },
+          {
+            "id": "blue-depot",
+            "name": "blue教学补给点",
+            "team": "blue",
+            "lat": 34.75778,
+            "lng": 113.670478,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          }
+        ],
+        "supply_routes": [],
+        "source_note": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+        "situation_report": "固定局部教学编组已经部署，目标和截止时间由程序记录。"
+      }
+    },
+    {
+      "id": "AJ13-local-v1",
+      "battle": "抗日战争-衡阳保卫战-1944.06至1944.08.08",
+      "title": "抗日战争-衡阳保卫战-1944.06至1944.08.08／局部教学演习",
+      "profile": "delay",
+      "source_ids": [
+        "A20",
+        "A21"
+      ],
+      "assumptions": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+      "time_step": "30分钟",
+      "deadline_turn": 4,
+      "required_turns": 2,
+      "ceasefire_turn": 2,
+      "map_center": {
+        "lat": 26.88946,
+        "lng": 112.61888
+      },
+      "map_radius_km": 4,
+      "objective": {
+        "lat": 26.88946,
+        "lng": 112.61888
+      },
+      "exit": {
+        "lat": 26.88946,
+        "lng": 112.604779
+      },
+      "goal_radius_km": 0.45,
+      "goal": "坚持至截止回合，红方至少两个编组仍有人员，蓝方未进入后方出口600米内",
+      "rules": {
+        "move_km": 0.8,
+        "damage": 12,
+        "cover": 0.8
+      },
+      "geometry": {
+        "contact_km": 0.1,
+        "control_radius_km": 0.25,
+        "encircle_radius_km": 2,
+        "retreat_check_km": 2,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "initial_state": {
+        "center": [
+          26.88946,
+          112.61888
+        ],
+        "current_time": "1944-06-22 08:00",
+        "era": "抗日战争局部教学假设",
+        "current_terrain": "丘陵森林",
+        "red_units": [
+          {
+            "name": "红方教学编组1",
+            "type": "步兵",
+            "lat": 26.886316,
+            "lng": 112.610822,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组2",
+            "type": "步兵",
+            "lat": 26.88946,
+            "lng": 112.610822,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组3",
+            "type": "工兵",
+            "lat": 26.892604,
+            "lng": 112.610822,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "blue_units": [
+          {
+            "name": "蓝方教学编组1",
+            "type": "步兵",
+            "lat": 26.886316,
+            "lng": 112.621902,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组2",
+            "type": "步兵",
+            "lat": 26.88946,
+            "lng": 112.621902,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组3",
+            "type": "工兵",
+            "lat": 26.892604,
+            "lng": 112.621902,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "engagements": [],
+        "terrain_features": [],
+        "supply_nodes": [
+          {
+            "id": "red-depot",
+            "name": "red教学补给点",
+            "team": "red",
+            "lat": 26.88946,
+            "lng": 112.598736,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          },
+          {
+            "id": "blue-depot",
+            "name": "blue教学补给点",
+            "team": "blue",
+            "lat": 26.88946,
+            "lng": 112.639024,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          }
+        ],
+        "supply_routes": [],
+        "source_note": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+        "situation_report": "固定局部教学编组已经部署，目标和截止时间由程序记录。"
+      }
+    },
+    {
+      "id": "AJ14-local-v1",
+      "battle": "抗日战争-百团大战-1940.08.20至1941.01.24",
+      "title": "抗日战争-百团大战-1940.08.20至1941.01.24／局部教学演习",
+      "profile": "rail",
+      "source_ids": [
+        "A22",
+        "A23",
+        "A24"
+      ],
+      "assumptions": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+      "time_step": "30分钟",
+      "deadline_turn": 4,
+      "required_turns": 2,
+      "ceasefire_turn": 2,
+      "map_center": {
+        "lat": 38.04139,
+        "lng": 114.47861
+      },
+      "map_radius_km": 4,
+      "objective": {
+        "lat": 38.04139,
+        "lng": 114.47861
+      },
+      "exit": {
+        "lat": 38.04139,
+        "lng": 114.462641
+      },
+      "goal_radius_km": 0.45,
+      "goal": "交通节点完好度降至20或以下并连续维持两轮",
+      "rules": {
+        "move_km": 0.6,
+        "damage": 12,
+        "cover": 0.8
+      },
+      "geometry": {
+        "contact_km": 0.1,
+        "control_radius_km": 0.25,
+        "encircle_radius_km": 2,
+        "retreat_check_km": 2,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "initial_state": {
+        "center": [
+          38.04139,
+          114.47861
+        ],
+        "current_time": "1940-07-22 08:00",
+        "era": "抗日战争局部教学假设",
+        "current_terrain": "丘陵森林",
+        "red_units": [
+          {
+            "name": "红方教学编组1",
+            "type": "步兵",
+            "lat": 38.038246,
+            "lng": 114.469485,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组2",
+            "type": "步兵",
+            "lat": 38.04139,
+            "lng": 114.469485,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组3",
+            "type": "工兵",
+            "lat": 38.044534,
+            "lng": 114.469485,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "blue_units": [
+          {
+            "name": "蓝方教学编组1",
+            "type": "步兵",
+            "lat": 38.038246,
+            "lng": 114.482032,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组2",
+            "type": "步兵",
+            "lat": 38.04139,
+            "lng": 114.482032,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组3",
+            "type": "工兵",
+            "lat": 38.044534,
+            "lng": 114.482032,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "engagements": [],
+        "terrain_features": [],
+        "supply_nodes": [
+          {
+            "id": "red-depot",
+            "name": "red教学补给点",
+            "team": "red",
+            "lat": 38.04139,
+            "lng": 114.455798,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          },
+          {
+            "id": "blue-depot",
+            "name": "blue教学补给点",
+            "team": "blue",
+            "lat": 38.04139,
+            "lng": 114.501422,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          }
+        ],
+        "supply_routes": [],
+        "source_note": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+        "situation_report": "固定局部教学编组已经部署，目标和截止时间由程序记录。"
+      }
+    },
+    {
+      "id": "AJ15-local-v1",
+      "battle": "抗日战争-冀中五一反扫荡-1942.05.01至1942.06.20",
+      "title": "抗日战争-冀中五一反扫荡-1942.05.01至1942.06.20／局部教学演习",
+      "profile": "underground",
+      "source_ids": [
+        "A25",
+        "A26"
+      ],
+      "assumptions": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+      "time_step": "30分钟",
+      "deadline_turn": 4,
+      "required_turns": 2,
+      "ceasefire_turn": 2,
+      "map_center": {
+        "lat": 37.73908,
+        "lng": 115.68348
+      },
+      "map_radius_km": 4,
+      "objective": {
+        "lat": 37.73908,
+        "lng": 115.68348
+      },
+      "exit": {
+        "lat": 37.73908,
+        "lng": 115.667577
+      },
+      "goal_radius_km": 0.45,
+      "goal": "截止时组织存续值不少于50且仍有红方可用人员",
+      "rules": {
+        "move_km": 0.6,
+        "damage": 12,
+        "cover": 0.6
+      },
+      "geometry": {
+        "contact_km": 0.1,
+        "control_radius_km": 0.25,
+        "encircle_radius_km": 2,
+        "retreat_check_km": 2,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "initial_state": {
+        "center": [
+          37.73908,
+          115.68348
+        ],
+        "current_time": "1942-05-01 08:00",
+        "era": "抗日战争局部教学假设",
+        "current_terrain": "丘陵森林",
+        "red_units": [
+          {
+            "name": "红方教学编组1",
+            "type": "步兵",
+            "lat": 37.735936,
+            "lng": 115.674392,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组2",
+            "type": "步兵",
+            "lat": 37.73908,
+            "lng": 115.674392,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组3",
+            "type": "工兵",
+            "lat": 37.742224,
+            "lng": 115.674392,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "blue_units": [
+          {
+            "name": "蓝方教学编组1",
+            "type": "步兵",
+            "lat": 37.735936,
+            "lng": 115.686888,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组2",
+            "type": "步兵",
+            "lat": 37.73908,
+            "lng": 115.686888,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组3",
+            "type": "工兵",
+            "lat": 37.742224,
+            "lng": 115.686888,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "engagements": [],
+        "terrain_features": [],
+        "supply_nodes": [
+          {
+            "id": "red-depot",
+            "name": "red教学补给点",
+            "team": "red",
+            "lat": 37.73908,
+            "lng": 115.660761,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          },
+          {
+            "id": "blue-depot",
+            "name": "blue教学补给点",
+            "team": "blue",
+            "lat": 37.73908,
+            "lng": 115.706199,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          }
+        ],
+        "supply_routes": [],
+        "source_note": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+        "situation_report": "固定局部教学编组已经部署，目标和截止时间由程序记录。"
+      }
+    },
+    {
+      "id": "AJ16-local-v1",
+      "battle": "抗日战争-敌后局部反攻总览-1944",
+      "title": "抗日战争-敌后局部反攻总览-1944／局部教学演习",
+      "profile": "assault",
+      "source_ids": [
+        "A27"
+      ],
+      "assumptions": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+      "time_step": "30分钟",
+      "deadline_turn": 4,
+      "required_turns": 2,
+      "ceasefire_turn": 2,
+      "map_center": {
+        "lat": 38.04139,
+        "lng": 114.47861
+      },
+      "map_radius_km": 4,
+      "objective": {
+        "lat": 38.04139,
+        "lng": 114.47861
+      },
+      "exit": {
+        "lat": 38.04139,
+        "lng": 114.462641
+      },
+      "goal_radius_km": 0.45,
+      "goal": "红方控制目标区，蓝方无可用编组在区内，连续保持两轮",
+      "rules": {
+        "move_km": 0.6,
+        "damage": 20,
+        "cover": 0.6
+      },
+      "geometry": {
+        "contact_km": 0.1,
+        "control_radius_km": 0.25,
+        "encircle_radius_km": 2,
+        "retreat_check_km": 2,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "initial_state": {
+        "center": [
+          38.04139,
+          114.47861
+        ],
+        "current_time": "1944-04-12 08:00",
+        "era": "抗日战争局部教学假设",
+        "current_terrain": "城市地带",
+        "red_units": [
+          {
+            "name": "红方教学编组1",
+            "type": "步兵",
+            "lat": 38.038246,
+            "lng": 114.469485,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组2",
+            "type": "步兵",
+            "lat": 38.04139,
+            "lng": 114.469485,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组3",
+            "type": "工兵",
+            "lat": 38.044534,
+            "lng": 114.469485,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "blue_units": [
+          {
+            "name": "蓝方教学编组1",
+            "type": "步兵",
+            "lat": 38.038246,
+            "lng": 114.482032,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组2",
+            "type": "步兵",
+            "lat": 38.04139,
+            "lng": 114.482032,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组3",
+            "type": "工兵",
+            "lat": 38.044534,
+            "lng": 114.482032,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "engagements": [],
+        "terrain_features": [],
+        "supply_nodes": [
+          {
+            "id": "red-depot",
+            "name": "red教学补给点",
+            "team": "red",
+            "lat": 38.04139,
+            "lng": 114.455798,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          },
+          {
+            "id": "blue-depot",
+            "name": "blue教学补给点",
+            "team": "blue",
+            "lat": 38.04139,
+            "lng": 114.501422,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          }
+        ],
+        "supply_routes": [],
+        "source_note": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+        "situation_report": "固定局部教学编组已经部署，目标和截止时间由程序记录。"
+      }
+    },
+    {
+      "id": "AJ17-local-v1",
+      "battle": "抗日战争-车桥战役-1944.03.05至1944.03.06",
+      "title": "抗日战争-车桥战役-1944.03.05至1944.03.06／局部教学演习",
+      "profile": "assault",
+      "source_ids": [
+        "A28",
+        "A29",
+        "A30"
+      ],
+      "assumptions": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+      "time_step": "30分钟",
+      "deadline_turn": 4,
+      "required_turns": 2,
+      "ceasefire_turn": 2,
+      "map_center": {
+        "lat": 33.46667,
+        "lng": 119.4
+      },
+      "map_radius_km": 4,
+      "objective": {
+        "lat": 33.46667,
+        "lng": 119.4
+      },
+      "exit": {
+        "lat": 33.46667,
+        "lng": 119.384924
+      },
+      "goal_radius_km": 0.45,
+      "goal": "红方控制目标区，蓝方无可用编组在区内，连续保持两轮",
+      "rules": {
+        "move_km": 0.6,
+        "damage": 20,
+        "cover": 0.6
+      },
+      "geometry": {
+        "contact_km": 0.1,
+        "control_radius_km": 0.25,
+        "encircle_radius_km": 2,
+        "retreat_check_km": 2,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "initial_state": {
+        "center": [
+          33.46667,
+          119.4
+        ],
+        "current_time": "1944-03-05 08:00",
+        "era": "抗日战争局部教学假设",
+        "current_terrain": "城市地带",
+        "red_units": [
+          {
+            "name": "红方教学编组1",
+            "type": "步兵",
+            "lat": 33.463526,
+            "lng": 119.391385,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组2",
+            "type": "步兵",
+            "lat": 33.46667,
+            "lng": 119.391385,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组3",
+            "type": "工兵",
+            "lat": 33.469814,
+            "lng": 119.391385,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "blue_units": [
+          {
+            "name": "蓝方教学编组1",
+            "type": "步兵",
+            "lat": 33.463526,
+            "lng": 119.403231,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组2",
+            "type": "步兵",
+            "lat": 33.46667,
+            "lng": 119.403231,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组3",
+            "type": "工兵",
+            "lat": 33.469814,
+            "lng": 119.403231,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "engagements": [],
+        "terrain_features": [],
+        "supply_nodes": [
+          {
+            "id": "red-depot",
+            "name": "red教学补给点",
+            "team": "red",
+            "lat": 33.46667,
+            "lng": 119.378463,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          },
+          {
+            "id": "blue-depot",
+            "name": "blue教学补给点",
+            "team": "blue",
+            "lat": 33.46667,
+            "lng": 119.421537,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          }
+        ],
+        "supply_routes": [],
+        "source_note": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+        "situation_report": "固定局部教学编组已经部署，目标和截止时间由程序记录。"
+      }
+    },
+    {
+      "id": "AJ18-local-v1",
+      "battle": "抗日战争-湘西会战-1945.04.09至1945.06.07",
+      "title": "抗日战争-湘西会战-1945.04.09至1945.06.07／局部教学演习",
+      "profile": "air",
+      "source_ids": [
+        "A31",
+        "A32"
+      ],
+      "assumptions": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+      "time_step": "30分钟",
+      "deadline_turn": 4,
+      "required_turns": 2,
+      "ceasefire_turn": 2,
+      "map_center": {
+        "lat": 27.45814,
+        "lng": 109.6592
+      },
+      "map_radius_km": 4,
+      "objective": {
+        "lat": 27.45814,
+        "lng": 109.6592
+      },
+      "exit": {
+        "lat": 27.45814,
+        "lng": 109.645027
+      },
+      "goal_radius_km": 0.45,
+      "goal": "在空中支援影响到货条件下控制目标区两轮",
+      "rules": {
+        "move_km": 0.6,
+        "damage": 12,
+        "cover": 0.8
+      },
+      "geometry": {
+        "contact_km": 0.1,
+        "control_radius_km": 0.25,
+        "encircle_radius_km": 2,
+        "retreat_check_km": 2,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "initial_state": {
+        "center": [
+          27.45814,
+          109.6592
+        ],
+        "current_time": "1945-04-09 08:00",
+        "era": "抗日战争局部教学假设",
+        "current_terrain": "丘陵森林",
+        "red_units": [
+          {
+            "name": "红方教学编组1",
+            "type": "步兵",
+            "lat": 27.454996,
+            "lng": 109.651101,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组2",
+            "type": "步兵",
+            "lat": 27.45814,
+            "lng": 109.651101,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组3",
+            "type": "工兵",
+            "lat": 27.461284,
+            "lng": 109.651101,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "blue_units": [
+          {
+            "name": "蓝方教学编组1",
+            "type": "步兵",
+            "lat": 27.454996,
+            "lng": 109.662237,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组2",
+            "type": "步兵",
+            "lat": 27.45814,
+            "lng": 109.662237,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组3",
+            "type": "工兵",
+            "lat": 27.461284,
+            "lng": 109.662237,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "engagements": [],
+        "terrain_features": [],
+        "supply_nodes": [
+          {
+            "id": "red-depot",
+            "name": "red教学补给点",
+            "team": "red",
+            "lat": 27.45814,
+            "lng": 109.638953,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          },
+          {
+            "id": "blue-depot",
+            "name": "blue教学补给点",
+            "team": "blue",
+            "lat": 27.45814,
+            "lng": 109.679447,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          }
+        ],
+        "supply_routes": [],
+        "source_note": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+        "situation_report": "固定局部教学编组已经部署，目标和截止时间由程序记录。"
+      }
+    },
+    {
+      "id": "AJ19-local-v1",
+      "battle": "抗日战争-缅北滇西反攻总览-1943.10至1945.03",
+      "title": "抗日战争-缅北滇西反攻总览-1943.10至1945.03／局部教学演习",
+      "profile": "air",
+      "source_ids": [
+        "A18",
+        "A33",
+        "A38"
+      ],
+      "assumptions": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+      "time_step": "30分钟",
+      "deadline_turn": 4,
+      "required_turns": 2,
+      "ceasefire_turn": 2,
+      "map_center": {
+        "lat": 24.99492,
+        "lng": 98.51276
+      },
+      "map_radius_km": 4,
+      "objective": {
+        "lat": 24.99492,
+        "lng": 98.51276
+      },
+      "exit": {
+        "lat": 24.99492,
+        "lng": 98.498884
+      },
+      "goal_radius_km": 0.45,
+      "goal": "在空中支援影响到货条件下控制目标区两轮",
+      "rules": {
+        "move_km": 0.6,
+        "damage": 12,
+        "cover": 0.8
+      },
+      "geometry": {
+        "contact_km": 0.1,
+        "control_radius_km": 0.25,
+        "encircle_radius_km": 2,
+        "retreat_check_km": 2,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "initial_state": {
+        "center": [
+          24.99492,
+          98.51276
+        ],
+        "current_time": "1945-01-27 08:00",
+        "era": "抗日战争局部教学假设",
+        "current_terrain": "丘陵森林",
+        "red_units": [
+          {
+            "name": "红方教学编组1",
+            "type": "步兵",
+            "lat": 24.991776,
+            "lng": 98.504831,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组2",
+            "type": "步兵",
+            "lat": 24.99492,
+            "lng": 98.504831,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组3",
+            "type": "工兵",
+            "lat": 24.998064,
+            "lng": 98.504831,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "blue_units": [
+          {
+            "name": "蓝方教学编组1",
+            "type": "步兵",
+            "lat": 24.991776,
+            "lng": 98.515733,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组2",
+            "type": "步兵",
+            "lat": 24.99492,
+            "lng": 98.515733,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组3",
+            "type": "工兵",
+            "lat": 24.998064,
+            "lng": 98.515733,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "engagements": [],
+        "terrain_features": [],
+        "supply_nodes": [
+          {
+            "id": "red-depot",
+            "name": "red教学补给点",
+            "team": "red",
+            "lat": 24.99492,
+            "lng": 98.492937,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          },
+          {
+            "id": "blue-depot",
+            "name": "blue教学补给点",
+            "team": "blue",
+            "lat": 24.99492,
+            "lng": 98.532583,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          }
+        ],
+        "supply_routes": [],
+        "source_note": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+        "situation_report": "固定局部教学编组已经部署，目标和截止时间由程序记录。"
+      }
+    },
+    {
+      "id": "AJ20-local-v1",
+      "battle": "抗日战争-全面反攻与受降总览-1945.08至1945.09",
+      "title": "抗日战争-全面反攻与受降总览-1945.08至1945.09／局部教学演习",
+      "profile": "reception",
+      "source_ids": [
+        "A01",
+        "A34",
+        "A35"
+      ],
+      "assumptions": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+      "time_step": "30分钟",
+      "deadline_turn": 4,
+      "required_turns": 2,
+      "ceasefire_turn": 2,
+      "map_center": {
+        "lat": 40.78341,
+        "lng": 114.87139
+      },
+      "map_radius_km": 4,
+      "objective": {
+        "lat": 40.78341,
+        "lng": 114.87139
+      },
+      "exit": {
+        "lat": 40.78341,
+        "lng": 114.854781
+      },
+      "goal_radius_km": 0.45,
+      "goal": "停火窗口开放后红方在目标600米内完成接收，两轮确认",
+      "rules": {
+        "move_km": 0.6,
+        "damage": 12,
+        "cover": 0.8
+      },
+      "geometry": {
+        "contact_km": 0.1,
+        "control_radius_km": 0.25,
+        "encircle_radius_km": 2,
+        "retreat_check_km": 2,
+        "sealed_ratio_encircled": 0.85,
+        "sealed_ratio_partial": 0.5,
+        "terrain_factor": 1.8
+      },
+      "initial_state": {
+        "center": [
+          40.78341,
+          114.87139
+        ],
+        "current_time": "1945-08-09 08:00",
+        "era": "抗日战争局部教学假设",
+        "current_terrain": "丘陵森林",
+        "red_units": [
+          {
+            "name": "红方教学编组1",
+            "type": "步兵",
+            "lat": 40.780266,
+            "lng": 114.861899,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组2",
+            "type": "步兵",
+            "lat": 40.78341,
+            "lng": 114.861899,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "红方教学编组3",
+            "type": "工兵",
+            "lat": 40.786554,
+            "lng": 114.861899,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "red-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "blue_units": [
+          {
+            "name": "蓝方教学编组1",
+            "type": "步兵",
+            "lat": 40.780266,
+            "lng": 114.874949,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组2",
+            "type": "步兵",
+            "lat": 40.78341,
+            "lng": 114.874949,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          },
+          {
+            "name": "蓝方教学编组3",
+            "type": "工兵",
+            "lat": 40.786554,
+            "lng": 114.874949,
+            "hp": 100,
+            "combat_power": 50,
+            "speed": 3,
+            "attack_range": 900,
+            "morale": 70,
+            "supply": 12,
+            "supply_node_id": "blue-depot",
+            "logistics": {
+              "food": 12,
+              "ammo": 12
+            },
+            "personnel": {
+              "committed": 100,
+              "current": 100,
+              "casualties": 0,
+              "noncombat_losses": 0,
+              "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+            },
+            "equipment": [
+              {
+                "name": "教学支援装备",
+                "unit": "件",
+                "committed": 4,
+                "operational": 4,
+                "damaged": 0,
+                "destroyed": 0,
+                "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准"
+              }
+            ]
+          }
+        ],
+        "engagements": [],
+        "terrain_features": [],
+        "supply_nodes": [
+          {
+            "id": "red-depot",
+            "name": "red教学补给点",
+            "team": "red",
+            "lat": 40.78341,
+            "lng": 114.847662,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          },
+          {
+            "id": "blue-depot",
+            "name": "blue教学补给点",
+            "team": "blue",
+            "lat": 40.78341,
+            "lng": 114.895118,
+            "stock": 120,
+            "source": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准；每包同时含1粮食工作单位和1弹药工作单位"
+          }
+        ],
+        "supply_routes": [],
+        "source_note": "教学合成初态：人数、库存、局部坐标、钟点与系数均为假设，非历史实际部署；未完成历史地图配准",
+        "situation_report": "固定局部教学编组已经部署，目标和截止时间由程序记录。"
+      }
+    }
+  ]
+}

@@ -11,7 +11,7 @@ from pathlib import Path
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-from gentactix import adjudicator, battlefield, causal, geo, integrity, state
+from gentactix import adjudicator, battlefield, causal, geo, integrity, state, missions
 from gentactix.battlefield import CAPABILITY_NOTE
 from . import extensions, harness_engine as h
 
@@ -23,6 +23,7 @@ class AnalysisRequest(BaseModel):
 class CounterfactualRequest(BaseModel):
     turn: int = Field(ge=1)
     mode: str = 'geometry'
+    orders: list[dict] = Field(default_factory=list, max_length=24)
     undo: list[dict] = Field(default_factory=list, max_length=24)
     changes: list[dict] = Field(default_factory=list, max_length=24)
     instruction: str = Field(default='', max_length=3000)
@@ -180,9 +181,18 @@ def build_router(get_session, serialized):
         session['progress'] = observer.progress
         try:
             record = _record(session, req.turn)
-            if req.mode == 'geometry':
+            if req.mode == 'mission':
+                if not record.get('before', {}).get('mission'):
+                    raise ValueError('该轨迹不是固定局部想定')
+                data = missions.counterfactual(record['before'], record['after'], req.orders, record['time_step'])
+                data.update(turn=req.turn, source_trace_id=record['id'])
+            elif req.mode == 'geometry':
                 data = causal.geometry_counterfactual(record, req.undo, req.changes)
             elif req.mode == 'model':
+                if session.get('simulation_mode') == 'replay':
+                    raise ValueError('历史回放用于讲解史实；请在开放推演会话中检验替代决策')
+                if record.get('before', {}).get('mission'):
+                    raise ValueError('固定局部想定请用命令反事实：mode=mission；模型直接改写状态不适用')
                 if not req.instruction.strip():
                     raise ValueError('模型反事实需要明确替代决策')
                 previous = _record(session, req.turn-1)
@@ -224,7 +234,7 @@ def build_router(get_session, serialized):
                                         '史料与模型既有历史知识可能引入结局先验，不能等同于真实世界随机对照实验',
                                         '没有新增确定性战损算法，反事实伤亡属于模型假设']}
             else:
-                raise ValueError('mode必须为geometry或model')
+                raise ValueError('mode必须为geometry、model或mission')
             if session.get('cancel_requested'):
                 raise RuntimeError('用户取消反事实分析')
             data['id'] = uuid.uuid4().hex

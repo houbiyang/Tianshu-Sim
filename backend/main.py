@@ -26,7 +26,7 @@ from fastapi.responses import Response, JSONResponse
 from pydantic import BaseModel, Field
 
 from gentactix import (adjudication_lib, adjudicator, anchors, battlefield, causal, geo, integrity,
-                       prompts, rag, state, sim_clock, fire_control, reporting)
+                       prompts, rag, state, sim_clock, fire_control, reporting, missions)
 
 from . import agent_tools, harness_engine, extensions, runtime_bridge, session_store, llm_settings, runtime_identity
 
@@ -236,7 +236,8 @@ def _retrieve_briefing(session: dict, query: str, phase: str):
         return "", meta
 
     top_k, max_chars = (8, 3200) if phase == "init" else (4, 2200)
-    hits = rag.search(query, top_k=top_k, battle=session["battle_choice"])
+    hits = rag.search(query, top_k=top_k, battle=session["battle_choice"], phase=phase,
+                      simulation_mode=session.get('simulation_mode', 'open'))
     if not hits:
         meta["note"] = "未命中相关史料，本次为模型自由发挥"
         return "", meta
@@ -261,15 +262,27 @@ def _retrieve_briefing(session: dict, query: str, phase: str):
 # ==========================================
 # 📦 快照：前端一次拿全渲染所需的一切
 # ==========================================
+def _effective_spec(session, world=None):
+    world = world or session.get('war_state') or {}
+    if world.get('mission'):
+        definition = world['mission']['definition']
+        explicit = dict(definition['geometry'])
+        return adjudication_lib.BattleSpec(name=definition['title'], params={**adjudication_lib.default_params(), **explicit},
+            explicit=explicit, source=missions.DATA, source_kind='local_teaching', matched_by='explicit',
+            time_step_hint=definition['time_step'], validation_status='teaching_estimate',
+            warnings=['局部合成地图的教学参数；不是历史地形测绘或战损率标定'])
+    return adjudicator.load_battle_spec(scenario_text=session.get('scenario_input', ''), battle=session['battle_choice'])
+
+
 def _snapshot(session: dict) -> dict:
+    if session['use_adjudicator'] and session['war_state'] and session.get('adj_spec') is None:
+        session['adj_spec'] = _effective_spec(session)
     # 🐛 面板补算兜底（与 app.py 同语义）：开关开着但没有裁决结果时
     # （初始化时内核失败、或旧会话恢复），按当前战局补算一次，面板绝不空白。
     if (session["use_adjudicator"] and session["war_state"]
             and (not session["adj_last"] or session['adj_last'].get('version') != adjudicator.ADJUDICATOR_VERSION)):
         if session.get("adj_spec") is None:
-            session["adj_spec"] = adjudicator.load_battle_spec(
-                scenario_text=session.get("scenario_input", ""),
-                battle=session["battle_choice"])
+            session["adj_spec"] = _effective_spec(session)
         session["adj_last"] = _safe_adjudicate(
             session, session["war_state"], session["time_step"],
             session["turn_count"], dict(session["adj_spec"].explicit), "面板补算")
@@ -280,6 +293,8 @@ def _snapshot(session: dict) -> dict:
         "turn_count": session["turn_count"],
         "time_step": session["time_step"],
         "settings": {
+            "simulation_mode": session.get('simulation_mode', 'open'),
+            "mission_id": session.get('mission_id'),
             "use_agent_tools": bool(session.get("use_agent_tools")),
             "persist_roles": session.get("persist_roles") if session.get("persist_roles") is not None else harness_engine.PERSIST_ROLES,
             "agent_mode": session.get("agent_mode", "json"),
@@ -306,6 +321,7 @@ def _snapshot(session: dict) -> dict:
                 "source_kind": spec.source_kind,
                 "time_step_hint": spec.time_step_hint,
                 "calibrated": spec.calibrated,
+                "validation_status": spec.validation_status,
                 "errors": list(spec.errors),
                 "warnings": list(spec.warnings),
                 "table": adjudication_lib.param_table(spec),
@@ -345,6 +361,12 @@ class CreateSessionRequest(BaseModel):
     use_agent_tools: bool = False
     persist_roles: bool | None = None
     agent_mode: str = 'json'
+    simulation_mode: str = 'open'
+    mission_id: str | None = None
+
+
+class NextTurnRequest(BaseModel):
+    instruction: str = Field(default='', max_length=4000)
 
 
 class ChatRequest(BaseModel):
@@ -495,6 +517,11 @@ def battles():
     return {"battles": adjudication_lib.list_battle_details()}
 
 
+@app.get('/api/missions')
+def mission_catalog():
+    return {'missions': [{k: v for k, v in m.items() if k != 'initial_state'} for m in missions.catalog()]}
+
+
 @app.get("/api/corpus")
 def corpus():
     return rag.corpus_stats()
@@ -510,6 +537,21 @@ def create_session(req: CreateSessionRequest):
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     if req.agent_mode not in ('json', 'native'):
         raise HTTPException(status_code=422, detail='agent_mode必须为json或native')
+    if req.simulation_mode not in ('open', 'replay'):
+        raise HTTPException(status_code=422, detail='模式必须为open或replay')
+    if req.mission_id:
+        try:
+            definition = missions.definition(req.mission_id)
+            if req.use_agent_tools or req.use_live_intel:
+                raise ValueError('固定局部想定使用DSH命令生成；请关闭领域工具循环和实时情报选项')
+            if req.simulation_mode != 'open':
+                raise ValueError('固定局部初态用于开放推演；历史回放请使用资料模式')
+            if req.battle and adjudication_lib.resolve(battle=req.battle).name != definition['battle']:
+                raise ValueError('局部想定与所选战役不一致')
+            req.battle = definition['battle']
+            req.time_step = definition['time_step']
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
     if req.agent_mode == 'native' and req.use_agent_tools and not harness_engine.NATIVE_RUNTIME:
         raise HTTPException(status_code=409, detail='原生运行时插件未启用，请选择JSON协议模式')
     session = _new_session(req.scenario.strip(), req.time_step,
@@ -517,6 +559,7 @@ def create_session(req: CreateSessionRequest):
                            req.use_rag, req.use_live_intel,
                            req.use_agent_tools, req.persist_roles, req.agent_mode)
     session["scenario_input"] = req.scenario.strip()
+    session.update(simulation_mode=req.simulation_mode, mission_id=req.mission_id)
     with _SESSION_LOCK:
         _SESSIONS[session["id"]] = session
     session_store.save(session)
@@ -576,14 +619,19 @@ def init_session(session_id: str):
     session['active_observer'] = observer
 
     try:
-        init_prompt = prompts.build_init_prompt(scenario_input, available_nodes, briefing)
-        init_state = harness_engine.get_ai_response_with_retry(
-            init_prompt,
-            role_id=engine_role, observer=observer,
-            cancel_check=lambda: bool(session.get("cancel_requested")))
+        init_prompt = prompts.build_init_prompt(scenario_input, available_nodes, briefing,
+                                                simulation_mode=session.get('simulation_mode', 'open'))
+        if session.get('mission_id'):
+            init_state = missions.initial(session['mission_id'])
+            init_prompt = '固定教学初态，未调用模型。定义摘要：' + init_state['mission']['definition_hash']
+        else:
+            init_state = harness_engine.get_ai_response_with_retry(
+                init_prompt, role_id=engine_role, observer=observer,
+                cancel_check=lambda: bool(session.get("cancel_requested")))
 
         # 3. 锚点吸附 + 海军强制落水
-        geo.sanitize_init_units(init_state, available_nodes)
+        if not session.get('mission_id'):
+            geo.sanitize_init_units(init_state, available_nodes)
         sim_clock.initialize(init_state)
         fire_control.enforce(init_state)
         if session.get('cancel_requested'):
@@ -591,11 +639,10 @@ def init_session(session_id: str):
 
         # T+0 也裁一次：开局就能看到哪条粮道是脆的（只用于面板显示）
         if session["use_adjudicator"]:
-            adj_spec = adjudicator.load_battle_spec(
-                scenario_text=scenario_input, battle=session["battle_choice"])
+            adj_spec = _effective_spec(session, init_state)
             adj_last = _safe_adjudicate(
                 session, init_state, session["time_step"], 0,
-                dict(adj_spec.explicit), "初始化")
+                (init_state['mission']['definition']['geometry'] if session.get('mission_id') else dict(adj_spec.explicit)), "初始化")
         else:
             adj_spec = None
             adj_last = None
@@ -655,10 +702,13 @@ def init_session(session_id: str):
 
 @app.post("/api/sessions/{session_id}/next")
 @_serialized
-def next_turn(session_id: str):
+def next_turn(session_id: str, req: NextTurnRequest | None = None):
     session = _get(session_id)
     if not session["war_state"]:
         raise HTTPException(status_code=409, detail="请先初始化沙盘")
+    if session.get('mission_id') and session['war_state']['mission']['status'] == 'completed':
+        raise HTTPException(status_code=409, detail='目标已结算；请导出复盘或重新开局')
+    instruction = req.instruction if req else ''
 
     time_step = session["time_step"]
     current_time_str = session["war_state"].get('current_time', '00:00')
@@ -677,10 +727,8 @@ def next_turn(session_id: str):
     adj_params = {}
     pre_adj = None
     if session["use_adjudicator"]:
-        session["adj_spec"] = adjudicator.load_battle_spec(
-            scenario_text=session.get("scenario_input", ""),
-            battle=session["battle_choice"])
-        adj_params = dict(session["adj_spec"].explicit)
+        session["adj_spec"] = _effective_spec(session)
+        adj_params = (prev_state['mission']['definition']['geometry'] if session.get('mission_id') else dict(session["adj_spec"].explicit))
         pre_adj = _safe_adjudicate(
             session, prev_state, time_step, next_turn_num, adj_params, "推演前")
 
@@ -702,16 +750,34 @@ def next_turn(session_id: str):
     try:
         step_prompt = (_amnesia_prefix(session, engine_role) if engine_role else "") + prompts.build_step_prompt(
             session["war_state"], next_turn_num, time_step,
-            session["use_live_intel"], briefing, adjudication=pre_adj)
+            session["use_live_intel"], briefing, adjudication=pre_adj,
+            simulation_mode=session.get('simulation_mode', 'open'))
+        if instruction:
+            step_prompt += '\n本轮指令（不得改写规则）：' + instruction
         native = session.get('use_agent_tools') and session.get('agent_mode') == 'native'
-        if native:
+        if session.get('mission_id'):
+            step_prompt = missions.prompt(prev_state, instruction, briefing)
+            for attempt in range(2):
+                proposal = harness_engine.get_ai_response(step_prompt, role_id=engine_role,
+                    observer=observer, cancel_check=cancel_check)
+                try:
+                    candidate = missions.advance(prev_state, proposal.get('orders'), time_step)
+                    break
+                except (ValueError, KeyError, TypeError) as exc:
+                    if attempt:
+                        raise ValueError('命令校验重试后仍失败：' + str(exc)) from exc
+                    step_prompt += '\n候选命令未通过，状态未改变。请纠正后完整重发orders：' + str(exc)
+            result = {'updated_state': candidate, 'report': missions.report(candidate),
+                      'source_note': '教学规则' + missions.VERSION + '；命令由模型提出，状态由程序结算。',
+                      'decisions': [{'team': next(t for t, u in missions.units(prev_state) if u['name'] == o['unit']), 'unit_name': o['unit'], 'action': str(o), 'rationale': str(proposal.get('reason', ''))} for o in proposal['orders']]}
+        elif native:
             step_prompt += ('\n【原生领域工具回合】可调用已注册的只读领域工具get_observation、retrieve_history、'
                             'evaluate_action、inspect_trajectory、evaluate_counterfactual。先核对状态和可行性；'
                             '最终直接返回updated_state/report/decisions的JSON，不使用应用层tool_calls协议。')
             result = harness_engine.get_ai_response_with_retry(step_prompt, role_id=engine_role,
                 observer=observer, cancel_check=cancel_check, previous_state=prev_state, native_context={
                     'session': {k: copy.deepcopy(session.get(k)) for k in ('war_state', 'use_rag', 'scenario_input',
-                        'battle_choice', 'history', 'trajectory')}, 'pre_adj': pre_adj})
+                        'battle_choice', 'history', 'trajectory', 'simulation_mode')}, 'pre_adj': pre_adj})
         elif session.get("use_agent_tools"):
             # 唯一分支点：智能体只负责**产出候选**，下游守卫链与原子提交完全共用
             result = agent_tools.run_decision_turn(
@@ -726,7 +792,8 @@ def next_turn(session_id: str):
         sim_clock.enforce_step(prev_state, updated_data, time_step)
 
         # 强制洗数据（落水算法）
-        geo.sanitize_step_units(updated_data)
+        if not session.get('mission_id'):
+            geo.sanitize_step_units(updated_data)
 
         # 名单守恒：赋值之前核对，无理由消失的按上一回合快照回填
         if isinstance(updated_data, dict) and isinstance(result, dict):

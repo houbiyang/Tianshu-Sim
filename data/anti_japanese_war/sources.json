@@ -1,0 +1,415 @@
+{
+  "scope": "本包公开文献与地名来源；引用逐条挂接，未核原始馆藏",
+  "sources": {
+    "A01": {
+      "title": "抗战综述",
+      "publisher": "中国人民抗日战争纪念馆",
+      "url": "http://www.1937china.com/views/kzls/zs_detail.html",
+      "supports": "阶段框架、两大战场、局部与全面反攻",
+      "evidence_type": "公开网页正文",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "该馆采用1943年7月起战略反攻的分期；本包保留局部态势，不能以单一日期切换所有战场。"
+    },
+    "A02": {
+      "title": "历史上的今天：淞沪会战爆发",
+      "publisher": "侵华日军南京大屠杀遇难同胞纪念馆",
+      "url": "https://www.19371213.com.cn/sylm/xwzx/202208/t20220816_3673882.html",
+      "supports": "淞沪开战时段、四行仓库、金山卫登陆",
+      "evidence_type": "公开网页正文",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "公开叙述不等于已逐页校验原始战报、名册或日方档案。"
+    },
+    "A03": {
+      "title": "一寸山河一寸血！88年前，淞沪会战爆发",
+      "publisher": "中国人民抗日战争纪念馆转载央视网",
+      "url": "https://www.1937china.com/kzgdata/html/20250803/175423636939886234473.html",
+      "supports": "会战投入兵力",
+      "evidence_type": "公开网页正文",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "正文将四行仓库称为苏州河南岸存在地理问题；本包不采纳该方位。"
+    },
+    "A04": {
+      "title": "追忆太原会战烽烟",
+      "publisher": "新华社",
+      "url": "https://www.news.cn/politics/20250723/127634db575747b6bcfc943a435706ad/c.html",
+      "supports": "会战组成、正面与侧后协同、娘子关和太原失守",
+      "evidence_type": "公开网页正文",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "采用11月8日夜失守的报道口径，不冒称所有史料一致。"
+    },
+    "A05": {
+      "title": "平型关战斗（1937年）",
+      "publisher": "中国军网",
+      "url": "https://www.81.cn/2018byzt/2018-07/31/content_9238266.htm",
+      "supports": "115师、9月25日伏击、战果",
+      "evidence_type": "搜索索引正文节选",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "读取搜索索引正文；网页直开重定向失败；战果为中方公开叙述。"
+    },
+    "A06": {
+      "title": "清明节将至，寻访平型关大捷烈士英灵",
+      "publisher": "中国军网",
+      "url": "https://www.81.cn/yljnt_208627/lsda_208656/9465506.html",
+      "supports": "平型关伤亡与阵亡量级",
+      "evidence_type": "搜索索引正文节选",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "公开叙述不等于已逐页校验原始战报、名册或日方档案。"
+    },
+    "A07": {
+      "title": "血战台儿庄 激战禹王山——徐州会战回眸",
+      "publisher": "国防部转载新华社",
+      "url": "https://www.mod.gov.cn/gfbw/gfjy_index/16398839.html",
+      "supports": "徐州战役背景、台儿庄与禹王山",
+      "evidence_type": "公开网页正文",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "所述台儿庄3万捐躯与A08的7500伤亡失踪口径冲突，不能擅自认定仅是范围不同。"
+    },
+    "A08": {
+      "title": "台儿庄战役",
+      "publisher": "首都文明网转载新华网",
+      "url": "https://www.bjwmb.gov.cn/kz2025/jdzy/10104689.html",
+      "supports": "3月23日至4月7日进程、窄口径参战及伤亡失踪",
+      "evidence_type": "公开网页正文",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "统计建制覆盖未逐一列明，7500不是已核实名册总数。"
+    },
+    "A09": {
+      "title": "第十二集 台儿庄大捷",
+      "publisher": "国家档案局／中国第二历史档案馆",
+      "url": "https://www.saac.gov.cn/zt/2014-09/03/content_65287.htm",
+      "supports": "孙连仲与汤恩伯部署、3月31日包围、4月3日反攻",
+      "evidence_type": "搜索索引正文节选及档案目录",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "已读公开导言节选，未逐页辨读所列电报扫描件。"
+    },
+    "A10": {
+      "title": "武汉会战：中国抗战的战略转折",
+      "publisher": "新华社",
+      "url": "http://www.news.cn/20250729/8cf25eaa832449aca9734ac831aa1de4/c.html",
+      "supports": "6—10月会战、双方投入、万家岭、9月田家镇、10月24日中山舰",
+      "evidence_type": "公开网页正文",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "公开叙述不等于已逐页校验原始战报、名册或日方档案。"
+    },
+    "A11": {
+      "title": "武汉会战",
+      "publisher": "国家档案局／中国第二历史档案馆",
+      "url": "https://www.saac.gov.cn/zt/2014-09/03/content_65304_2.htm",
+      "supports": "6月进攻与10月25日撤离",
+      "evidence_type": "搜索索引正文节选及档案目录",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "已读导言节选；没有把撤离日等同三镇全部陷落日。"
+    },
+    "A12": {
+      "title": "第十五集 万家岭大捷",
+      "publisher": "国家档案局／中国第二历史档案馆",
+      "url": "https://www.saac.gov.cn/zt/2014-09/05/content_65505_17.htm",
+      "supports": "参战部队、9月下旬包围、10月7日总攻及10月16日详报范围",
+      "evidence_type": "搜索索引正文节选及档案目录",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "导言的“遗尸数万”未获同口径印证，不收入数值字段；未辨读全部扫描件。"
+    },
+    "A13": {
+      "title": "《抗日战争湖南战场史料》前言",
+      "publisher": "湖南省文史研究馆",
+      "url": "https://css.hunan.gov.cn/css/tslm/hxws/wssy/201204/sxrj_52819_13/201609/t20160905_3253626.html",
+      "supports": "三次长沙分期、指挥与退军日期",
+      "evidence_type": "公开网页正文",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "本包引用网页前言，不声称查阅整套档案汇编。"
+    },
+    "A14": {
+      "title": "三次长沙会战：烽火淬炼的抗战精神丰碑",
+      "publisher": "新华社",
+      "url": "https://www.news.cn/politics/20250813/2ffbf218584248c781e58991e48ec465/c.html",
+      "supports": "冈村与阿南的分别指挥、兵力、第三次第10军与岳麓山炮兵",
+      "evidence_type": "公开网页正文",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "公开叙述不等于已逐页校验原始战报、名册或日方档案。"
+    },
+    "A15": {
+      "title": "第十八集 第一次长沙会战",
+      "publisher": "国家档案局／中国第二历史档案馆",
+      "url": "https://www.saac.gov.cn/zt/2014-09/09/content_65795_2.htm",
+      "supports": "首次会战兵力与9月14日—10月6日经过要图",
+      "evidence_type": "搜索索引正文节选及档案目录",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "要图时间不等于所有追击停止日，导言另记10月中旬恢复态势。"
+    },
+    "A16": {
+      "title": "1939年12月4日 昆仑关失陷",
+      "publisher": "深圳市盐田区档案馆",
+      "url": "https://www.yantian.gov.cn/ytdayszxxw/lsjt/content/post_11737797.html",
+      "supports": "12月4、18、28、31日节点与白崇禧报告口径",
+      "evidence_type": "公开网页正文",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "14000余为文中“中国军队”，未证明仅为第5军；4000余为报告所称毙敌。"
+    },
+    "A17": {
+      "title": "昆仑关会战",
+      "publisher": "无锡市档案史志馆转载白先勇《白崇禧将军身影集》",
+      "url": "https://daj.wuxi.gov.cn/doc/2015/08/06/2427004.shtml",
+      "supports": "桂越交通背景、参战第5师团与中村旅团",
+      "evidence_type": "公开网页正文",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "属回忆性转述；反攻起点记12月17日晚，与A16的18日有异文；不据此证明整旅团永久全灭。"
+    },
+    "A18": {
+      "title": "抗战局势的新变化",
+      "publisher": "中共中央党史和文献研究院",
+      "url": "https://www.dswxyjy.org.cn/n/2014/0714/c244520-25279231.html",
+      "supports": "豫湘桂进程与缅北滇西两路反攻",
+      "evidence_type": "公开网页正文",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "同文不同段落的数字须分开：近6.7万伤亡属缅北滇西，不属豫湘桂。"
+    },
+    "A19": {
+      "title": "“黔桂路大撤退”亲历记",
+      "publisher": "湖南省档案局",
+      "url": "https://sdaj.hunan.gov.cn/sdaj/xhyqk/dask/daskzz/zz2015_78993/54394_1/54398_1/201601/t20160128_2912661.html",
+      "supports": "1944年4—12月范围及撤退中的平民处境",
+      "evidence_type": "公开网页正文",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "公开叙述不等于已逐页校验原始战报、名册或日方档案。"
+    },
+    "A20": {
+      "title": "方先觉《中湘颂》与衡阳保卫战",
+      "publisher": "湖南省文史研究馆",
+      "url": "https://css.hunan.gov.cn/css/tslm/hxws/wssy/201404/sxrj_5/201609/t20160905_3253312.html",
+      "supports": "第10军方先觉、6月22日至8月8日口径",
+      "evidence_type": "搜索索引正文节选",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "与地方纪念日期6月23日有异文，不混算47/48日。"
+    },
+    "A21": {
+      "title": "铭记历史：衡阳全市防空警报试鸣",
+      "publisher": "衡阳市人民政府",
+      "url": "https://www.hengyang.gov.cn/xxgk/dtxx/bmdt/20240625/i3398500.html",
+      "supports": "6月23日地方纪念起点",
+      "evidence_type": "搜索索引正文节选",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "纪念活动文本不是战斗详报。"
+    },
+    "A22": {
+      "title": "百团大战",
+      "publisher": "中共中央党史和文献研究院",
+      "url": "https://www.dswxyjy.org.cn/n/2014/0530/c244520-25086486.html",
+      "supports": "命令与三阶段、105团、战果分类",
+      "evidence_type": "公开网页正文",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "采用至1940年12月5日口径，不能自动外推到1941年1月24日。"
+    },
+    "A23": {
+      "title": "抗战时期的人民军队",
+      "publisher": "中国人民抗日战争纪念馆",
+      "url": "https://www.1937china.com/kzgdata/clzl/ztzl/qqzt2024/",
+      "supports": "百团大战扩展至1941年1月24日的展陈口径",
+      "evidence_type": "公开展陈检索正文",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "与A22并列登记；长短窗口战果不直接相加。"
+    },
+    "A24": {
+      "title": "再说百团大战的历史意义与功过是非",
+      "publisher": "全国征兵网",
+      "url": "https://www.gfbzb.gov.cn/zbbm/gfzs/201502/20150228/1430981902.html",
+      "supports": "17000伤亡、1940年战绩与后续困难的多因素解释",
+      "evidence_type": "公开网页正文",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "评论性研究转述；后续扫荡、政策、灾荒不能压成单因果定律。"
+    },
+    "A25": {
+      "title": "抗战时期中共冀中地道战的战术演进与策略运用",
+      "publisher": "邯郸党史网",
+      "url": "https://handandangshi.gov.cn/yaolun/2463.html",
+      "supports": "1942年5月1日—6月20日、地道体系发展限制",
+      "evidence_type": "搜索索引正文节选",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "来源推算兵力1.7万与常见5万口径不同，未核出同一统计范围，故不选定初始人数。"
+    },
+    "A26": {
+      "title": "吕正操：平原防御模范战中歼敌五百",
+      "publisher": "浙江组织工作网",
+      "url": "https://www.zjzzgz.gov.cn/art/2019/4/4/art_1413013_32410255.html",
+      "supports": "5月29日转外线、6月1日夜越石德路、6月12日掌史村",
+      "evidence_type": "搜索索引正文节选",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "具体战斗与整个冀中反扫荡不能混作同一损失窗口。"
+    },
+    "A27": {
+      "title": "解放区军民的局部反攻",
+      "publisher": "中共中央党史和文献研究院",
+      "url": "https://www.dswxyjy.org.cn/n/2014/0714/c244520-25279236.html",
+      "supports": "1944各地并行攻势与各区域年度统计",
+      "evidence_type": "公开网页正文",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "不同地区毙伤、俘虏、投诚、反正须分别列项。"
+    },
+    "A28": {
+      "title": "车桥战役：一次虎口拔牙的歼灭战",
+      "publisher": "国防部转载解放军报",
+      "url": "https://www.mod.gov.cn/gfbw/gfjy_index/js_214151/4842146.html",
+      "supports": "3月5—6日、攻坚打援、465与483含俘口径",
+      "evidence_type": "公开报道检索正文",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "与A29是否含俘存在冲突；不能再次加上24与168。"
+    },
+    "A29": {
+      "title": "民族记忆：车桥战役",
+      "publisher": "中央纪委网站",
+      "url": "https://m.ccdi.gov.cn/content/a4/71/5154.html",
+      "supports": "3月5日1时50分、增援过程、粟裕战役经过转述",
+      "evidence_type": "公开回忆转述检索正文",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "表述为毙伤465另俘24，与A28合计含俘写法不同。"
+    },
+    "A30": {
+      "title": "车桥战役",
+      "publisher": "国家档案局／中央档案馆",
+      "url": "https://www.saac.gov.cn/zt/2014-09/15/content_67054.htm",
+      "supports": "3月5日1时50分、6日晨及扩展至13日的战果窗口、战役命令目录",
+      "evidence_type": "公开网页正文",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "已读公开导言；没有逐页校验原始电报扫描件。"
+    },
+    "A31": {
+      "title": "湘西会战",
+      "publisher": "中央人民政府驻澳门特别行政区联络办公室",
+      "url": "https://www.zlb.gov.cn/2015-08/24/c_128160520.htm",
+      "supports": "4月9日—6月7日与芷江机场目标",
+      "evidence_type": "公开网页正文",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "公开叙述不等于已逐页校验原始战报、名册或日方档案。"
+    },
+    "A32": {
+      "title": "第三十集 湘西会战（芷江战役）",
+      "publisher": "国家档案局／中国第二历史档案馆",
+      "url": "https://www.saac.gov.cn/zt/2014-09/15/content_67074.htm",
+      "supports": "何应钦与王耀武、作战过程、1.9万及2.8万口径",
+      "evidence_type": "公开网页正文",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "读取导言和目录；敌我伤亡统计表扫描件尚未逐栏核证。"
+    },
+    "A33": {
+      "title": "重走滇缅公路：致，远去的你们",
+      "publisher": "新华网云南",
+      "url": "https://www.yn.news.cn/20251112/41a76c44ea694604a739eac78d247c8b/c.html",
+      "supports": "1944年5月渡怒江、1945年1月27日芒友会师",
+      "evidence_type": "搜索索引正文节选",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "公开叙述不等于已逐页校验原始战报、名册或日方档案。"
+    },
+    "A34": {
+      "title": "解放区战场的全面反攻",
+      "publisher": "中共中央党史和文献研究院",
+      "url": "https://www.dswxyjy.org.cn/n/2014/0821/c244520-25512949.html",
+      "supports": "8月9—11日命令、8月15日后继续作战、150座城市",
+      "evidence_type": "公开网页正文",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "公开叙述不等于已逐页校验原始战报、名册或日方档案。"
+    },
+    "A35": {
+      "title": "解放张家口的战略意义",
+      "publisher": "中共中央党史和文献研究院",
+      "url": "https://www.dswxyjy.org.cn/BIG5/n/2015/0105/c244514-26328352.html",
+      "supports": "1945年8月23日冀察部队收复张家口",
+      "evidence_type": "搜索索引正文节选",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "公开叙述不等于已逐页校验原始战报、名册或日方档案。"
+    },
+    "A36": {
+      "title": "徐州会战时间之我见",
+      "publisher": "抗日战争纪念网收录研究论文",
+      "url": "https://www.krzzjn.com/uploadfile/2020/0426/20200426074722859.pdf",
+      "supports": "徐州会战起讫存在多种划分",
+      "evidence_type": "论文检索正文节选",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "本轮仅核读索引中关于1937年12月、1938年1月及延至6月的分期，不据此复原逐日命令。"
+    },
+    "A37": {
+      "title": "抗日战争胜利关键是中国共产党思想上政治上路线正确",
+      "publisher": "中共中央党史和文献研究院",
+      "url": "https://www.dswxyjy.org.cn/n1/2020/1112/c434108-31927829.html",
+      "supports": "豫湘桂50余万兵力损失的综合口径",
+      "evidence_type": "搜索索引正文节选",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "损失兵力不是阵亡，文章另将战役范围延至1945年1月，不能与八个月口径合并。"
+    },
+    "A38": {
+      "title": "回望历史 捍卫正义",
+      "publisher": "新华社",
+      "url": "https://www.news.cn/20250905/f2c0d98944364b818bdc1d00b8b80521/c.html",
+      "supports": "缅北滇西作战广义至1945年3月",
+      "evidence_type": "搜索索引正文节选",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "会师日不是全部缅北作战结束日。"
+    },
+    "A39": {
+      "title": "淞沪会战",
+      "publisher": "首都文明网转载新华网",
+      "url": "https://www.bjwmb.gov.cn/kz2025/jdzy/10104692.html",
+      "supports": "张治中、87/88师、松井石根及11月8日撤离",
+      "evidence_type": "公开网页正文",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "本文记上海11日失守，与A02的12日有异文；转载不算独立原始印证。"
+    },
+    "A40": {
+      "title": "84年前的今天，上海沦陷",
+      "publisher": "侵华日军南京大屠杀遇难同胞纪念馆",
+      "url": "https://www.19371213.com.cn/sylm/xwzx/202111/t20211112_3189078.html",
+      "supports": "淞沪累计兵力、11月12日和公开伤亡统计",
+      "evidence_type": "搜索索引正文节选",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "30万中方伤亡与6万日军毙伤为中方公开叙述，非逐部队原始统计；未核日方同口径数字。"
+    },
+    "G01": {
+      "title": "GeoNames China geographical database",
+      "publisher": "GeoNames",
+      "url": "https://download.geonames.org/export/dump/",
+      "supports": "现代聚落经纬度与名称",
+      "evidence_type": "公开地名数据集",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "caveat": "CC BY 4.0；现代地名不证明1937—1945年阵地位置。"
+    }
+  }
+}

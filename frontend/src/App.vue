@@ -4,6 +4,8 @@
 import { computed, nextTick, onMounted, onBeforeUnmount, reactive, ref, watch } from "vue";
 import { api } from "./api";
 import type { Battle, Health, NumericFlag, Snapshot } from "./types";
+import MissionPanel from "./components/MissionPanel.vue";
+import { normalizeStep, stepOptions } from "./timeSteps";
 import MapView from "./components/MapView.vue";
 import BattlefieldPanel from "./components/BattlefieldPanel.vue";
 import AdjudicationPanel from "./components/AdjudicationPanel.vue";
@@ -13,7 +15,8 @@ import LaunchScreen from './components/LaunchScreen.vue';
 import { RENDERER_VERSION, summarizeEngagements } from "./tactical";
 import { mdToHtml } from "./markdown";
 
-const TIME_STEPS = ["5分钟", "15分钟", "30分钟", "1小时", "6小时", "12小时", "1天", "1周", "1个月"];
+const TIME_STEPS = computed(() => stepOptions(opts.time_step));
+const turnInstruction = ref("");
 
 const health = ref<Health | null>(null);
 const battles = ref<Battle[]>([]);
@@ -61,8 +64,8 @@ async function resumeSession(id: string) {
     sessionId.value = id; localStorage.setItem('gentactix-session', id); screen.value = 'workspace';
   }
 }
-function startScenario(value: { scenario: string; battle: string; time_step: string; use_rag: boolean; use_adjudicator: boolean }) {
-  Object.assign(opts, value); void init();
+function startScenario(value: { scenario: string; battle: string; time_step: string; use_rag: boolean; use_adjudicator: boolean; simulation_mode: string; mission_id: string }) {
+  Object.assign(opts, value); if (value.mission_id) { opts.use_agent_tools = false; opts.use_live_intel = false; } void init();
 }
 onBeforeUnmount(() => unsubscribeMenu?.());
 
@@ -76,6 +79,7 @@ const opts = reactive({
   use_agent_tools: false, // 智能体回合：默认关，开启后每回合多次模型往返
   persist_roles: true,
   agent_mode: 'native',
+  simulation_mode: 'open', mission_id: '' as string | null,
 });
 
 const selftest = ref(false);
@@ -85,7 +89,8 @@ const ragOpen = ref(false);
 const battleHint = computed(() => battles.value.find((b) => b.name === opts.battle)?.time_step ?? "");
 function applyBattleHint() {
   const hint = battleHint.value;
-  if (hint && TIME_STEPS.includes(hint)) opts.time_step = hint;
+  opts.mission_id = '';
+  if (hint) opts.time_step = normalizeStep(hint);
 }
 
 const busy = ref("");
@@ -136,7 +141,7 @@ async function refreshBackend() {
 }
 
 function restoreOptions(s: Snapshot) {
-  Object.assign(opts, { scenario: s.scenario, time_step: s.time_step,
+  Object.assign(opts, { scenario: s.scenario, time_step: normalizeStep(s.time_step), simulation_mode: 'open', mission_id: '',
     battle: s.adjudication.battle_choice || '', use_adjudicator: s.adjudication.enabled,
     use_rag: s.rag.enabled, ...s.settings });
 }
@@ -181,7 +186,7 @@ async function init() {
       use_live_intel: opts.use_live_intel,
       use_agent_tools: opts.use_agent_tools,
       persist_roles: opts.persist_roles,
-      agent_mode: opts.agent_mode,
+      agent_mode: opts.agent_mode, simulation_mode: opts.simulation_mode, mission_id: opts.mission_id || null,
     });
     sessionId.value = session_id;
   } catch (e) {
@@ -196,7 +201,7 @@ async function init() {
   } else sessionId.value = previousSession;
 }
 
-const next = () => run(`正在推演未来 ${snap.value?.time_step ?? ""} 的战况…`, () => api.next(sessionId.value));
+const next = async () => { if (await run(`正在推演未来 ${snap.value?.time_step ?? ""} 的战况…`, () => api.next(sessionId.value, turnInstruction.value))) turnInstruction.value = ""; };
 const review = () => run("参谋长正在深度复盘…", () => api.review(sessionId.value));
 
 async function cancel() {
@@ -307,8 +312,9 @@ function flagLine(f: NumericFlag): string {
       <label>推演场景</label>
       <textarea v-model="opts.scenario" rows="3" :disabled="!!busy"></textarea>
 
+      <label>推演模式（初始化时生效）</label><select v-model="opts.simulation_mode" :disabled="!!busy || !!opts.mission_id"><option value="open">开放推演</option><option value="replay">历史回放</option></select>
       <label>⏱️ 单回合时间跨度</label>
-      <select v-model="opts.time_step" :disabled="!!busy">
+      <select v-model="opts.time_step" :disabled="!!busy || !!opts.mission_id">
         <option v-for="t in TIME_STEPS" :key="t">{{ t }}</option>
       </select>
 
@@ -322,10 +328,11 @@ function flagLine(f: NumericFlag): string {
         </select>
         <p class="muted" v-if="battles.length === 0">裁决库为空：adjudication/ 下还没有战役文件，将使用默认几何。</p>
         <p class="muted" v-else-if="battleHint">这场战役建议回合跨度 <b>{{ battleHint }}</b>（已预填；改小则每回合部队挪不动、永远打不着）。</p>
-      <p class="muted" v-if="!opts.use_adjudicator">裁决已关闭：模型自行推演走位与胜负，<b>同一想定两次运行结果不同</b>。</p>
+      <p class="muted" v-if="!opts.use_adjudicator && !opts.mission_id">裁决已关闭：模型自行推演走位与胜负，<b>同一想定两次运行结果不同</b>。</p>
 
-      <label class="toggle"><input type="checkbox" v-model="opts.use_agent_tools" :disabled="!!busy" />
+      <label class="toggle"><input type="checkbox" v-model="opts.use_agent_tools" :disabled="!!busy || !!opts.mission_id" />
         🤖 智能体回合（先侦察试算、后下令，默认关闭）</label>
+      <p class="muted" v-if="opts.mission_id">固定局部想定使用DSH命令生成和事件轨迹，状态由程序结算；领域工具循环暂不接入此模式。</p>
       <p class="muted" v-if="opts.use_agent_tools">
         原生模式使用运行时步骤与工具预算；兼容模式至多4次JSON往返。<b>耗时显著增加</b>；
         工具全部只读，战局仍由系统统一提交。</p>
@@ -364,10 +371,12 @@ function flagLine(f: NumericFlag): string {
         <p class="muted">渲染器版本：<code>{{ RENDERER_VERSION }}</code> · 交战图形：定向扇区；AI 未给攻击方位时降级为空心虚线环。</p>
       </div>
 
+      <label for="turn-instruction">本轮决策意图</label><textarea id="turn-instruction" v-model="turnInstruction" maxlength="4000" rows="3" :disabled="!!busy || !hasState()" placeholder="例如：红方先补给再推进；蓝方保卫目标。"></textarea>
+      <p class="muted">侧栏想定设置在重新初始化时生效；本轮意图仅影响下一轮决策。</p>
       <div class="buttons">
         <button v-if="busy && sessionId" class="cancel" @click="cancel">取消当前操作</button>
         <button class="primary" @click="init" :disabled="!!busy">🚀 初始化沙盘</button>
-        <button @click="next" :disabled="!!busy || !hasState()">⏩ 下一轮推演</button>
+        <button @click="next" :disabled="!!busy || !hasState() || snap?.war_state?.mission?.status === 'completed'">⏩ 下一轮推演</button>
         <button @click="review" :disabled="!!busy || !hasState()">🧐 呼叫总参谋长复盘</button>
         <button @click="exportJson" :disabled="!hasState()">📦 一键导出战局快照 (JSON)</button>
       </div>
@@ -377,13 +386,14 @@ function flagLine(f: NumericFlag): string {
     </aside>
 
     <!-- 主区 -->
-    <main class="main" :class="{ 'dock-collapsed': dockCollapsed }">
+    <main class="main" :class="{ 'dock-collapsed': dockCollapsed, 'has-mission': !!snap?.war_state?.mission }">
       <header v-if="hasState()">
         <span>🕒 当前战区时间：<b>{{ snap!.war_state!.current_time ?? "—" }}</b></span>
         <span>第 {{ snap!.turn_count }} 回合</span>
         <span class="muted">{{ snap!.scenario }}</span>
       </header>
 
+      <MissionPanel v-if="snap?.war_state?.mission" :mission="snap.war_state.mission" :session-id="sessionId" :busy="!!busy" />
       <div class="map-wrap" v-if="hasState()"><MapView :snap="snap" :selftest="selftest" /></div>
       <div class="idle" v-else>
         <img :src="'./logo.png'" alt="GenTactix" class="idle-logo" @error="($event.target as HTMLImageElement).style.display='none'" />

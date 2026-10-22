@@ -8,12 +8,15 @@ A desktop workspace for historical campaign simulation and decision review. Buil
 
 ## Features
 
-- **Campaigns and scenarios:** start with a map of China and its surroundings. Choose the Battle of Changping or one of nine Korean War campaigns, or create a scenario through a guided conversation.
+- **Campaigns and scenarios:** start with a map of China and its surroundings. The current source catalog includes Changping, nine Korean War campaigns, 15 Long March scenarios and 20 WWII China scenarios. You can also create a scenario through a guided conversation.
 - **Map and state:** display units, movement trails and status. When data is available, show terrain features, fields of fire, weapon ranges, supply nodes and routes, and personnel/equipment losses. Missing values remain unknown.
+- **Replayable local exercises:** 20 WWII China entries offer fixed initial states and seven teaching rule types for orders, personnel/equipment ledgers, inventory and objectives. Command counterfactuals reuse the same pre-state. These are synthetic exercises, not historically calibrated deployments; see the [design and limits](docs/可重放推演设计.md) (Chinese).
 - **Turn progression:** select the turn duration and let the application maintain the clock. State checks preserve the roster and flag missing units, invalid coordinates and numeric anomalies. Optional geometric adjudication constrains movement, supply connectivity and encirclement.
 - **DSH agents and plugins:** Native tool mode supports persistent role sessions, read-only domain tools, runtime events, budgets and in-flight cancellation. An application-level JSON tool mode remains available for compatibility.
 - **Decision review:** inspect reports, key decisions and turning points; use traces for attribution analysis. Geometric counterfactuals and paired model branches leave the main campaign state intact.
 - **Sources and saves:** local historical retrieval, campaign-specific adjudication parameters, checkpoints, recovery and JSON import/export.
+
+Editable research packages: [Long March](data/long_march/README.md) and [WWII China](data/anti_japanese_war/README.md), documented in Chinese. Cards retain sources, conflicting accounts and unknown values; new geometry presets are teaching estimates. Previously installed releases require a rebuild to include these additions.
 - **Model settings:** configure vLLM / OpenAI-compatible or DeepSeek endpoints, models, credentials, timeouts and role budgets through the menu. Settings are stored encrypted.
 
 ![Workspace tested with fixture responses](docs/screenshots/workspace.png)

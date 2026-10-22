@@ -33,7 +33,7 @@ const rulesOpen = ref(false);
 
     <template v-if="spec">
       <p class="spec-line">参数：{{ spec.summary }}
-        <span v-if="!spec.calibrated" class="warn">（未标定，使用默认几何）</span></p>
+        <span v-if="!spec.calibrated" class="warn">（未配置，使用默认几何）</span></p>
       <p v-for="w in spec.warnings" class="muted">ℹ️ {{ w }}</p>
       <p v-if="spec.errors.length" class="bad">裁决参数有误（出错项已忽略，其余照常生效）：{{ spec.errors.join("；") }}</p>
     </template>
@@ -96,16 +96,16 @@ const rulesOpen = ref(false);
     <div class="expander">
       <button class="link" @click="rulesOpen = !rulesOpen">⚖️ 裁决口径（怎么算的） {{ rulesOpen ? "▾" : "▸" }}</button>
       <ul v-if="rulesOpen" class="rules">
-        <li><b>机动上限</b> = 兵种战术速度 × 本回合时长 ÷ 地形系数（当前地形「{{ last.terrain || "未标注" }}」×{{ last.terrain_factor }}，来源：{{ last.terrain_source || "模型地形标签" }}{{ last.terrain_source === "战役参数库标定" ? "——战役文件已写下 terrain_factor，模型自报标签被覆盖" : "" }}）</li>
+        <li><b>机动上限</b> = 兵种战术速度 × 本回合时长 ÷ 地形系数（当前地形「{{ last.terrain || "未标注" }}」×{{ last.terrain_factor }}，来源：{{ last.terrain_source || "模型地形标签" }}{{ last.terrain_source === "战役参数库配置" ? "——战役文件已写下 terrain_factor，模型自报标签被覆盖" : "" }}）</li>
         <li><b>接触判定</b>：最近敌距 ≤ 可机动距离＋{{ last.contact_km }} km；接触不等于能直接射击。</li>
         <li><b>区域控制圈</b> = max({{ last.control_radius_km }} km, 攻击射程 × 1.2)；间瞄火力与保障分队依兵种规则不控制土地。</li>
-        <li><b>补给源</b> = 己方最靠后的单位（离敌方重心最远者），粮道穿敌控区即判「已切断」</li>
+        <li><b>补给源</b>优先使用单位绑定的补给点及明确线路；无配置才回退到己方后方单位。线路穿敌控区即判「已切断」</li>
         <li><b>包围</b> = 以单位为中心 24 个方向，被敌方控制圈封锁 ≥85% 判「被围」，≥50% 判「半包围」</li>
         <li><b>退路</b> = 背离敌军的 ±75° 扇区内，是否存在一条能跑出的通道</li>
         <li><b>可复现</b> = 同一战局 + 同一回合（当前第 {{ last.turn }} 回合）+ 同一跨度，指纹必然相同</li>
       </ul>
       <p v-if="rulesOpen" class="muted">
-        不裁决的项目：伤亡数字、士气具体分值、天气、指挥失误。这些留在叙事层，由模型叙述 ——
+        几何层不裁决伤亡数字、士气具体分值、天气或指挥失误。固定局部教学模式另按显式系数计算战损和库存；普通模式仍由模型估计。
         裁决器刻意只碰「位置、时间、连通性」这三类可以复算的东西。
       </p>
     </div>

@@ -23,7 +23,7 @@ command = [sys.executable, '-m', 'PyInstaller', '--noconfirm', '--clean', '--one
            '--hidden-import', 'uvicorn.lifespan.on']
 for name in ('corpus', 'adjudication', 'plugins'):
     command += ['--add-data', f'{ROOT / name}:{name}']
-for name in ('unit_types.json', 'korean_anchors.json'):
+for name in ('unit_types.json', 'korean_anchors.json', 'long_march_anchors.json', 'anti_japanese_war_anchors.json', 'missions.json'):
     command += ['--add-data', f'{ROOT / "gentactix" / name}:gentactix']
 command += [str(ROOT / 'tools' / 'desktop_backend.py')]
 subprocess.run(command, cwd=ROOT, env=env, check=True)

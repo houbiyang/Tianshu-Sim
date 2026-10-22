@@ -55,7 +55,7 @@ def _retrieve_briefing(query, enabled, top_k, max_chars, phase, battle=None):
         meta["note"] = f"史料库为空（{stats['dir']}），本次为模型自由发挥"
         return "", meta
 
-    hits = rag.search(query, top_k=top_k, battle=battle)
+    hits = rag.search(query, top_k=top_k, battle=battle, phase=phase, simulation_mode=st.session_state.get('simulation_mode' if phase == 'init' else 'active_simulation_mode', 'open'))
     if not hits:
         meta["note"] = "未命中相关史料，本次为模型自由发挥"
         return "", meta
@@ -184,6 +184,8 @@ with st.sidebar:
         st.caption("已关闭：模型自行推演走位与胜负，**同一想定两次运行结果不同**。")
 
     st.header("推演设定")
+    st.selectbox("推演模式", ["open", "replay"], key="simulation_mode",
+                 format_func=lambda x: "开放推演（允许偏离史实）" if x == "open" else "历史回放（史料叙述）")
     scenario_input = st.text_area("输入历史事件或假设冲突：",
                                  placeholder="例如：1944年诺曼底登陆...",
                                  help="AI 会根据此描述初始化地图坐标和初始时间")
@@ -242,7 +244,7 @@ if btn_init:
             try:
                 # 1. 获取 AI 的初始阵型分布
                 init_state = engine.get_ai_response_with_retry(
-                    prompts.build_init_prompt(scenario_input, available_nodes, briefing),
+                    prompts.build_init_prompt(scenario_input, available_nodes, briefing, simulation_mode=st.session_state.simulation_mode),
                     deepseek_api_key,
                 )
 
@@ -250,6 +252,7 @@ if btn_init:
                 geo.sanitize_init_units(init_state, available_nodes)
                 from gentactix import sim_clock
                 sim_clock.initialize(init_state)
+                st.session_state.active_simulation_mode = st.session_state.simulation_mode
 
                 st.session_state.war_state = init_state
                 st.session_state.last_war_state = None
@@ -334,7 +337,7 @@ if btn_next:
                 result = engine.get_ai_response_with_retry(
                     prompts.build_step_prompt(
                         st.session_state.war_state, next_turn_num, time_step,
-                        use_live_intel, briefing, adjudication=pre_adj),
+                        use_live_intel, briefing, adjudication=pre_adj, simulation_mode=st.session_state.get('active_simulation_mode', 'open')),
                     deepseek_api_key,
                 )
 

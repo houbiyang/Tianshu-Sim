@@ -67,6 +67,11 @@ def validate(session):
             continue
         if not isinstance(world, dict) or not isinstance(world.get('current_time'), str):
             raise ValueError('战局必须包含有效时间')
+        if world.get('mission'):
+            from gentactix import missions
+            missions.validate(world)
+            if session.get('mission_id') != world['mission']['id'] or session.get('simulation_mode', 'open') != 'open':
+                raise ValueError('会话模式或想定身份不一致')
         for team in ('red_units', 'blue_units'):
             if not isinstance(world.get(team), list) or any(not isinstance(u, dict) for u in world[team]):
                 raise ValueError(f'{team}必须是单位对象列表')

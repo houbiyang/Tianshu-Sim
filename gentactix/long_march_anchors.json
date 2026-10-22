@@ -1,0 +1,583 @@
+{
+  "checked": "2026-10-22",
+  "display_crs": "WGS84",
+  "precision_note": "原始小数位不表示历史定位精度；纬度、经度顺序。未知的战术点不自动补齐。",
+  "sources": {
+    "geonames-cn": {
+      "url": "https://download.geonames.org/export/dump/CN.zip",
+      "license": "CC BY 4.0",
+      "attribution": "GeoNames (https://www.geonames.org/)",
+      "accessed": "2026-10-22",
+      "download_sha256": "a545f52444c6d2f2883e7a3ad112a0f26fc17947e10360e0ab8d8202d9d73716"
+    }
+  },
+  "points": {
+    "quanzhou": {
+      "name": "红军长征-全州",
+      "coordinates": [
+        25.93545,
+        111.06752
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1797352,
+      "source_url": "https://www.geonames.org/1797352/",
+      "source_name": "Quanzhou",
+      "feature_code": "PPLA3",
+      "uncertainty_km": 4,
+      "identity_sources": [
+        "S03",
+        "S04"
+      ],
+      "note": "误差圈为工作估计，未核定历史渡口、桥头或驻军位置；只有明确驻此地名的单位才可使用。"
+    },
+    "xingan": {
+      "name": "红军长征-兴安",
+      "coordinates": [
+        25.61405,
+        110.66854
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1789066,
+      "source_url": "https://www.geonames.org/1789066/",
+      "source_name": "Xing’an",
+      "feature_code": "PPLA3",
+      "uncertainty_km": 4,
+      "identity_sources": [
+        "S03",
+        "S04"
+      ],
+      "note": "误差圈为工作估计，未核定历史渡口、桥头或驻军位置；只有明确驻此地名的单位才可使用。"
+    },
+    "jieshou": {
+      "name": "红军长征-界首地域",
+      "coordinates": [
+        25.72417,
+        110.75778
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1805849,
+      "source_url": "https://www.geonames.org/1805849/",
+      "source_name": "Jieshou",
+      "feature_code": "PPL",
+      "uncertainty_km": 4,
+      "identity_sources": [
+        "S03"
+      ],
+      "note": "误差圈为工作估计，未核定历史渡口、桥头或驻军位置；只有明确驻此地名的单位才可使用。"
+    },
+    "guanyang": {
+      "name": "红军长征-灌阳",
+      "coordinates": [
+        25.4916,
+        111.15541
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1809866,
+      "source_url": "https://www.geonames.org/1809866/",
+      "source_name": "Guanyang",
+      "feature_code": "PPLA3",
+      "uncertainty_km": 5,
+      "identity_sources": [
+        "S03",
+        "S04"
+      ],
+      "note": "误差圈为工作估计，未核定历史渡口、桥头或驻军位置；只有明确驻此地名的单位才可使用。"
+    },
+    "jiangjiehe": {
+      "name": "红军长征-江界河聚落",
+      "coordinates": [
+        27.3148,
+        107.402
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1806350,
+      "source_url": "https://www.geonames.org/1806350/",
+      "source_name": "Jiangjiehe",
+      "feature_code": "PPL",
+      "uncertainty_km": 5,
+      "identity_sources": [
+        "S05"
+      ],
+      "note": "误差圈为工作估计，未核定历史渡口、桥头或驻军位置；只有明确驻此地名的单位才可使用。"
+    },
+    "tucheng": {
+      "name": "红军长征-土城",
+      "coordinates": [
+        28.2925,
+        105.99389
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1792435,
+      "source_url": "https://www.geonames.org/1792435/",
+      "source_name": "Tucheng",
+      "feature_code": "PPLA4",
+      "uncertainty_km": 3,
+      "identity_sources": [
+        "S07"
+      ],
+      "note": "误差圈为工作估计，未核定历史渡口、桥头或驻军位置；只有明确驻此地名的单位才可使用。"
+    },
+    "maotai": {
+      "name": "红军长征-茅台",
+      "coordinates": [
+        27.85243,
+        106.37753
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1801143,
+      "source_url": "https://www.geonames.org/1801143/",
+      "source_name": "Maotai",
+      "feature_code": "PPL",
+      "uncertainty_km": 3,
+      "identity_sources": [
+        "S07"
+      ],
+      "note": "误差圈为工作估计，未核定历史渡口、桥头或驻军位置；只有明确驻此地名的单位才可使用。"
+    },
+    "zunyi": {
+      "name": "红军长征-遵义",
+      "coordinates": [
+        27.68667,
+        106.90722
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1783621,
+      "source_url": "https://www.geonames.org/1783621/",
+      "source_name": "Zunyi",
+      "feature_code": "PPLA2",
+      "uncertainty_km": 5,
+      "identity_sources": [
+        "S06",
+        "S07"
+      ],
+      "note": "误差圈为工作估计，未核定历史渡口、桥头或驻军位置；只有明确驻此地名的单位才可使用。"
+    },
+    "jiaopingdu": {
+      "name": "红军长征-皎平渡聚落",
+      "coordinates": [
+        26.29554,
+        102.42422
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1806028,
+      "source_url": "https://www.geonames.org/1806028/",
+      "source_name": "Jiaopingdu",
+      "feature_code": "PPL",
+      "uncertainty_km": 5,
+      "identity_sources": [
+        "S08"
+      ],
+      "note": "误差圈为工作估计，未核定历史渡口、桥头或驻军位置；只有明确驻此地名的单位才可使用。"
+    },
+    "anshun": {
+      "name": "红军长征-安顺场聚落",
+      "coordinates": [
+        29.27682,
+        102.28548
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1817967,
+      "source_url": "https://www.geonames.org/1817967/",
+      "source_name": "Anshun",
+      "feature_code": "PPL",
+      "uncertainty_km": 3,
+      "identity_sources": [
+        "S09"
+      ],
+      "note": "误差圈为工作估计，未核定历史渡口、桥头或驻军位置；只有明确驻此地名的单位才可使用。"
+    },
+    "luding": {
+      "name": "红军长征-泸定县城",
+      "coordinates": [
+        29.93246,
+        102.23163
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1801756,
+      "source_url": "https://www.geonames.org/1801756/",
+      "source_name": "Luqiao",
+      "feature_code": "PPLA3",
+      "uncertainty_km": 3,
+      "identity_sources": [
+        "S09",
+        "S10"
+      ],
+      "note": "误差圈为工作估计，未核定历史渡口、桥头或驻军位置；只有明确驻此地名的单位才可使用。"
+    },
+    "baozuo": {
+      "name": "红军长征-包座聚落",
+      "coordinates": [
+        33.4746,
+        103.36714
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 6958366,
+      "source_url": "https://www.geonames.org/6958366/",
+      "source_name": "Baozuo",
+      "feature_code": "PPL",
+      "uncertainty_km": 10,
+      "identity_sources": [
+        "S12",
+        "S13"
+      ],
+      "note": "误差圈为工作估计，未核定历史渡口、桥头或驻军位置；只有明确驻此地名的单位才可使用。"
+    },
+    "lazikou": {
+      "name": "红军长征-腊子口镇",
+      "coordinates": [
+        34.06634,
+        103.89402
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1804264,
+      "source_url": "https://www.geonames.org/1804264/",
+      "source_name": "Lazikou",
+      "feature_code": "PPLA4",
+      "uncertainty_km": 15,
+      "identity_sources": [
+        "S14"
+      ],
+      "note": "误差圈为工作估计，未核定历史渡口、桥头或驻军位置；只有明确驻此地名的单位才可使用。"
+    },
+    "zhiluo": {
+      "name": "红军长征-直罗镇",
+      "coordinates": [
+        35.95833,
+        109.00028
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1784511,
+      "source_url": "https://www.geonames.org/1784511/",
+      "source_name": "Zhiluozhen",
+      "feature_code": "PPL",
+      "uncertainty_km": 4,
+      "identity_sources": [
+        "S20",
+        "S21"
+      ],
+      "note": "误差圈为工作估计，未核定历史渡口、桥头或驻军位置；只有明确驻此地名的单位才可使用。"
+    },
+    "baizhang": {
+      "name": "红军长征-百丈镇",
+      "coordinates": [
+        30.18732,
+        103.26072
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1817206,
+      "source_url": "https://www.geonames.org/1817206/",
+      "source_name": "Baizhang",
+      "feature_code": "PPL",
+      "uncertainty_km": 5,
+      "identity_sources": [
+        "S17",
+        "S18"
+      ],
+      "note": "误差圈为工作估计，未核定历史渡口、桥头或驻军位置；只有明确驻此地名的单位才可使用。"
+    },
+    "cangxi": {
+      "name": "红军长征-苍溪县城",
+      "coordinates": [
+        31.7346,
+        105.93162
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1803514,
+      "source_url": "https://www.geonames.org/1803514/",
+      "source_name": "Lingjiang",
+      "feature_code": "PPLA3",
+      "uncertainty_km": 5,
+      "identity_sources": [
+        "S16"
+      ],
+      "note": "误差圈为工作估计，未核定历史渡口、桥头或驻军位置；只有明确驻此地名的单位才可使用。"
+    },
+    "hezhang": {
+      "name": "红军长征-赫章",
+      "coordinates": [
+        27.12222,
+        104.72389
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1808195,
+      "source_url": "https://www.geonames.org/1808195/",
+      "source_name": "Hezhang",
+      "feature_code": "PPLA3",
+      "uncertainty_km": 5,
+      "identity_sources": [
+        "S19"
+      ],
+      "note": "误差圈为工作估计，未核定历史渡口、桥头或驻军位置；只有明确驻此地名的单位才可使用。"
+    },
+    "panxian": {
+      "name": "红军长征-盘县地域",
+      "coordinates": [
+        25.76667,
+        104.65
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1799007,
+      "source_url": "https://www.geonames.org/1799007/",
+      "source_name": "Panxian",
+      "feature_code": "PPL",
+      "uncertainty_km": 8,
+      "identity_sources": [
+        "S19"
+      ],
+      "note": "误差圈为工作估计，未核定历史渡口、桥头或驻军位置；只有明确驻此地名的单位才可使用。"
+    },
+    "shigu": {
+      "name": "红军长征-石鼓镇",
+      "coordinates": [
+        26.86852,
+        99.95628
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1280006,
+      "source_url": "https://www.geonames.org/1280006/",
+      "source_name": "Shigu",
+      "feature_code": "PPL",
+      "uncertainty_km": 5,
+      "identity_sources": [
+        "S22"
+      ],
+      "note": "误差圈为工作估计，未核定历史渡口、桥头或驻军位置；只有明确驻此地名的单位才可使用。"
+    },
+    "ganzi": {
+      "name": "红军长征-甘孜",
+      "coordinates": [
+        31.62744,
+        99.99413
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1810271,
+      "source_url": "https://www.geonames.org/1810271/",
+      "source_name": "Ganzi",
+      "feature_code": "PPLA3",
+      "uncertainty_km": 5,
+      "identity_sources": [
+        "S02"
+      ],
+      "note": "误差圈为工作估计，未核定历史渡口、桥头或驻军位置；只有明确驻此地名的单位才可使用。"
+    },
+    "huining": {
+      "name": "红军长征-会宁县城",
+      "coordinates": [
+        35.69196,
+        105.04858
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1806807,
+      "source_url": "https://www.geonames.org/1806807/",
+      "source_name": "Huishi",
+      "feature_code": "PPLA3",
+      "uncertainty_km": 4,
+      "identity_sources": [
+        "S02"
+      ],
+      "note": "误差圈为工作估计，未核定历史渡口、桥头或驻军位置；只有明确驻此地名的单位才可使用。"
+    },
+    "yongping": {
+      "name": "红军长征-永坪",
+      "coordinates": [
+        37.00444,
+        109.81278
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1786276,
+      "source_url": "https://www.geonames.org/1786276/",
+      "source_name": "Yongping",
+      "feature_code": "PPL",
+      "uncertainty_km": 5,
+      "identity_sources": [
+        "S15",
+        "S02"
+      ],
+      "note": "误差圈为工作估计，未核定历史渡口、桥头或驻军位置；只有明确驻此地名的单位才可使用。"
+    },
+    "dushu": {
+      "name": "红军长征-独树镇",
+      "coordinates": [
+        33.32543,
+        113.15969
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1811783,
+      "source_url": "https://www.geonames.org/1811783/",
+      "source_name": "Dushu",
+      "feature_code": "PPLA4",
+      "uncertainty_km": 5,
+      "identity_sources": [
+        "S15"
+      ],
+      "note": "误差圈为工作估计，未核定历史渡口、桥头或驻军位置；只有明确驻此地名的单位才可使用。"
+    },
+    "yujiahe": {
+      "name": "红军长征-庾家河地域",
+      "coordinates": [
+        33.86972,
+        110.41556
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1785824,
+      "source_url": "https://www.geonames.org/1785824/",
+      "source_name": "Yujiahe",
+      "feature_code": "PPL",
+      "uncertainty_km": 5,
+      "identity_sources": [
+        "S15"
+      ],
+      "note": "误差圈为工作估计，未核定历史渡口、桥头或驻军位置；只有明确驻此地名的单位才可使用。"
+    },
+    "xiaojin": {
+      "name": "红军长征-小金县城（懋功地域）",
+      "coordinates": [
+        30.99907,
+        102.36019
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1800792,
+      "source_url": "https://www.geonames.org/1800792/",
+      "source_name": "Meixing",
+      "feature_code": "PPLA3",
+      "uncertainty_km": 6,
+      "identity_sources": [
+        "S02"
+      ],
+      "note": "误差圈为工作估计，未核定历史渡口、桥头或驻军位置；只有明确驻此地名的单位才可使用。"
+    },
+    "baxi": {
+      "name": "红军长征-巴西",
+      "coordinates": [
+        33.60697,
+        103.23396
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1816836,
+      "source_url": "https://www.geonames.org/1816836/",
+      "source_name": "Baxi",
+      "feature_code": "PPL",
+      "uncertainty_km": 6,
+      "identity_sources": [
+        "S12",
+        "S13"
+      ],
+      "note": "误差圈为工作估计，未核定历史渡口、桥头或驻军位置；只有明确驻此地名的单位才可使用。"
+    }
+  },
+  "campaigns": {
+    "红军长征-湘江战役-1934.11.25至1934.12.01": {
+      "points": [
+        "quanzhou",
+        "xingan",
+        "jieshou",
+        "guanyang"
+      ]
+    },
+    "红军长征-强渡乌江-1935.01.01至1935.01.06": {
+      "points": [
+        "jiangjiehe"
+      ]
+    },
+    "红军长征-四渡赤水-1935.01.19至1935.03.22": {
+      "points": [
+        "tucheng",
+        "maotai",
+        "zunyi"
+      ]
+    },
+    "红军长征-中央红军巧渡金沙江-1935.05.03至1935.05.09": {
+      "points": [
+        "jiaopingdu"
+      ]
+    },
+    "红军长征-强渡大渡河与飞夺泸定桥-1935.05.24至1935.05.29": {
+      "points": [
+        "anshun",
+        "luding"
+      ]
+    },
+    "红军长征-懋功会师与雪山草地转移-1935.06.12至1935.09.12": {
+      "points": [
+        "xiaojin",
+        "baxi"
+      ]
+    },
+    "红军长征-腊子口战斗-1935.09.16至1935.09.17": {
+      "points": [
+        "lazikou"
+      ]
+    },
+    "红军长征-红二十五军长征-1934.11.16至1935.09.16": {
+      "points": [
+        "dushu",
+        "yujiahe",
+        "yongping"
+      ]
+    },
+    "红军长征-嘉陵江战役-1935.03.28至1935.04.21": {
+      "points": [
+        "cangxi"
+      ]
+    },
+    "红军长征-百丈关战役-1935.11": {
+      "points": [
+        "baizhang"
+      ]
+    },
+    "红军长征-乌蒙山回旋战-1936.02.27至1936.03.28": {
+      "points": [
+        "hezhang",
+        "panxian"
+      ]
+    },
+    "红军长征-红二六军团抢渡金沙江-1936.04.25至1936.04.28": {
+      "points": [
+        "shigu"
+      ]
+    },
+    "红军长征-直罗镇战役-1935.11.20至1935.11.24": {
+      "points": [
+        "zhiluo"
+      ]
+    },
+    "红军长征-甘孜会师至三大主力会师-1936.07.01至1936.10.22": {
+      "points": [
+        "ganzi",
+        "huining"
+      ]
+    },
+    "红军长征-包座战役-1935.08.29至1935.09.01": {
+      "points": [
+        "baozuo",
+        "baxi"
+      ]
+    }
+  }
+}

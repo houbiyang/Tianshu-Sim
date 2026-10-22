@@ -120,6 +120,15 @@ class AgentToolsTest(unittest.TestCase):
         self.assertFalse(agent_tools.exec_retrieve_history(session, {})["ok"])
 
     # ---- evaluate_action：dry-run 铁律 ----
+    def test_retrieve_history_preserves_complete_long_evidence(self):
+        row = "| 5000余人 | " + "统计范围说明" * 110 + "；不是阵亡。[S11](https://example.org/source) |"
+        hit = {"source": "sample.md", "doc_title": "包座", "section": "伤亡", "score": 1,
+               "text": "| 数量 | 范围与依据 |\n|---|---|\n" + row}
+        with patch.object(agent_tools.rag, "search", return_value=[hit]):
+            result = agent_tools.exec_retrieve_history({"use_rag": True, "history": []}, {"query": "伤亡"})
+        self.assertTrue(result["ok"])
+        self.assertIn(row, result["passages"][0]["text"])
+
     def test_evaluate_action_is_dry_run(self):
         prev = _state()
         before = copy.deepcopy(prev)

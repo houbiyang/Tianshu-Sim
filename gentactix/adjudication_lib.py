@@ -55,6 +55,7 @@ META_KEYS = {
     "updated",
     "time_step",   # 建议回合跨度（给前端预填，不参与几何计算）
     "aliases",     # 用 | 分隔的历史简称；展示名仍取文件名
+    "validation_status",  # 证据状态，与是否配置过参数无关
 }
 
 # ==========================================
@@ -124,12 +125,13 @@ class BattleSpec:
     source_kind: str = "default"       # library / corpus / default
     matched_by: str = "fallback"       # explicit / exact / contains / fallback / miss
     time_step_hint: str = ""           # 战役文件建议的回合跨度（仅提示，不强制）
+    validation_status: str = "unverified"
     warnings: list = field(default_factory=list)
     errors: list = field(default_factory=list)
 
     @property
     def calibrated(self) -> bool:
-        """True 表示这场战役有专门的标定数据，False 表示在用默认几何。"""
+        """兼容旧API：仅表示已有显式配置，不代表历史或实测验证。"""
         return bool(self.explicit)
 
     def overridden(self):
@@ -150,7 +152,8 @@ class BattleSpec:
         else:
             changed = "、".join(items)
         kind = "裁决库" if self.source_kind == "library" else "语料 frontmatter"
-        return f"{self.name} · {kind} · 已标定 {len(self.explicit)} 项（{changed}）"
+        evidence = "教学估计，未经史实验证" if self.validation_status == "teaching_estimate" else "未登记验证证据"
+        return f"{self.name} · {kind} · 已配置 {len(self.explicit)} 项（{changed}）· {evidence}"
 
 
 # ==========================================
@@ -383,6 +386,7 @@ def resolve(scenario_text="", battle=None, corpus_dir=None, library_dir=None):
         source_kind=kind,
         matched_by=matched_by,
         time_step_hint=str(raw.get("time_step") or ""),
+        validation_status=str(raw.get("validation_status") or "unverified"),
         warnings=warnings,
         errors=errors,
     )

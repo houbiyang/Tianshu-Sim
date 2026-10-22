@@ -1,0 +1,269 @@
+{
+  "scope": "公开资料核读；不是穷尽档案或完成学术定论。来源按主张逐项使用。",
+  "sources": {
+    "S01": {
+      "title": "要全面地认识长征史",
+      "publisher": "中央党史和文献研究院／北京日报",
+      "url": "https://www.dswxyjy.org.cn/n1/2016/0906/c396983-28695103.html",
+      "evidence_type": "研究者综述",
+      "supports": "四路红军、起讫范围与战略目的演变",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false
+    },
+    "S02": {
+      "title": "红军长征中的会师",
+      "publisher": "国防部／中国国防报",
+      "url": "http://www.mod.gov.cn/gfbw/gfjy_index/js_214151/16418521.html",
+      "evidence_type": "战史综述",
+      "supports": "达维、永坪、甘孜、会宁与将台堡会师日期及整编",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false
+    },
+    "S03": {
+      "title": "英勇的湘江之战",
+      "publisher": "南京党史网／学习时报",
+      "url": "http://dsb.nanjing.gov.cn/xxcb/201609/t20160902_2084419.html",
+      "evidence_type": "战史回顾",
+      "supports": "11月25日命令、三处阻击、12月1日渡江；文内兵力口径另列",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false
+    },
+    "S04": {
+      "title": "倒下，为了蹚出通向胜利的道路——追忆牺牲于长征湘江战役中的红军将士",
+      "publisher": "新华社",
+      "url": "https://www.news.cn/20260910/0900c8a9ce564a8f9c39c5a22efd4f57/c.html",
+      "evidence_type": "采访报道与战史回顾",
+      "supports": "湘江主要战场、后卫战及损失叙述",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false
+    },
+    "S05": {
+      "title": "乌江：红军在这里开始反攻",
+      "publisher": "新华社",
+      "url": "https://www.xinhuanet.com/politics/2019-07/10/c_1124736075.htm",
+      "evidence_type": "采访报道，转述1935年红星报",
+      "supports": "分渡口行动、回龙场8人遇难、江界河水位变迁",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false
+    },
+    "S06": {
+      "title": "四渡赤水：高超指挥艺术的生动体现",
+      "publisher": "国防部／解放军报",
+      "url": "http://www.mod.gov.cn/gfbw/gfjy_index/js_214151/4849498.html",
+      "evidence_type": "战史分析",
+      "supports": "广义四渡赤水至5月9日；遵义战果与全程战果不可互换",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false
+    },
+    "S07": {
+      "title": "1935年1月29日 中央红军四渡赤水",
+      "publisher": "中国科学院化学研究所党史栏目",
+      "url": "http://dang.ic.cas.cn/dsjc/200401/t20040129_284278.html",
+      "evidence_type": "机构转载综述",
+      "supports": "四渡时间、地点和北渡长江计划变化；非原始命令影印",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false
+    },
+    "S08": {
+      "title": "走进红军巧渡金沙江旧址：“常胜的红军来渡江”",
+      "publisher": "国防部／中国国防报",
+      "url": "http://www.mod.gov.cn/gfbw/gfjy_index/js_214151/4882602.html",
+      "evidence_type": "实地采访报道",
+      "supports": "1935年皎平渡、4月29日指示、船只数量统计范围",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false
+    },
+    "S09": {
+      "title": "大渡河战役：红军的生死存亡之战",
+      "publisher": "国防部／解放军报",
+      "url": "http://www.mod.gov.cn/gfbw/gfjy_index/js_214151/4850116.html",
+      "evidence_type": "战史分析",
+      "supports": "安顺场夺渡、17人突击队、26日决策、29日16时夺桥",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false
+    },
+    "S10": {
+      "title": "飞夺泸定桥：中国革命史上的不朽篇章",
+      "publisher": "新华社",
+      "url": "https://www.xinhuanet.com/politics/2019-01/02/c_1123938981.htm",
+      "evidence_type": "采访与回忆转述",
+      "supports": "29日6时许抵桥、突击与铺板任务；与国防部转载为同一来源",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false
+    },
+    "S11": {
+      "title": "红军长征中有哪些重要战役战斗？",
+      "publisher": "中国军网",
+      "url": "http://www.81.cn/yw_208727/16343466.html",
+      "evidence_type": "汇编式战史综述",
+      "supports": "包座、直罗镇等范围与战果；百丈关日期另有异文",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false
+    },
+    "S12": {
+      "title": "长征革命遗址、遗迹",
+      "publisher": "若尔盖县人民政府",
+      "url": "https://www.ruoergai.gov.cn/regxrmzf/c105376/202303/f66ee6ab86f044019bfbc9170a6fe707.shtml",
+      "evidence_type": "地方遗址说明",
+      "supports": "达金寺、求吉寺、上包座及巴西历史地名关系",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false
+    },
+    "S13": {
+      "title": "红色旅游",
+      "publisher": "若尔盖县人民政府",
+      "url": "https://www.ruoergai.gov.cn/regxrmzf/c100134/201911/db408ab818ae4f109139b7c407754818.shtml",
+      "evidence_type": "地方遗址说明",
+      "supports": "包座红30军部队、毙伤与俘获分项；非逐人损失名册",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false
+    },
+    "S14": {
+      "title": "攻克腊子口天险 打通红军北上通道",
+      "publisher": "新华社",
+      "url": "https://www.xinhuanet.com/politics/2019-08/16/c_1124885996.htm",
+      "evidence_type": "采访与回忆转述",
+      "supports": "9月16日晚、半夜进攻与攀崖迂回；地形及粮食补充",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false
+    },
+    "S15": {
+      "title": "“中央红军之向导”——回望红二十五军的长征",
+      "publisher": "黑龙江政协",
+      "url": "https://www.hljzx.gov.cn/contents/68/14160.html",
+      "evidence_type": "历史回顾",
+      "supports": "出发干部、独树镇、庾家河及抵达永坪与会师区别",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false
+    },
+    "S16": {
+      "title": "嘉陵江战役：大规模强渡江河的模范战例",
+      "publisher": "中国军网／中国国防报",
+      "url": "https://www.81.cn/js_208592/jdt_208593/16209692.html",
+      "evidence_type": "战史分析",
+      "supports": "两梯队渡江、剑门关11时进攻、江油围城打援",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false
+    },
+    "S17": {
+      "title": "百丈关的红色追寻：长征精神依旧滋润着的这片红色热土",
+      "publisher": "国防部／解放军报",
+      "url": "https://www.mod.gov.cn/gfbw/gfjy_index/16296109.html",
+      "evidence_type": "采访与亲历者回忆转述",
+      "supports": "百丈关地形、15团对80团回忆及分队伤亡不可外推",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false
+    },
+    "S18": {
+      "title": "百丈关战役",
+      "publisher": "湖南红网",
+      "url": "https://news.rednet.cn/c/2014/12/02/4066470.htm",
+      "evidence_type": "媒体汇编；含评论",
+      "supports": "13日进攻、16日占领、19日反扑与21日撤出的一种时间线；评论不作事实",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false
+    },
+    "S19": {
+      "title": "乌蒙山回旋战：绝境中勇闯胜途",
+      "publisher": "国防部／解放军报",
+      "url": "https://www.mod.gov.cn/gfbw/gfjy_index/js_214151/4850739.html",
+      "evidence_type": "战史分析",
+      "supports": "2月27日至3月28日转战、野马川会议与改向",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false
+    },
+    "S20": {
+      "title": "直罗镇战役（1935年）",
+      "publisher": "中国军网",
+      "url": "https://www.81.cn/2018byzt/2018-07/31/content_8100125.htm",
+      "evidence_type": "战史综述",
+      "supports": "21日拂晓与14时、23日午夜至24日上午；整编背景有简写和异文",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false
+    },
+    "S21": {
+      "title": "直罗镇战役",
+      "publisher": "中央网信办",
+      "url": "https://www.cac.gov.cn/2016-08/22/c_1119432539.htm",
+      "evidence_type": "战史回顾",
+      "supports": "直罗镇两军团部署及24日结束；与军网同源表述不能算独立统计",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false
+    },
+    "S22": {
+      "title": "金沙水拍云崖暖——云南船工帮助红军抢渡金沙江",
+      "publisher": "中共云南省委党史研究室",
+      "url": "https://www.ynds.yn.gov.cn/html/hongsedibiaoyunlingfengbei/2022/7/8/624f38f9-1706-4338-8afc-3ca0c0f5fa41.html",
+      "evidence_type": "搜索索引可读正文片段；源站全文抓取失败",
+      "supports": "仅核得1936年4月25至28日、石鼓上游五渡口，更多细节待核",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false
+    },
+    "G01": {
+      "title": "GeoNames China country extract",
+      "publisher": "GeoNames",
+      "url": "https://download.geonames.org/export/dump/CN.zip",
+      "evidence_type": "地名数据集",
+      "supports": "WGS84现代地名位置；不证明历史阵地；CC BY 4.0",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false,
+      "download_sha256": "a545f52444c6d2f2883e7a3ad112a0f26fc17947e10360e0ab8d8202d9d73716"
+    },
+    "S23": {
+      "title": "彩旗飘扬迎红军 红旗直指金沙江",
+      "publisher": "文化和旅游部专题",
+      "url": "https://zhuanti.mct.gov.cn/history_detail/776.html",
+      "evidence_type": "地方史实介绍／回顾；已读检索返回正文",
+      "supports": "1936年渡江部队、25至28日窗口、船筏及事故；非完整损失名册",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false
+    },
+    "S24": {
+      "title": "追寻红色记忆 传承革命精神",
+      "publisher": "云南人大网",
+      "url": "https://www.ynrd.gov.cn/html/2021/bainiandangshi_0512/12435.html",
+      "evidence_type": "地方史实介绍／回顾；已读检索返回正文",
+      "supports": "4月25日先头、26日下午主力起渡、27日各部渡运",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false
+    },
+    "S25": {
+      "title": "红军长征过丽江纪念馆：红军长征再渡金沙江",
+      "publisher": "中共云南省委党史研究室",
+      "url": "https://www.ynds.yn.gov.cn/html/hongseyinji/2023/12/3/4ebe0df8-f81d-4dac-8cb7-3e7835414254.html",
+      "evidence_type": "地方史实介绍／回顾；已读检索返回正文",
+      "supports": "纪念馆与渡江记述；27日全部渡完及25日中午表述与其他来源有异文",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false
+    },
+    "S26": {
+      "title": "中国共产党历史（第一卷）上册·第十二章 遵义会议和红军长征的胜利",
+      "publisher": "中共中央党史研究室／求是网",
+      "url": "https://www.qstheory.cn/books/2019-07/31/c_1119408590_12.htm",
+      "evidence_type": "正式党史著作公开章节",
+      "supports": "土城日期、遵义后领导分工、两河口至俄界决策及左右路军编组；按章内记载使用，非原始电报影印",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false
+    },
+    "S27": {
+      "title": "强军文化专刊·军史发现丨包座战斗",
+      "publisher": "中国军网／解放军报",
+      "url": "http://www.81.cn/yw_208727/16491657.html",
+      "evidence_type": "军史回顾",
+      "published": "2026-10-09",
+      "supports": "8月29日黄昏攻点、31日15时打援与9月1日凌晨投降的记载；红4军第10师求吉寺方向；与S12收束日期并列；文末毙伤4000余、俘800余分项",
+      "caveat": "文中第89师第264团的隶属表述不据以建立完整编制表；气象和逐人动作未独立核实。",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false
+    },
+    "S28": {
+      "title": "天险腊子口战役遗址（甘肃篇）",
+      "publisher": "中央党史和文献研究院网站",
+      "url": "https://www.dswxyjy.org.cn/n/2013/0407/c222137-21044764.html",
+      "evidence_type": "遗址说明",
+      "supports": "腊子口遗址身份及9月16日表述；没有给出战时桥头或工事经纬度，不作精确定位证据",
+      "accessed": "2026-10-22",
+      "original_archive_examined": false
+    }
+  }
+}

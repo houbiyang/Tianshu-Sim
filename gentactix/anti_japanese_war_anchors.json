@@ -1,0 +1,711 @@
+{
+  "checked": "2026-10-22",
+  "display_crs": "WGS84",
+  "precision_note": "仅现代聚落参考，不是战术点或射界数据。",
+  "sources": {
+    "geonames-cn": {
+      "url": "https://download.geonames.org/export/dump/CN.zip",
+      "license": "CC BY 4.0",
+      "attribution": "GeoNames (https://www.geonames.org/)",
+      "accessed": "2026-10-22",
+      "download_sha256": "a545f52444c6d2f2883e7a3ad112a0f26fc17947e10360e0ab8d8202d9d73716"
+    }
+  },
+  "points": {
+    "shanghai": {
+      "name": "抗日战争-上海",
+      "coordinates": [
+        31.22222,
+        121.45806
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1796236,
+      "source_url": "https://www.geonames.org/1796236/",
+      "source_name": "Shanghai",
+      "feature_code": "PPLA",
+      "uncertainty_km": 10,
+      "identity_sources": [
+        "A01",
+        "A02",
+        "A03",
+        "A39",
+        "A40"
+      ],
+      "note": "坐标身份仅为现代聚落；误差圈是工作估计，不涵盖整个会战，不表示阵地测量精度。地域选择参见对应史料卡。"
+    },
+    "taiyuan": {
+      "name": "抗日战争-太原",
+      "coordinates": [
+        37.86944,
+        112.56028
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1793511,
+      "source_url": "https://www.geonames.org/1793511/",
+      "source_name": "Taiyuan",
+      "feature_code": "PPLA",
+      "uncertainty_km": 8,
+      "identity_sources": [
+        "A04",
+        "A05",
+        "A22",
+        "A23",
+        "A24"
+      ],
+      "note": "坐标身份仅为现代聚落；误差圈是工作估计，不涵盖整个会战，不表示阵地测量精度。地域选择参见对应史料卡。"
+    },
+    "yangquan": {
+      "name": "抗日战争-阳泉",
+      "coordinates": [
+        37.8575,
+        113.56333
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1787351,
+      "source_url": "https://www.geonames.org/1787351/",
+      "source_name": "Yangquan",
+      "feature_code": "PPLA2",
+      "uncertainty_km": 8,
+      "identity_sources": [
+        "A04",
+        "A05",
+        "A22",
+        "A23",
+        "A24"
+      ],
+      "note": "坐标身份仅为现代聚落；误差圈是工作估计，不涵盖整个会战，不表示阵地测量精度。地域选择参见对应史料卡。"
+    },
+    "lingqiu": {
+      "name": "抗日战争-灵丘县城（武灵镇）",
+      "coordinates": [
+        39.46799,
+        114.14843
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1803486,
+      "source_url": "https://www.geonames.org/1803486/",
+      "source_name": "Wuling",
+      "feature_code": "PPLA3",
+      "uncertainty_km": 8,
+      "identity_sources": [
+        "A04",
+        "A05",
+        "A06"
+      ],
+      "note": "坐标身份仅为现代聚落；误差圈是工作估计，不涵盖整个会战，不表示阵地测量精度。地域选择参见对应史料卡。"
+    },
+    "xuzhou": {
+      "name": "抗日战争-徐州",
+      "coordinates": [
+        34.20442,
+        117.28386
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 10630003,
+      "source_url": "https://www.geonames.org/10630003/",
+      "source_name": "Xuzhou",
+      "feature_code": "PPLA2",
+      "uncertainty_km": 15,
+      "identity_sources": [
+        "A07",
+        "A09",
+        "A36"
+      ],
+      "note": "坐标身份仅为现代聚落；误差圈是工作估计，不涵盖整个会战，不表示阵地测量精度。地域选择参见对应史料卡。"
+    },
+    "taierzhuang": {
+      "name": "抗日战争-台儿庄",
+      "coordinates": [
+        34.55528,
+        117.73917
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1793694,
+      "source_url": "https://www.geonames.org/1793694/",
+      "source_name": "Tai’erzhuang",
+      "feature_code": "PPL",
+      "uncertainty_km": 4,
+      "identity_sources": [
+        "A07",
+        "A08",
+        "A09",
+        "A36"
+      ],
+      "note": "坐标身份仅为现代聚落；误差圈是工作估计，不涵盖整个会战，不表示阵地测量精度。地域选择参见对应史料卡。"
+    },
+    "linyi": {
+      "name": "抗日战争-临沂",
+      "coordinates": [
+        35.06306,
+        118.34278
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1803318,
+      "source_url": "https://www.geonames.org/1803318/",
+      "source_name": "Linyi",
+      "feature_code": "PPLA2",
+      "uncertainty_km": 10,
+      "identity_sources": [
+        "A07",
+        "A08",
+        "A09",
+        "A36"
+      ],
+      "note": "坐标身份仅为现代聚落；误差圈是工作估计，不涵盖整个会战，不表示阵地测量精度。地域选择参见对应史料卡。"
+    },
+    "wuhan": {
+      "name": "抗日战争-武汉",
+      "coordinates": [
+        30.58333,
+        114.26667
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1791247,
+      "source_url": "https://www.geonames.org/1791247/",
+      "source_name": "Wuhan",
+      "feature_code": "PPLA",
+      "uncertainty_km": 15,
+      "identity_sources": [
+        "A10",
+        "A11"
+      ],
+      "note": "坐标身份仅为现代聚落；误差圈是工作估计，不涵盖整个会战，不表示阵地测量精度。地域选择参见对应史料卡。"
+    },
+    "dean": {
+      "name": "抗日战争-德安县城",
+      "coordinates": [
+        29.32997,
+        115.75574
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1798443,
+      "source_url": "https://www.geonames.org/1798443/",
+      "source_name": "De’an",
+      "feature_code": "PPLA3",
+      "uncertainty_km": 8,
+      "identity_sources": [
+        "A10",
+        "A11",
+        "A12"
+      ],
+      "note": "坐标身份仅为现代聚落；误差圈是工作估计，不涵盖整个会战，不表示阵地测量精度。地域选择参见对应史料卡。"
+    },
+    "jiujiang": {
+      "name": "抗日战争-九江",
+      "coordinates": [
+        29.70475,
+        116.00206
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1805179,
+      "source_url": "https://www.geonames.org/1805179/",
+      "source_name": "Jiujiang",
+      "feature_code": "PPLA2",
+      "uncertainty_km": 8,
+      "identity_sources": [
+        "A10",
+        "A11"
+      ],
+      "note": "坐标身份仅为现代聚落；误差圈是工作估计，不涵盖整个会战，不表示阵地测量精度。地域选择参见对应史料卡。"
+    },
+    "changsha": {
+      "name": "抗日战争-长沙",
+      "coordinates": [
+        28.19874,
+        112.97087
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1815577,
+      "source_url": "https://www.geonames.org/1815577/",
+      "source_name": "Changsha",
+      "feature_code": "PPLA",
+      "uncertainty_km": 10,
+      "identity_sources": [
+        "A13",
+        "A14",
+        "A15",
+        "A18",
+        "A19",
+        "A37"
+      ],
+      "note": "坐标身份仅为现代聚落；误差圈是工作估计，不涵盖整个会战，不表示阵地测量精度。地域选择参见对应史料卡。"
+    },
+    "yueyang": {
+      "name": "抗日战争-岳阳",
+      "coordinates": [
+        29.36778,
+        113.12019
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 13457912,
+      "source_url": "https://www.geonames.org/13457912/",
+      "source_name": "Yueyang",
+      "feature_code": "PPLA2",
+      "uncertainty_km": 10,
+      "identity_sources": [
+        "A13",
+        "A14",
+        "A15"
+      ],
+      "note": "坐标身份仅为现代聚落；误差圈是工作估计，不涵盖整个会战，不表示阵地测量精度。地域选择参见对应史料卡。"
+    },
+    "nanning": {
+      "name": "抗日战争-南宁",
+      "coordinates": [
+        22.81667,
+        108.31667
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1799869,
+      "source_url": "https://www.geonames.org/1799869/",
+      "source_name": "Nanning",
+      "feature_code": "PPLA",
+      "uncertainty_km": 10,
+      "identity_sources": [
+        "A16",
+        "A17",
+        "A18",
+        "A19",
+        "A37"
+      ],
+      "note": "坐标身份仅为现代聚落；误差圈是工作估计，不涵盖整个会战，不表示阵地测量精度。地域选择参见对应史料卡。"
+    },
+    "binyang": {
+      "name": "抗日战争-宾阳县城",
+      "coordinates": [
+        23.2206,
+        108.80463
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1801675,
+      "source_url": "https://www.geonames.org/1801675/",
+      "source_name": "Binyang",
+      "feature_code": "PPLA3",
+      "uncertainty_km": 8,
+      "identity_sources": [
+        "A16",
+        "A17"
+      ],
+      "note": "坐标身份仅为现代聚落；误差圈是工作估计，不涵盖整个会战，不表示阵地测量精度。地域选择参见对应史料卡。"
+    },
+    "zhengzhou": {
+      "name": "抗日战争-郑州",
+      "coordinates": [
+        34.75778,
+        113.64861
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1784658,
+      "source_url": "https://www.geonames.org/1784658/",
+      "source_name": "Zhengzhou",
+      "feature_code": "PPLA",
+      "uncertainty_km": 12,
+      "identity_sources": [
+        "A18",
+        "A19",
+        "A37"
+      ],
+      "note": "坐标身份仅为现代聚落；误差圈是工作估计，不涵盖整个会战，不表示阵地测量精度。地域选择参见对应史料卡。"
+    },
+    "hengyang": {
+      "name": "抗日战争-衡阳",
+      "coordinates": [
+        26.88946,
+        112.61888
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1808370,
+      "source_url": "https://www.geonames.org/1808370/",
+      "source_name": "Hengyang",
+      "feature_code": "PPL",
+      "uncertainty_km": 8,
+      "identity_sources": [
+        "A18",
+        "A19",
+        "A20",
+        "A21",
+        "A37"
+      ],
+      "note": "坐标身份仅为现代聚落；误差圈是工作估计，不涵盖整个会战，不表示阵地测量精度。地域选择参见对应史料卡。"
+    },
+    "guilin": {
+      "name": "抗日战争-桂林",
+      "coordinates": [
+        25.28022,
+        110.29639
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1809498,
+      "source_url": "https://www.geonames.org/1809498/",
+      "source_name": "Guilin",
+      "feature_code": "PPLA2",
+      "uncertainty_km": 8,
+      "identity_sources": [
+        "A18",
+        "A19",
+        "A37"
+      ],
+      "note": "坐标身份仅为现代聚落；误差圈是工作估计，不涵盖整个会战，不表示阵地测量精度。地域选择参见对应史料卡。"
+    },
+    "liuzhou": {
+      "name": "抗日战争-柳州",
+      "coordinates": [
+        24.32405,
+        109.40698
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1803300,
+      "source_url": "https://www.geonames.org/1803300/",
+      "source_name": "Liuzhou",
+      "feature_code": "PPLA2",
+      "uncertainty_km": 8,
+      "identity_sources": [
+        "A18",
+        "A19",
+        "A37"
+      ],
+      "note": "坐标身份仅为现代聚落；误差圈是工作估计，不涵盖整个会战，不表示阵地测量精度。地域选择参见对应史料卡。"
+    },
+    "shijiazhuang": {
+      "name": "抗日战争-石家庄",
+      "coordinates": [
+        38.04139,
+        114.47861
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1795270,
+      "source_url": "https://www.geonames.org/1795270/",
+      "source_name": "Shijiazhuang",
+      "feature_code": "PPLA",
+      "uncertainty_km": 10,
+      "identity_sources": [
+        "A22",
+        "A23",
+        "A24",
+        "A27"
+      ],
+      "note": "坐标身份仅为现代聚落；误差圈是工作估计，不涵盖整个会战，不表示阵地测量精度。地域选择参见对应史料卡。"
+    },
+    "hengshui": {
+      "name": "抗日战争-衡水",
+      "coordinates": [
+        37.73908,
+        115.68348
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1808392,
+      "source_url": "https://www.geonames.org/1808392/",
+      "source_name": "Hengshui",
+      "feature_code": "PPLA2",
+      "uncertainty_km": 10,
+      "identity_sources": [
+        "A25",
+        "A26"
+      ],
+      "note": "坐标身份仅为现代聚落；误差圈是工作估计，不涵盖整个会战，不表示阵地测量精度。地域选择参见对应史料卡。"
+    },
+    "renqiu": {
+      "name": "抗日战争-任丘",
+      "coordinates": [
+        38.70941,
+        116.10086
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1797181,
+      "source_url": "https://www.geonames.org/1797181/",
+      "source_name": "Renqiu",
+      "feature_code": "PPLA3",
+      "uncertainty_km": 8,
+      "identity_sources": [
+        "A25",
+        "A26"
+      ],
+      "note": "坐标身份仅为现代聚落；误差圈是工作估计，不涵盖整个会战，不表示阵地测量精度。地域选择参见对应史料卡。"
+    },
+    "huaian": {
+      "name": "抗日战争-淮安",
+      "coordinates": [
+        33.58861,
+        119.01917
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1797873,
+      "source_url": "https://www.geonames.org/1797873/",
+      "source_name": "Huai'an",
+      "feature_code": "PPL",
+      "uncertainty_km": 10,
+      "identity_sources": [
+        "A27",
+        "A28",
+        "A29",
+        "A30"
+      ],
+      "note": "坐标身份仅为现代聚落；误差圈是工作估计，不涵盖整个会战，不表示阵地测量精度。地域选择参见对应史料卡。"
+    },
+    "cheqiao": {
+      "name": "抗日战争-江苏淮安车桥",
+      "coordinates": [
+        33.46667,
+        119.4
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1815045,
+      "source_url": "https://www.geonames.org/1815045/",
+      "source_name": "Cheqiao",
+      "feature_code": "PPL",
+      "uncertainty_km": 4,
+      "identity_sources": [
+        "A28",
+        "A29",
+        "A30"
+      ],
+      "note": "坐标身份仅为现代聚落；误差圈是工作估计，不涵盖整个会战，不表示阵地测量精度。地域选择参见对应史料卡。"
+    },
+    "zhijiang": {
+      "name": "抗日战争-芷江县城",
+      "coordinates": [
+        27.45814,
+        109.6592
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1784525,
+      "source_url": "https://www.geonames.org/1784525/",
+      "source_name": "Zhijiang",
+      "feature_code": "PPLA3",
+      "uncertainty_km": 6,
+      "identity_sources": [
+        "A31",
+        "A32"
+      ],
+      "note": "坐标身份仅为现代聚落；误差圈是工作估计，不涵盖整个会战，不表示阵地测量精度。地域选择参见对应史料卡。"
+    },
+    "dongkou": {
+      "name": "抗日战争-洞口县城",
+      "coordinates": [
+        27.05272,
+        110.5361
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1812420,
+      "source_url": "https://www.geonames.org/1812420/",
+      "source_name": "Dongkou",
+      "feature_code": "PPLA3",
+      "uncertainty_km": 6,
+      "identity_sources": [
+        "A31",
+        "A32"
+      ],
+      "note": "坐标身份仅为现代聚落；误差圈是工作估计，不涵盖整个会战，不表示阵地测量精度。地域选择参见对应史料卡。"
+    },
+    "tengchong": {
+      "name": "抗日战争-腾冲（腾越）",
+      "coordinates": [
+        24.99492,
+        98.51276
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1279891,
+      "source_url": "https://www.geonames.org/1279891/",
+      "source_name": "Tengyue",
+      "feature_code": "PPLA3",
+      "uncertainty_km": 8,
+      "identity_sources": [
+        "A18",
+        "A33",
+        "A38"
+      ],
+      "note": "坐标身份仅为现代聚落；误差圈是工作估计，不涵盖整个会战，不表示阵地测量精度。地域选择参见对应史料卡。"
+    },
+    "longling": {
+      "name": "抗日战争-龙陵县城（龙山）",
+      "coordinates": [
+        24.60089,
+        98.70418
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 1280694,
+      "source_url": "https://www.geonames.org/1280694/",
+      "source_name": "Longshan",
+      "feature_code": "PPLA3",
+      "uncertainty_km": 8,
+      "identity_sources": [
+        "A18",
+        "A33",
+        "A38"
+      ],
+      "note": "坐标身份仅为现代聚落；误差圈是工作估计，不涵盖整个会战，不表示阵地测量精度。地域选择参见对应史料卡。"
+    },
+    "zhangjiakou": {
+      "name": "抗日战争-张家口",
+      "coordinates": [
+        40.78341,
+        114.87139
+      ],
+      "kind": "现代地名参考点（非战术阵地）",
+      "source": "geonames-cn",
+      "geoname_id": 2033196,
+      "source_url": "https://www.geonames.org/2033196/",
+      "source_name": "Zhangjiakou",
+      "feature_code": "PPLA2",
+      "uncertainty_km": 10,
+      "identity_sources": [
+        "A01",
+        "A34",
+        "A35"
+      ],
+      "note": "坐标身份仅为现代聚落；误差圈是工作估计，不涵盖整个会战，不表示阵地测量精度。地域选择参见对应史料卡。"
+    }
+  },
+  "campaigns": {
+    "抗日战争-淞沪会战-1937.08.13至1937.11.12": {
+      "points": [
+        "shanghai"
+      ]
+    },
+    "抗日战争-太原会战-1937.09至1937.11": {
+      "points": [
+        "taiyuan",
+        "yangquan",
+        "lingqiu"
+      ]
+    },
+    "抗日战争-平型关伏击战-1937.09.25": {
+      "points": [
+        "lingqiu"
+      ]
+    },
+    "抗日战争-徐州会战总览-1938.01至1938.05": {
+      "points": [
+        "xuzhou",
+        "taierzhuang",
+        "linyi"
+      ]
+    },
+    "抗日战争-台儿庄战役-1938.03.23至1938.04.07": {
+      "points": [
+        "taierzhuang",
+        "linyi"
+      ]
+    },
+    "抗日战争-武汉会战-1938.06至1938.10": {
+      "points": [
+        "wuhan",
+        "jiujiang",
+        "dean"
+      ]
+    },
+    "抗日战争-万家岭战役-1938.09下旬至1938.10": {
+      "points": [
+        "dean"
+      ]
+    },
+    "抗日战争-第一次长沙会战-1939.09.14至1939.10": {
+      "points": [
+        "changsha",
+        "yueyang"
+      ]
+    },
+    "抗日战争-第二次长沙会战-1941.09.07至1941.10.09": {
+      "points": [
+        "changsha",
+        "yueyang"
+      ]
+    },
+    "抗日战争-第三次长沙会战-1941.12.24至1942.01.16": {
+      "points": [
+        "changsha",
+        "yueyang"
+      ]
+    },
+    "抗日战争-桂南会战与昆仑关攻坚-1939.11至1940.01": {
+      "points": [
+        "nanning",
+        "binyang"
+      ]
+    },
+    "抗日战争-豫湘桂战役总览-1944.04至1944.12": {
+      "points": [
+        "zhengzhou",
+        "changsha",
+        "hengyang",
+        "guilin",
+        "liuzhou",
+        "nanning"
+      ]
+    },
+    "抗日战争-衡阳保卫战-1944.06至1944.08.08": {
+      "points": [
+        "hengyang"
+      ]
+    },
+    "抗日战争-百团大战-1940.08.20至1941.01.24": {
+      "points": [
+        "shijiazhuang",
+        "yangquan",
+        "taiyuan"
+      ]
+    },
+    "抗日战争-冀中五一反扫荡-1942.05.01至1942.06.20": {
+      "points": [
+        "hengshui",
+        "renqiu"
+      ]
+    },
+    "抗日战争-敌后局部反攻总览-1944": {
+      "points": [
+        "shijiazhuang",
+        "huaian"
+      ]
+    },
+    "抗日战争-车桥战役-1944.03.05至1944.03.06": {
+      "points": [
+        "cheqiao",
+        "huaian"
+      ]
+    },
+    "抗日战争-湘西会战-1945.04.09至1945.06.07": {
+      "points": [
+        "zhijiang",
+        "dongkou"
+      ]
+    },
+    "抗日战争-缅北滇西反攻总览-1943.10至1945.03": {
+      "points": [
+        "tengchong",
+        "longling"
+      ]
+    },
+    "抗日战争-全面反攻与受降总览-1945.08至1945.09": {
+      "points": [
+        "zhangjiakou"
+      ]
+    }
+  }
+}

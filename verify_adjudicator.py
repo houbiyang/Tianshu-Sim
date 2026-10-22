@@ -304,13 +304,13 @@ plain = adj.adjudicate(changping, "30分钟", turn=1)
 over = adj.adjudicate(changping, "30分钟", turn=1, params={"terrain_factor": 2.0})
 check("未标定时地形来自模型标签", plain["terrain_source"] == "模型地形标签", plain.get("terrain_source"))
 check("标定后地形系数取参数库值", over["terrain_factor"] == 2.0, over["terrain_factor"])
-check("标定后注明来源", over["terrain_source"] == "战役参数库标定", over.get("terrain_source"))
+check("标定后注明来源", over["terrain_source"] == "战役参数库配置", over.get("terrain_source"))
 check("机动按标定系数重算（1.6→2.0 即 ×0.8）",
       all(abs(o["reach_km"] - p["reach_km"] * 0.8) <= 0.03
           for p, o in zip(plain["units"], over["units"])),
       [(p["reach_km"], o["reach_km"]) for p, o in zip(plain["units"], over["units"])])
 check("标定改变结论 ⇒ 指纹不同", plain["fingerprint"] != over["fingerprint"])
-check("注入 prompt 的裁决块注明来源", "战役参数库标定" in over["digest"])
+check("注入 prompt 的裁决块注明来源", "战役参数库配置" in over["digest"])
 check("DEFAULT 里的 terrain_factor 默认值不算标定",
       adj.adjudicate(changping, "30分钟", turn=1, params={})["terrain_source"] == "模型地形标签")
 

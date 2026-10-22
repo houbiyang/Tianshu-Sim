@@ -287,6 +287,17 @@ class DesktopBackendTest(unittest.TestCase):
         items = self.client.get("/api/battles").json()["battles"]
         cp = next(b for b in items if b["name"] == "长平之战")
         self.assertEqual(cp["time_step"], "6小时")
+        long_march = [b for b in items if b["name"].startswith("红军长征-")]
+        self.assertEqual(len(long_march), 15)
+        self.assertEqual(len({b["name"] for b in long_march}), 15)
+        bridge = next(b for b in long_march if "飞夺泸定桥" in b["name"])
+        self.assertEqual(bridge["time_step"], "30分钟")
+        anti_japanese = [b for b in items if b["name"].startswith("抗日战争-")]
+        self.assertEqual(len(anti_japanese), 20)
+        self.assertEqual(len({b["name"] for b in anti_japanese}), 20)
+        self.assertEqual(len([b for b in anti_japanese if "长沙会战" in b["name"]]), 3)
+        cheqiao = next(b for b in anti_japanese if "车桥战役" in b["name"])
+        self.assertEqual(cheqiao["time_step"], "30分钟")
 
     def test_create_and_session_guards(self):
         self.assertEqual(self.client.post("/api/sessions", json={"scenario": "  "}).status_code, 422)
@@ -318,7 +329,7 @@ class DesktopBackendTest(unittest.TestCase):
         self.assertEqual(snap["adjudication"]["spec"]["time_step_hint"], "6小时")
         # 地形系数按战役标定覆盖模型标签（测试状态没写 current_terrain → 模型标签为空）
         self.assertEqual(snap["adjudication"]["last"]["terrain_factor"], 1.4)
-        self.assertEqual(snap["adjudication"]["last"]["terrain_source"], "战役参数库标定")
+        self.assertEqual(snap["adjudication"]["last"]["terrain_source"], "战役参数库配置")
         # RAG 关闭也要有可见说明，而不是静默
         self.assertEqual(snap["rag"]["last"]["note"], "史料检索未开启")
         self.assertIsNone(snap["integrity"]["roster"])

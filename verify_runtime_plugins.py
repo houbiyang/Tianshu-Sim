@@ -87,7 +87,7 @@ class RuntimePluginTests(unittest.TestCase):
         self.assertEqual(snap['time_step'], '15分钟')
         self.assertTrue(snap['adjudication']['enabled'])
         self.assertEqual(snap['settings'], {'use_agent_tools': True, 'persist_roles': True,
-                                          'agent_mode': 'native', 'use_live_intel': False})
+                                          'agent_mode': 'native', 'use_live_intel': False, 'simulation_mode': 'open', 'mission_id': None})
 
     def advance(self, sid):
         self.responses.append(advanced())

@@ -106,11 +106,12 @@ def exec_retrieve_history(session, args) -> dict:
         out["passages_note"] = "史料检索未开启"
     else:
         scoped_query = " ".join(filter(None, (session.get("scenario_input", ""), query)))
-        hits = rag.search(scoped_query, top_k=4, battle=session.get("battle_choice"))
-        text, used = rag.build_briefing(hits, max_chars=2200)
+        hits = rag.search(scoped_query, top_k=4, battle=session.get("battle_choice"), phase='step',
+                          simulation_mode=session.get('simulation_mode', 'open'))
+        passages = rag.select_passages(hits, max_chars=2200)
         out["passages"] = [
-            {"doc_title": h["doc_title"], "section": h["section"], "text": h["text"][:600]}
-            for h in hits[:used]
+            {"doc_title": h["doc_title"], "section": h["section"], "text": h["text"]}
+            for h in passages
         ]
         if not hits:
             out["passages_note"] = "未命中相关史料"

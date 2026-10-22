@@ -81,11 +81,13 @@ const delta = (m: MetricContrast) => m.delta > 0 ? `+${m.delta}` : String(m.delt
       </tbody></table></div>
       <p v-for="(pair, i) in current?.interactions.filter(p => p.nonadditive) ?? []" :key="i" class="muted">{{ pair.units.join(' + ') }}：联合撤销改变{{ pair.joint_status_changes }}项，单项合计{{ pair.single_counts_sum }}项，存在非加性。</p>
 
+      <p v-if="snap.war_state?.mission" class="muted">本局采用固定命令规则，可在地图上方的目标面板对照红方待命决策；下方模型改写状态分支不适用。</p>
+      <p v-if="snap.settings?.simulation_mode === 'replay'" class="muted">历史回放不用于反事实验收，请创建开放推演会话。</p>
       <h4>改变决策 · 成对模型重演</h4>
       <p class="muted">从选定决策之前的同一DSH事件前缀分出对照与干预两条原生子会话。每组调用模型2次，原战局保持不变；随机采样未受控，差异属于推演证据。</p>
       <label class="instruction">替代决策<textarea v-model="instruction" :disabled="disabled" maxlength="3000" placeholder="例如：红方先保持原位，延后一回合再实施侧翼机动；其他条件不变。"></textarea></label>
       <div class="toolbar"><label>重演组数 <select v-model="samples" :disabled="disabled"><option :value="1">1组</option><option :value="2">2组</option><option :value="3">3组</option></select></label>
-        <button :disabled="disabled || !turns.length || !instruction.trim()" @click="branch">运行成对反事实（{{ samples * 2 }}次调用）</button></div>
+        <button :disabled="disabled || !!snap.war_state?.mission || snap.settings?.simulation_mode === 'replay' || !turns.length || !instruction.trim()" @click="branch">运行成对反事实（{{ samples * 2 }}次调用）</button></div>
       <p v-if="localBusy" role="status">{{ localBusy }}</p>
       <article v-if="result" class="branch-result" data-testid="counterfactual-result"><b>{{ result.mode === 'controlled_geometry' ? '单步几何反事实' : '成对模型反事实' }} · T+{{ result.turn }} · {{ result.read_only ? '只读' : '状态未确认' }}</b><p>{{ result.scope }}</p>
         <ul v-if="result.status_changes?.length"><li v-for="(change, i) in result.status_changes.slice(0, 12)" :key="i">{{ change.name }} · {{ fieldName(change.field) }}：{{ valueName(change.factual) }} → {{ valueName(change.alternative) }}</li></ul>
