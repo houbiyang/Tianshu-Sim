@@ -31,7 +31,7 @@
 在源码工作区中，也可为 AppImage 安装当前用户的菜单项和桌面图标：
 
 ```bash
-python3 tools/install_linux.py release/GenTactix-DSH-3.1.2-x86_64.AppImage --project-root .
+python3 tools/install_linux.py release/GenTactix-DSH-3.1.3-x86_64.AppImage --project-root .
 ```
 
 详细步骤、构建方法及配置迁移见[桌面使用说明](docs/桌面启动与配置.md)。当前提供 Linux 包，尚未验证 Windows 或 macOS 安装包。
@@ -84,7 +84,7 @@ npm --prefix frontend run typecheck
 npm --prefix frontend run build
 ```
 
-完整测试范围见 [TESTING.md](TESTING.md)。[3.1.2 验收报告](docs/发布验收-3.1.2.md)记录了上甘岭局部四单位想定的 20 回合真实模型测试、恢复过程、中途修复和未覆盖项目；这不代表所有战役与模型行为均已验证。
+完整测试范围见 [TESTING.md](TESTING.md)。[50步审计](docs/50步推演与输出审计-2026-10-22.md)保留真实运行中的失败和语义问题；[3.1.3 修复记录](docs/补给射界与战报一致性修复-2026-10-22.md)说明补给、射界与战报校验，并记录历史回放、4步真实续推及复盘复测。这不代表所有战役与模型行为均已验证。
 
 程序提供教学推演与解释辅助。模型生成的伤亡、士气和归因不是经过验证的战斗效能或因果结论；HP 也不等于人员数量。几何裁决默认关闭，不能替代弹道、地形遮蔽或后勤吞吐模型。地图射界为示意图层，离线底图为粗略轮廓，在线瓦片需要网络。DSH 使用方式及反事实边界见[架构说明](docs/因果分析与DSH插件架构.md)。
 

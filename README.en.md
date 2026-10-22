@@ -31,7 +31,7 @@ Download a Linux x86_64 package from [Releases](https://github.com/snow-wind-001
 From a source checkout, install an AppImage with a per-user menu entry and desktop icon:
 
 ```bash
-python3 tools/install_linux.py release/GenTactix-DSH-3.1.2-x86_64.AppImage --project-root .
+python3 tools/install_linux.py release/GenTactix-DSH-3.1.3-x86_64.AppImage --project-root .
 ```
 
 See the [desktop guide (Chinese)](docs/桌面启动与配置.md) for packaging and configuration migration. Linux packages are provided; Windows and macOS packages have not been validated.
@@ -84,7 +84,7 @@ npm --prefix frontend run typecheck
 npm --prefix frontend run build
 ```
 
-See [TESTING.md](TESTING.md) for coverage. The [3.1.2 acceptance report](docs/发布验收-3.1.2.md) documents a live 20-turn test of a four-unit local Shangganling scenario, including recovery, fixes made during the run and untested areas. It does not establish correctness across all campaigns or model behaviors.
+See [TESTING.md](TESTING.md) for coverage. The [50-turn audit (Chinese)](docs/50步推演与输出审计-2026-10-22.md) preserves live failures and semantic issues. The [3.1.3 repair report (Chinese)](docs/补给射界与战报一致性修复-2026-10-22.md) covers supply, firing geometry and report validation, with historical replay, four live continuation turns and review checks. These tests do not establish correctness across all campaigns or model behaviors.
 
 This is a teaching and interpretation aid. Model-generated casualties, morale and attribution are not validated combat-effectiveness estimates or causal findings; HP is not a personnel count. Geometric adjudication is off by default and does not replace ballistics, terrain occlusion or logistics throughput models. Fields of fire are illustrative overlays. The offline map provides coarse outlines; online tiles require a network connection. See the [architecture notes (Chinese)](docs/因果分析与DSH插件架构.md) for DSH integration and counterfactual boundaries.
 
