@@ -115,6 +115,51 @@ class DesktopBackendTest(unittest.TestCase):
         return res.json()
 
     # ---- 健康与守卫 ----
+    def test_empty_recovery_commits_exactly_one_turn_and_failure_preserves_checkpoint(self):
+        from verify_harness_engine import FakeHarness
+        from backend import session_store
+        for outputs, expected in ((['', json.dumps({'updated_state': _init_state(30), 'report': '推进完毕'})], 200),
+                                  (['', ''], 502), (['', 'broken JSON'], 502)):
+            sid = self._create(); self._init(sid)
+            before = copy.deepcopy(backend_main._SESSIONS[sid])
+            fake = FakeHarness(outputs)
+            with patch.object(harness_engine, 'complete_ex', self._real_complete_ex), \
+                 patch.object(harness_engine, 'get_harness', return_value=fake):
+                response = self.client.post(f'/api/sessions/{sid}/next')
+            self.assertEqual(response.status_code, expected, response.text)
+            after = backend_main._SESSIONS[sid]
+            self.assertEqual(len(fake.prompts), 2)
+            if expected == 200:
+                self.assertEqual(after['turn_count'], before['turn_count'] + 1)
+                self.assertEqual(len(after['history']), len(before['history']) + 1)
+                self.assertEqual(len(after['trajectory']), len(before['trajectory']) + 1)
+                self.assertEqual(after['war_state']['current_time'], '前262年四月 · T+30分钟')
+                self.assertEqual(after['engine_last_meta']['empty_recoveries'], 1)
+            else:
+                for field in ('war_state', 'last_war_state', 'turn_count', 'history', 'trajectory', 'decision_log'):
+                    self.assertEqual(after[field], before[field], field)
+                    self.assertEqual(session_store.load_all()[0][sid][field], before[field], field)
+                self.assertEqual(len(after['failed_operations']), len(before.get('failed_operations', [])) + 1)
+
+    def test_cancel_during_empty_result_does_not_commit_or_retry(self):
+        from verify_harness_engine import FakeHarness
+        sid = self._create(); self._init(sid)
+        before = copy.deepcopy(backend_main._SESSIONS[sid])
+        fake = FakeHarness([''])
+        original = fake.run
+        def cancel_after_run(*args, **kwargs):
+            result = original(*args, **kwargs)
+            backend_main._SESSIONS[sid]['cancel_requested'] = True
+            return result
+        fake.run = cancel_after_run
+        with patch.object(harness_engine, 'complete_ex', self._real_complete_ex), \
+             patch.object(harness_engine, 'get_harness', return_value=fake):
+            response = self.client.post(f'/api/sessions/{sid}/next')
+        self.assertEqual(response.status_code, 409, response.text)
+        self.assertEqual(len(fake.prompts), 1)
+        for field in ('war_state', 'turn_count', 'history', 'trajectory'):
+            self.assertEqual(backend_main._SESSIONS[sid][field], before[field])
+
     def test_health_exposes_versions(self):
         h = self.client.get("/api/health").json()
         self.assertEqual(h["engine"], "deepseek-harness")

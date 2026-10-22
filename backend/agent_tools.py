@@ -20,7 +20,6 @@ from __future__ import annotations
 
 import copy
 import json
-import time
 
 from gentactix import adjudicator, causal, geo, rag
 from gentactix import state
@@ -224,22 +223,9 @@ def run_decision_turn(session, prompt: str, role_id: str,
     for step in range(MAX_AGENT_STEPS):
         if cancel_check is not None and cancel_check():
             raise RuntimeError(f"用户已取消，智能体回合在第 {step + 1} 步停止，战局未改动")
-        t0 = time.monotonic()
-        if observer is not None:
-            observer.active_sessions.add(role_id)
-        try:
-            result = harness_engine.run_role(role_id, message, on_notification=on_notification)
-        except Exception as exc:
-            if observer is not None:
-                observer.record_failure(exc)
-            raise
-        finally:
-            if observer is not None:
-                observer.active_sessions.discard(role_id)
-        if observer is not None:
-            observer.elapsed_ms += (time.monotonic() - t0) * 1000
-            observer.last_finish = result.finish_reason
-            observer.record_result(result)
+        result = harness_engine._run_brain(message, role_id, observer=observer,
+                                           on_notification=on_notification, cancel_check=cancel_check)
+        # _run_brain owns normal and recovered attempt metadata and elapsed time.
         try:
             parsed = harness_engine.parse_json_object(result.final_response)
         except ValueError:

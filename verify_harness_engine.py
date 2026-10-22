@@ -135,6 +135,102 @@ class HarnessEngineTests(unittest.TestCase):
         with patch.object(harness_engine, "get_harness", return_value=fake):
             self.assertEqual(harness_engine.complete("报告战况"), "前线平稳。")
 
+    def test_reasoning_only_recovers_once_in_same_session_with_separate_evidence(self):
+        for role in (None, 'gentactix-recovery-engine'):
+            with self.subTest(role=role):
+                fake = FakeHarness([SimpleNamespace(text='', reasoning='PRIVATE_REASONING'), '{"ok": true}'])
+                observer = harness_engine.RunObserver('回合')
+                prompt = '已提交状态：T9，时间09:15，兵力5000；推进15分钟。'
+                with patch.object(harness_engine, 'get_harness', return_value=fake):
+                    result = harness_engine.get_ai_response(prompt, role_id=role, observer=observer)
+                self.assertEqual(result, {'ok': True})
+                self.assertEqual(fake.session_ids[0], fake.session_ids[1])
+                self.assertIn(prompt, fake.prompts[1])
+                self.assertIn('不是新的战局回合', fake.prompts[1])
+                self.assertEqual(observer.meta()['empty_recoveries'], 1)
+                self.assertEqual(len(observer.runs), 2)
+                self.assertFalse(observer.runs[0]['accepted'])
+                self.assertTrue(observer.runs[0]['output_diagnostics']['reasoning_only'])
+                self.assertEqual(observer.runs[1]['finish_reason'], 'completed')
+                self.assertNotIn('PRIVATE_REASONING', json.dumps(observer.runs))
+                self.assertFalse(observer.active_sessions)
+                self.assertNotIn('phase', observer.progress)
+
+    def test_empty_recovery_keeps_runtime_policy(self):
+        fake = FakeHarness(['', '{"ok": true}'])
+        policies = []
+        with patch.object(harness_engine, 'get_harness', return_value=fake), \
+             patch.object(harness_engine, 'role_policy', return_value={'reasoning_effort': 'high', 'max_tokens': 65536}), \
+             patch.object(harness_engine, '_configure_runtime', side_effect=lambda sid: policies.append(dict(harness_engine._run_policies[sid]))):
+            harness_engine.get_ai_response('继续')
+        self.assertEqual(policies, [{'reasoning_effort': 'high', 'max_tokens': 65536}] * 2)
+
+    def test_repeated_empty_is_bounded_and_does_not_advise_connection_or_lower_effort(self):
+        fake = FakeHarness(['', '', 'must not run'])
+        observer = harness_engine.RunObserver('回合')
+        with patch.object(harness_engine, 'get_harness', return_value=fake):
+            with self.assertRaisesRegex(harness_engine.HarnessRunError, '恢复额度已用完'):
+                harness_engine.get_ai_response('继续', observer=observer)
+        self.assertEqual(len(fake.prompts), 2)
+        self.assertEqual(len(observer.runs), 2)
+        self.assertTrue(all(r['rejection'] == 'empty_final_response' for r in observer.runs))
+
+    def test_recovery_budget_is_shared_across_operation_calls(self):
+        fake = FakeHarness(['', '{"ok": true}', '', 'must not run'])
+        observer = harness_engine.RunObserver('工具回合')
+        with patch.object(harness_engine, 'get_harness', return_value=fake):
+            harness_engine.get_ai_response('工具前', observer=observer)
+            with self.assertRaisesRegex(harness_engine.HarnessRunError, '恢复额度已用完'):
+                harness_engine.get_ai_response('工具后', observer=observer)
+        self.assertEqual(len(fake.prompts), 3)
+        self.assertEqual(observer.empty_recoveries, 1)
+
+    def test_cancel_after_empty_prevents_recovery(self):
+        for callback_cancel in (True, False):
+            fake = FakeHarness(['', '{"ok": true}'])
+            observer = harness_engine.RunObserver('回合')
+            original_record = observer.record_result
+            def record(result):
+                original_record(result)
+                if not callback_cancel:
+                    observer.cancel_requested = True
+            observer.record_result = record
+            with patch.object(harness_engine, 'get_harness', return_value=fake):
+                with self.assertRaisesRegex(RuntimeError, '用户已取消'):
+                    harness_engine.get_ai_response('继续', observer=observer,
+                        cancel_check=(lambda: bool(fake.prompts)) if callback_cancel else None)
+            self.assertEqual(len(fake.prompts), 1)
+            self.assertEqual(observer.empty_recoveries, 0)
+
+    def test_non_completed_and_invalid_json_are_not_empty_retried(self):
+        for response in (SimpleNamespace(text='', finish_reason='max-tokens'),
+                         SimpleNamespace(text='', finish_reason='error'), 'invalid JSON'):
+            fake = FakeHarness([response, '{"ok": true}'])
+            with patch.object(harness_engine, 'get_harness', return_value=fake):
+                with self.assertRaises((RuntimeError, ValueError)):
+                    harness_engine.get_ai_response('继续')
+            self.assertEqual(len(fake.prompts), 1)
+
+    def test_empty_diagnostics_count_compaction_and_only_last_message(self):
+        result = SimpleNamespace(events=[
+            {'type': 'assistant/message', 'data': {'message': {'content': [{'type': 'text', 'text': 'old'}]}}},
+            {'type': 'compaction/end'}, {'type': 'compaction/end'},
+            {'type': 'assistant/message', 'data': {'usage': {'outputTokens': 31},
+                'message': {'content': [{'type': 'reasoning', 'text': 'x' * 138}]}}}])
+        self.assertEqual(harness_engine.empty_output_diagnostics(result), {
+            'reasoning_only': True, 'reasoning_characters': 138, 'text_characters': 0,
+            'output_tokens': 31, 'compactions': 2})
+        self.assertFalse(harness_engine.empty_output_diagnostics(SimpleNamespace(events=None))['reasoning_only'])
+
+    def test_failure_after_rejected_attempt_has_disjoint_event_sequences(self):
+        observer = harness_engine.RunObserver('回合')
+        event = {'seq': 188, 'type': 'assistant/message', 'data': {}}
+        observer.record_result(SimpleNamespace(session_id='s', events=[event], finish_reason='completed'))
+        observer.on_notification(SimpleNamespace(method='session.event', payload={
+            'sessionId': 's', 'event': {'seq': 191, 'type': 'turn/start', 'data': {}}}))
+        observer.record_failure(RuntimeError('fixture transport failure'))
+        self.assertEqual([[e['seq'] for e in r['events']] for r in observer.runs], [[188], [191]])
+
     def test_extract_reasoning_from_event_blocks(self):
         fake = FakeHarness([SimpleNamespace(text="答", reasoning="先想")])
         with patch.object(harness_engine, "get_harness", return_value=fake):

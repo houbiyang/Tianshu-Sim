@@ -281,6 +281,8 @@ class RunObserver:
         self.tool_executions = []
         self.active_sessions = set()
         self._events = {}
+        self.empty_recoveries = 0
+        self.cancel_requested = False
 
     def record_result(self, result, *, parent=None):
         sid = str(getattr(result, 'session_id', '') or '')
@@ -298,7 +300,13 @@ class RunObserver:
                           'evidence': 'dsh_session_events' if seqs else 'no_sequence_evidence'})
 
     def record_failure(self, exc):
-        events = list(self._events.values())
+        # A recovery operation may already contain a rejected completed run.
+        # Keep that attempt separate from a later transport/runtime failure.
+        recorded = {(e.get('session_id'), e.get('seq'), e.get('type'))
+                    for run in self.runs for e in run.get('events', [])
+                    if isinstance(e.get('seq'), int)}
+        events = [e for e in self._events.values()
+                  if (e.get('session_id'), e.get('seq'), e.get('type')) not in recorded]
         if events:
             self.runs.append({'id': f'{self.operation_id}:r{len(self.runs)+1}', 'session_id': events[-1]['session_id'],
                               'finish_reason': 'failed', 'events': events, 'event_count': len(events),
@@ -345,11 +353,39 @@ class RunObserver:
         return {"label": self.label, "finish_reason": self.last_finish,
                 "turns": self.turns, "steps": self.steps,
                 "tokens": self.total_tokens, "elapsed_ms": int(self.elapsed_ms),
-                "operation_id": self.operation_id, "trace_runs": len(self.runs)}
+                "operation_id": self.operation_id, "trace_runs": len(self.runs),
+                "empty_recoveries": self.empty_recoveries}
 
 
 class HarnessRunError(RuntimeError):
     """Public, sanitized guidance derived from a runtime finish event."""
+
+
+class EmptyFinalResponseError(HarnessRunError):
+    """Completed run without public output; retain evidence without exposing reasoning."""
+
+    def __init__(self, result):
+        self.result = result
+        self.diagnostics = empty_output_diagnostics(result)
+        detail = '最后消息仅有推理块，没有正文' if self.diagnostics['reasoning_only'] else '没有可用正文'
+        super().__init__(f'harness 已结束（finish_reason=completed），但{detail}；'
+                         '候选未提交，原战局保留。这不等于连接失败或输出预算耗尽。')
+
+
+def empty_output_diagnostics(result):
+    events = [e for e in (getattr(result, 'events', None) or []) if isinstance(e, dict)]
+    last = next((e.get('data') for e in reversed(events) if e.get('type') == 'assistant/message'), {})
+    last = last if isinstance(last, dict) else {}
+    owner = last.get('message') if isinstance(last.get('message'), dict) else last
+    blocks = owner.get('content') if isinstance(owner.get('content'), list) else []
+    blocks = [b for b in blocks if isinstance(b, dict) and isinstance(b.get('text'), str)]
+    reasoning_chars = sum(len(b['text']) for b in blocks if b.get('type') == 'reasoning')
+    text_chars = sum(len(b['text'].strip()) for b in blocks if b.get('type') == 'text')
+    usage = last.get('usage') if isinstance(last.get('usage'), dict) else {}
+    return {'reasoning_only': reasoning_chars > 0 and text_chars == 0,
+            'reasoning_characters': reasoning_chars, 'text_characters': text_chars,
+            'output_tokens': usage.get('outputTokens'),
+            'compactions': sum(e.get('type') == 'compaction/end' for e in events)}
 
 
 def _gate(result):
@@ -383,8 +419,7 @@ def _gate(result):
             f"harness 未完成（finish_reason={result.finish_reason}），"
             f"本次输出已拒收；{hint}")
     if not result.final_response.strip():
-        raise HarnessRunError(
-            f"harness 未返回内容（finish_reason={result.finish_reason}），请在「模型配置」测试当前连接")
+        raise EmptyFinalResponseError(result)
     return result
 
 
@@ -426,6 +461,7 @@ def _configure_runtime(session_id):
 def cancel_observer(observer):
     results = []
     if observer is not None:
+        observer.cancel_requested = True
         for sid in tuple(observer.active_sessions):
             try:
                 results.append(runtime_bridge.control('/cancel', {'session_id': sid}))
@@ -483,7 +519,8 @@ def fork_run(parent, prompt, observer, *, role='counterfactual', context=None):
 
 
 def _run_brain(prompt: str, role_id: str | None, on_notification=None,
-               observer: RunObserver | None = None, role='engine', native_context=None):
+               observer: RunObserver | None = None, role='engine', native_context=None,
+               cancel_check=None):
     """三脑统一出口：有角色会话 → 同会话续写；没有 → 一次性新会话（旧行为）。
 
     observer 存在时：事件流挂观测器，并累计用时 / 记录结束原因（meta 单点）。
@@ -497,17 +534,48 @@ def _run_brain(prompt: str, role_id: str | None, on_notification=None,
     if observer is not None:
         observer.active_sessions.add(sid)
     t0 = time.monotonic()
+    def cancelled():
+        return bool((observer is not None and observer.cancel_requested)
+                    or (cancel_check is not None and cancel_check()))
     try:
-        if role_id:
-            result = run_role(sid, prompt, on_notification=on_notification)
-        else:
-            result = complete_ex(prompt, session_id=sid, on_notification=on_notification)
-        if observer is not None:
-            observer.last_finish = result.finish_reason
-            observer.record_result(result)
-        return result
+        current_prompt = prompt
+        for attempt in range(2):
+            if cancelled():
+                raise RuntimeError('用户已取消，空正文恢复未执行，战局未改动')
+            try:
+                if role_id:
+                    result = run_role(sid, current_prompt, on_notification=on_notification)
+                else:
+                    result = complete_ex(current_prompt, session_id=sid, on_notification=on_notification)
+            except EmptyFinalResponseError as exc:
+                if observer is not None:
+                    observer.last_finish = 'completed_without_text'
+                    observer.record_result(exc.result)
+                    observer.runs[-1].update(accepted=False, rejection='empty_final_response',
+                                             output_diagnostics=exc.diagnostics)
+                if attempt or (observer is not None and observer.empty_recoveries >= 1):
+                    raise HarnessRunError('模型正常结束但仍无可用正文；本次操作的1次自动恢复额度已用完，'
+                                          '原战局未提交、未推进。请稍后重试；无需因此降低思考强度或重置战局。') from exc
+                if cancelled():
+                    raise RuntimeError('用户已取消，不再恢复空正文，战局未改动') from exc
+                if observer is not None:
+                    observer.empty_recoveries += 1
+                    observer.progress.update(phase='empty_output_recovery', recovery_attempt=1)
+                ENGINE_NOTICES.append({'level': 'warning', 'message':
+                    '模型结束但未给出正文，正在同一会话自动恢复1次；保留原战局、思考强度和输出预算。'})
+                current_prompt = ('【空正文恢复：此前候选未提交】\n'
+                    '上次调用已结束，但没有最终正文。不要只给推理或重复工具调用；'
+                    '依据下面重申的任务和已提交状态，返回该任务要求的完整最终正文/JSON。'
+                    '这是同一次操作的恢复，不是新的战局回合，禁止再次累加时间、伤亡或补给消耗。'
+                    '不要输出内部推理。\n\n' + prompt)
+                continue
+            if observer is not None:
+                observer.last_finish = result.finish_reason
+                observer.record_result(result)
+                observer.progress.pop('phase', None)
+            return result
     except Exception as exc:
-        if observer is not None:
+        if observer is not None and not isinstance(exc.__cause__, EmptyFinalResponseError):
             observer.record_failure(exc)
         raise
     finally:
@@ -567,9 +635,10 @@ def parse_json_object(raw_text: str) -> dict:
 # 🧠 引擎 A：JSON 战局推演（含坐标反思循环）
 # ==========================================
 def get_ai_response(prompt: str, role_id: str | None = None,
-                    observer: RunObserver | None = None, native_context=None) -> dict:
+                    observer: RunObserver | None = None, native_context=None, cancel_check=None) -> dict:
     """经 harness 生成 JSON 战局，并做 markdown 代码块 / 裸文本兜底抽取。"""
-    return parse_json_object(_run_brain(prompt, role_id, observer=observer, native_context=native_context).final_response)
+    return parse_json_object(_run_brain(prompt, role_id, observer=observer, native_context=native_context,
+                                      cancel_check=cancel_check).final_response)
 
 
 def get_ai_response_with_retry(prompt: str, max_retries: int = MAX_API_RETRIES,
@@ -586,7 +655,8 @@ def get_ai_response_with_retry(prompt: str, max_retries: int = MAX_API_RETRIES,
     for attempt in range(max_retries):
         if cancel_check is not None and cancel_check():
             raise RuntimeError("用户已取消，坐标反思循环停止，战局未改动")
-        result_json = get_ai_response(current_prompt, role_id=role_id, observer=observer, native_context=native_context)
+        result_json = get_ai_response(current_prompt, role_id=role_id, observer=observer, native_context=native_context,
+                                      cancel_check=cancel_check)
         # 键名归一化必须早于坐标校验（中文键 → is_naval 判不出海军的坑）
         normalize_state_units(result_json)
         state_to_check = result_json.get("updated_state", result_json)
