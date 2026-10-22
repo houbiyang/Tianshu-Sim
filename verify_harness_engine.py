@@ -172,8 +172,8 @@ class HarnessEngineTests(unittest.TestCase):
                           side_effect=lambda s: verdicts.pop(0) if verdicts else []):
             result = harness_engine.get_ai_response_with_retry("初始态势")
         self.assertEqual(len(fake.prompts), 2)
-        self.assertIn("坐标物理规则冲突", fake.prompts[1])
-        self.assertIn("自我修正", json.dumps(harness_engine.ENGINE_NOTICES, ensure_ascii=False))
+        self.assertIn("坐标/射击几何冲突", fake.prompts[1])
+        self.assertIn("已修正", json.dumps(harness_engine.ENGINE_NOTICES, ensure_ascii=False))
 
     def test_retry_exhausted_forces_pass(self):
         fake = FakeHarness([json.dumps(state_json())] * MAX_API_RETRIES)
@@ -184,6 +184,24 @@ class HarnessEngineTests(unittest.TestCase):
         self.assertEqual(len(fake.prompts), MAX_API_RETRIES)
         self.assertIn("强制放行", json.dumps(harness_engine.ENGINE_NOTICES, ensure_ascii=False))
         self.assertIn("updated_state", result)
+
+    def test_fire_sector_repair_and_exhaustion_never_force_pass(self):
+        from verify_output_consistency import FireTests
+        bad = FireTests().shot(180)
+        good = FireTests().shot(180, 180)
+        good['red_units'][0]['fire_sector_change'] = {'reason': '炮架完成转向'}
+        fake = FakeHarness([json.dumps({'updated_state': w}) for w in (bad, good)])
+        with patch.object(harness_engine, 'get_harness', return_value=fake), \
+             patch.object(harness_engine, 'get_coordinate_errors', return_value=[]):
+            result = harness_engine.get_ai_response_with_retry('回合', previous_state=bad)
+        self.assertEqual(len(fake.prompts), 2)
+        self.assertIn('实际射向', fake.prompts[1])
+        self.assertEqual(result['updated_state']['red_units'][0]['fire_sector']['bearing_deg'], 180)
+        fake = FakeHarness([json.dumps({'updated_state': bad})] * MAX_API_RETRIES)
+        with patch.object(harness_engine, 'get_harness', return_value=fake), \
+             patch.object(harness_engine, 'get_coordinate_errors', return_value=[]):
+            with self.assertRaisesRegex(ValueError, '候选未提交'):
+                harness_engine.get_ai_response_with_retry('回合', previous_state=bad)
 
     def test_normalize_runs_before_coordinate_check(self):
         # 中文键战局：归一化必须发生在坐标校验之前，否则 is_naval 判不出海军

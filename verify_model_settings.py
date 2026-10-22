@@ -126,6 +126,47 @@ class SettingsApiTests(unittest.TestCase):
         self.assertEqual(h.role_policy('chat')['max_tool_calls'], 2)
         self.assertEqual(llm_settings.load()['role_policies'], value['role_policies'])
 
+    def test_engine_default_and_explicit_effort_and_budget_caps(self):
+        with patch.object(h, 'ROLE_POLICIES', {}), patch.object(h, 'LLM_MAX_TOKENS', 32768), \
+             patch.dict(os.environ, {'GENTACTIX_ENGINE_REASONING_EFFORT': '', 'GENTACTIX_ENGINE_MAX_TOKENS': '32768'}):
+            self.assertEqual(h.role_policy('engine')['reasoning_effort'], 'high')
+            self.assertEqual(h.role_policy('engine')['max_tokens'], 32768)
+            h.ROLE_POLICIES['engine'] = {'max_tokens': 16384, 'reasoning_effort': None}
+            self.assertIsNone(h.role_policy('engine')['reasoning_effort'])
+            self.assertEqual(h.role_policy('engine')['max_tokens'], 16384)
+            h.ROLE_POLICIES['engine']['reasoning_effort'] = 'high'
+            self.assertEqual(h.role_policy('engine')['reasoning_effort'], 'high')
+            h.LLM_MAX_TOKENS = 8192
+            self.assertEqual(h.role_policy('engine')['max_tokens'], 8192)
+
+    def test_high_effort_64k_configuration_survives_save(self):
+        value = config()
+        value.update(max_tokens=65536, context_window=262144,
+                     role_policies={'engine': {'max_tokens': 65536, 'reasoning_effort': 'high'}})
+        with patch.object(h, 'close_harness'):
+            response = self.client.put('/api/llm/config', json=value)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['max_tokens'], 65536)
+        self.assertEqual(response.json()['role_policies']['engine'], value['role_policies']['engine'])
+        self.assertEqual(llm_settings.load()['role_policies']['engine'], value['role_policies']['engine'])
+
+    def test_exhausted_output_cannot_commit_even_parseable_json(self):
+        from types import SimpleNamespace
+        session = main._new_session('预算验收', '15分钟', False, None, False, False)
+        session['war_state'] = {'current_time': '1952-10-14 04:00', 'red_units': [], 'blue_units': []}
+        main._SESSIONS[session['id']] = session
+        before = copy.deepcopy(session)
+        result = SimpleNamespace(finish_reason='max-tokens',
+            final_response=json.dumps({'updated_state': {'current_time': '1952-10-14 04:15', 'red_units': [], 'blue_units': []}}),
+            events=[{'type': 'assistant/message', 'data': {'usage': {'outputTokens': 16384}}}])
+        with patch.object(h, 'get_ai_response_with_retry', side_effect=lambda *a, **kw: h._gate(result)):
+            response = self.client.post(f"/api/sessions/{session['id']}/next")
+        self.assertEqual(response.status_code, 502)
+        self.assertIn('16384', response.text)
+        self.assertIn('全局与当前角色', response.text)
+        for field in ('war_state', 'turn_count', 'history', 'trajectory'):
+            self.assertEqual(session[field], before[field])
+
     def test_busy_or_foreign_origin_cannot_change_config(self):
         main._OP_LOCK.acquire()
         try:

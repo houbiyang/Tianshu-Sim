@@ -201,7 +201,9 @@ class RuntimePluginTests(unittest.TestCase):
         self.assertEqual(h.ENGINE_NOTICES[-1]['message'], 'keep')
 
     def test_role_budget_controls_are_independent(self):
-        with patch.dict(os.environ, {'GENTACTIX_CHAT_MAX_TOKENS': '1024', 'GENTACTIX_CHAT_REASONING_EFFORT': 'low'}):
+        # Test environment defaults without the user's encrypted role overrides.
+        with patch.object(h, 'ROLE_POLICIES', {}), patch.object(h, 'LLM_MAX_TOKENS', 65536), \
+             patch.dict(os.environ, {'GENTACTIX_CHAT_MAX_TOKENS': '1024', 'GENTACTIX_CHAT_REASONING_EFFORT': 'low'}):
             policy = h.role_policy('chat')
             self.assertEqual(policy['max_tokens'], 1024)
             self.assertEqual(policy['reasoning_effort'], 'low')

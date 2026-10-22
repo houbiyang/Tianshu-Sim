@@ -256,6 +256,8 @@ def run_decision_turn(session, prompt: str, role_id: str,
             # 键名归一化先于坐标校验（与旧反思循环同一顺序铁律）
             state.normalize_state_units(candidate)
             errors = geo.get_coordinate_errors(candidate)
+            from gentactix import fire_control
+            errors.extend(fire_control.errors(candidate, session.get('war_state')))
             if errors:
                 feedback = ("\n\n【系统最高警告：坐标物理规则冲突！】\n"
                             "你提交的 orders 中存在以下致命地理错误：\n")

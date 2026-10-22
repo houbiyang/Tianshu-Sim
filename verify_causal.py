@@ -1,5 +1,6 @@
 """Offline causal geometry regressions; no SDK, credentials or live models."""
 import copy
+import json
 import unittest
 
 from gentactix import causal
@@ -19,6 +20,30 @@ def fixture():
 
 
 class CausalTests(unittest.TestCase):
+    def test_explanation_deduplicates_metadata_without_dropping_turns_or_effects(self):
+        records=[]
+        for turn in range(1,51):
+            r=fixture();r.update(id=f'test:e0:t{turn}',turn=turn)
+            r['decisions']=[{'id':f'd{turn}','team':'red','unit_name':'甲','action':'前进',
+                             'rationale':'接近对方','expected_effect':'能够接触','basis':'model_declared'}]
+            records.append(r)
+        analysis=causal.analyze(records);original=copy.deepcopy(analysis)
+        # These repeated branch descriptions must not multiply prompt size.
+        for turn in analysis['attributions']:
+            for effect in turn['effects']:effect['scope']='重复的控制变量说明'*1000
+        compact=causal.explanation_evidence(analysis)
+        self.assertEqual([r['trace_id'] for r in compact['evidence']],[r['id'] for r in records])
+        self.assertEqual(compact['coverage']['decision_count'],50)
+        for source,target in zip(analysis['attributions'],compact['attributions']):
+            self.assertEqual(len(source['effects']),len(target['effects']))
+            self.assertEqual(source['interactions'],target['interactions'])
+            for full,small in zip(source['effects'],target['effects']):
+                self.assertEqual(full['status_changes'],small['status_changes'])
+                self.assertEqual([m for m in full['metrics'] if m['delta']],small['nonzero_metrics'])
+        self.assertLess(len(json.dumps(compact)),len(json.dumps(analysis))/2)
+        compact['evidence'][0]['changes'].clear()
+        self.assertEqual(analysis['timeline'],original['timeline'])
+
     def test_ablation_changes_contact_without_mutation(self):
         record = fixture(); original = copy.deepcopy(record)
         result = causal.geometry_counterfactual(record, undo=[{'team': 'red', 'name': '甲'}])

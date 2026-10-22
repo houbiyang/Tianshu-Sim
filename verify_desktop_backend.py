@@ -118,7 +118,48 @@ class DesktopBackendTest(unittest.TestCase):
     def test_health_exposes_versions(self):
         h = self.client.get("/api/health").json()
         self.assertEqual(h["engine"], "deepseek-harness")
-        self.assertEqual(h["adjudicator_version"], "geo-4")
+        self.assertEqual(h["adjudicator_version"], "geo-5")
+
+    def test_delete_removes_only_selected_checkpoint_and_role_handles(self):
+        from backend import session_store
+        sid, other = self._create(), self._create()
+        self._init(sid); self._init(other)
+        before = copy.deepcopy(backend_main._SESSIONS[other])
+        role, other_role = f'gentactix-{sid}e0-engine', f'gentactix-{other}e0-engine'
+        harness_engine._role_sessions.update({role: object(), other_role: object()})
+        response = self.client.delete(f'/api/sessions/{sid}')
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json()['audit_retained'])
+        self.assertNotIn(role, harness_engine._role_sessions)
+        self.assertIn(other_role, harness_engine._role_sessions)
+        self.assertEqual(self.client.get(f'/api/sessions/{sid}').status_code, 404)
+        restored, errors = session_store.load_all()
+        self.assertFalse(errors)
+        self.assertNotIn(sid, restored)
+        self.assertEqual(restored[other]['war_state'], before['war_state'])
+        self.assertEqual(backend_main._SESSIONS[other], before)
+
+    def test_delete_disk_failure_preserves_battle(self):
+        from backend import session_store
+        sid = self._create(); self._init(sid)
+        before = copy.deepcopy(backend_main._SESSIONS[sid])
+        with patch.object(session_store, 'remove', side_effect=PermissionError('fixture')):
+            response = self.client.delete(f'/api/sessions/{sid}')
+        self.assertEqual(response.status_code, 500)
+        self.assertIn('战局已保留', response.json()['detail'])
+        self.assertEqual(backend_main._SESSIONS[sid], before)
+        self.assertIn(sid, session_store.load_all()[0])
+
+    def test_delete_rejects_active_operation_foreign_origin_and_unknown_id(self):
+        sid = self._create()
+        backend_main._OP_LOCK.acquire()
+        try:
+            self.assertEqual(self.client.delete(f'/api/sessions/{sid}').status_code, 409)
+        finally:
+            backend_main._OP_LOCK.release()
+        self.assertEqual(self.client.delete(f'/api/sessions/{sid}', headers={'Origin': 'https://example.org'}).status_code, 403)
+        self.assertEqual(self.client.delete('/api/sessions/not-a-saved-id').status_code, 404)
+        self.assertIn(sid, backend_main._SESSIONS)
 
     def test_battlefield_snapshot_carries_nested_metrics_and_archived_losses(self):
         sid = self._create()
@@ -178,6 +219,24 @@ class DesktopBackendTest(unittest.TestCase):
         self.assertIn("累计投入", response.text)
         for field in ("war_state", "turn_count", "history", "adj_last"):
             self.assertEqual(backend_main._SESSIONS[sid][field], before[field], field)
+
+    def test_hp_panel_rebuilds_from_exported_history_without_count_fabrication(self):
+        sid = self._create(adjudicator_on=False)
+        self._init(sid)
+        updated = _init_state(30)
+        updated['red_units'][0]['hp'] = 4500
+        self.responses.append(json.dumps({'updated_state': updated, 'report': 'HP下降测试'}))
+        response = self.client.post(f'/api/sessions/{sid}/next')
+        self.assertEqual(response.status_code, 200, response.text)
+        view = response.json()['battlefield']
+        row = next(u for u in view['operational']['units'] if u['name'] == '秦军左翼')
+        self.assertEqual((row['hp_change'], row['hp_decline_rate']), (-500, .1))
+        self.assertIsNone(view['losses']['teams'][0]['personnel'])
+        from backend import session_store
+        restored, errors = session_store.load_all()
+        self.assertFalse(errors)
+        backend_main._SESSIONS[sid] = restored[sid]
+        self.assertEqual(self.client.get(f'/api/sessions/{sid}').json()['battlefield'], view)
 
     def test_battles_carry_time_step_hint(self):
         items = self.client.get("/api/battles").json()["battles"]
@@ -326,11 +385,46 @@ class DesktopBackendTest(unittest.TestCase):
         self._init(sid)
         self.responses.append("秦军优势在粮道与兵力厚度。")
         snap = self.client.post(f"/api/sessions/{sid}/review").json()
-        self.assertEqual(snap["review"]["text"], "秦军优势在粮道与兵力厚度。")
+        self.assertIn("秦军优势在粮道与兵力厚度。", snap["review"]["text"])
+        self.assertIn("状态核对摘要", snap["review"]["text"])
         self.responses.append("建议以辎重队为饵。")
         snap = self.client.post(f"/api/sessions/{sid}/chat", json={"message": "优势在哪方？"}).json()
         self.assertEqual([m["role"] for m in snap["chat_messages"]], ["user", "assistant"])
         self.assertEqual(snap["chat_messages"][1]["content"], "建议以辎重队为饵。")
+
+    def test_bad_firing_sector_rolls_back_entire_turn_after_bounded_retries(self):
+        sid = self._create()
+        self._init(sid)
+        before = copy.deepcopy(backend_main._SESSIONS[sid])
+        candidate = _init_state(30)
+        u = candidate['red_units'][0]
+        u.update(attack_range=500, fire_sector={'bearing_deg': 0, 'arc_deg': 60})
+        candidate['engagements'] = [{'attacker': u['name'], 'attacker_pos': [u['lat'], u['lng']],
+                                    'lat': u['lat'] - .001, 'lng': u['lng']}]
+        from gentactix.config import MAX_API_RETRIES
+        self.responses.extend([json.dumps({'updated_state': candidate, 'report': '开火'})] * MAX_API_RETRIES)
+        response = self.client.post(f'/api/sessions/{sid}/next')
+        self.assertEqual(response.status_code, 502)
+        self.assertIn('射击几何', response.text)
+        for key in ('war_state', 'history', 'turn_count', 'trajectory'):
+            self.assertEqual(backend_main._SESSIONS[sid][key], before[key])
+
+    def test_report_and_review_full_strength_claims_do_not_override_counts(self):
+        sid = self._create()
+        self._init(sid)
+        w = _init_state(30)
+        w['red_units'][0]['personnel'] = {'current': 22, 'committed': 30, 'casualties': 8, 'noncombat_losses': 0}
+        self.responses.append(json.dumps({'updated_state': w, 'report': '秦军左翼满编满供。'}))
+        response = self.client.post(f'/api/sessions/{sid}/next')
+        self.assertEqual(response.status_code, 200, response.text)
+        text = response.json()['history'][0]
+        self.assertNotIn('满编满供', text); self.assertIn('22/30', text)
+        trace = backend_main._SESSIONS[sid]['trajectory'][-1]
+        self.assertEqual(trace['guards']['report']['original_text'], '秦军左翼满编满供。')
+        self.responses.append('秦军左翼满编。建议继续观察。')
+        reviewed = self.client.post(f'/api/sessions/{sid}/review').json()['review']
+        self.assertNotIn('秦军左翼满编', reviewed['text']); self.assertIn('建议继续观察', reviewed['text'])
+        self.assertTrue(reviewed['audit']['artifact_id'])
 
     def test_chat_capped_at_40(self):
         sid = self._create()

@@ -211,7 +211,14 @@ select { max-width: 100%; }
 .planning-input button { justify-self: end; min-width: 100px; }
 .draft-ready { color: #a4e5ee; font-size: 12px; }
 .recent-battles { padding: 20px 24px; overflow: auto; max-height: 50vh; }
-.recent-battles button { width: 100%; display: flex; justify-content: space-between; align-items: center; text-align: left; margin-bottom: 8px; gap: 20px; background: #0b263a; padding: 16px; }
+.saved-battle { display: flex; gap: 8px; margin-bottom: 8px; }
+.recent-battles .open-battle { flex: 1; min-width: 0; display: flex; justify-content: space-between; align-items: center; text-align: left; gap: 16px; background: #0b263a; padding: 16px; }
+.open-battle > span:first-child { min-width: 0; }
+.delete-battle, .danger-action { color: #ffbdba; border-color: #885453; }
+.delete-battle { flex-shrink: 0; align-self: center; }
+.delete-content { padding: 20px 24px; max-height: 55vh; overflow: auto; line-height: 1.7; overflow-wrap: anywhere; }
+.delete-content .delete-scenario { color: #e0f0f6; font-weight: 600; }
+.delete-dialog { max-width: 600px; }
 .recent-battles strong { display: block; font-weight: 500; font-size: 13px; max-width: 550px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .recent-battles small { display: block; color: #9db6c5; font-size: 10px; margin-top: 6px; }
 .recent-battles button > span:last-child { font-size: 11px; color: #b2e4ed; white-space: nowrap; }
@@ -232,7 +239,8 @@ select { max-width: 100%; }
 .main { grid-template-rows: 42px minmax(220px, 1fr) 56px 44px 230px; }
 .main.dock-collapsed { grid-template-rows: 42px minmax(220px, 1fr) 56px 44px 0; }
 .main header { font-size: 11px; background: #0a2538; gap: 14px; overflow: hidden; }
-.main header .muted { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.main header > span:not(.muted) { flex: 0 0 auto; white-space: nowrap; }
+.main header .muted { flex: 1 1 120px; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .sidebar { background: #0b2032; padding: 17px 15px; border-right-color: #2b6077; }
 .sidebar h1 { font-size: 16px; font-weight: 550; letter-spacing: 1px; }
 .sidebar .sub { font-size: 9px; letter-spacing: 1.8px; }
@@ -301,5 +309,7 @@ select { max-width: 100%; }
   .desktop-root .shell { height: auto; display: block; }
   .sidebar { max-height: 240px; }
   .main { height: 950px; grid-template-rows: 48px minmax(320px, 1fr) 60px 44px 300px; }
+  .main header { padding: 6px 12px; }
+  .main header .muted { flex-basis: 100%; }
 }
 @media (prefers-reduced-motion: reduce) { *, *:before, *:after { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }

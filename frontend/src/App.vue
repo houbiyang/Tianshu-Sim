@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // 薄 UI 编排：与 app.py 的侧栏/地图/战报三区结构对齐，
 // 所有「数据实况」caption（交战统计、史料注入、守恒提示）照搬旧版文案口径。
-import { computed, onMounted, onBeforeUnmount, reactive, ref, watch } from "vue";
+import { computed, nextTick, onMounted, onBeforeUnmount, reactive, ref, watch } from "vue";
 import { api } from "./api";
 import type { Battle, Health, NumericFlag, Snapshot } from "./types";
 import MapView from "./components/MapView.vue";
@@ -23,10 +23,38 @@ const sessionId = ref<string>("");
 const recentSessions = ref<{ session_id: string; turn_count: number; scenario: string }[]>([]);
 const screen = ref<'launch' | 'workspace'>('launch');
 const settingsDialog = ref<HTMLDialogElement | null>(null);
+const deleteDialog = ref<HTMLDialogElement | null>(null);
+const pendingDelete = ref<{ session_id: string; turn_count: number; scenario: string } | null>(null);
+const deleting = ref(false);
+const deleteError = ref('');
 const settingsPanel = ref<InstanceType<typeof LlmSettings> | null>(null);
 const dockCollapsed = ref(false);
 let unsubscribeMenu: (() => void) | undefined;
 function openSettings() { settingsDialog.value?.showModal(); void settingsPanel.value?.reload(); }
+async function requestDelete(saved: { session_id: string; turn_count: number; scenario: string }) {
+  if (busy.value) return;
+  pendingDelete.value = saved; deleteError.value = '';
+  await nextTick(); deleteDialog.value?.showModal();
+}
+async function confirmDelete() {
+  const saved = pendingDelete.value;
+  if (!saved || deleting.value || busy.value) return;
+  deleting.value = true; busy.value = '正在删除存档…'; deleteError.value = '';
+  try {
+    await api.deleteSession(saved.session_id);
+    recentSessions.value = recentSessions.value.filter(s => s.session_id !== saved.session_id);
+    if (sessionId.value === saved.session_id) {
+      sessionId.value = ''; snap.value = null; screen.value = 'launch';
+      progress.value = {}; notices.value = []; error.value = ''; chatInput.value = '';
+      tab.value = 'reports';
+    }
+    if (localStorage.getItem('gentactix-session') === saved.session_id) localStorage.removeItem('gentactix-session');
+    deleteDialog.value?.close(); pendingDelete.value = null;
+    await nextTick();
+    document.querySelector<HTMLButtonElement>('.creation-modes button[aria-selected="true"]')?.focus();
+  } catch (e) { deleteError.value = String(e); }
+  finally { deleting.value = false; busy.value = ''; }
+}
 async function resumeSession(id: string) {
   if (await run('正在恢复战局…', () => api.get(id))) {
     if (snap.value) restoreOptions(snap.value);
@@ -255,7 +283,7 @@ function flagLine(f: NumericFlag): string {
 
 <template>
   <div class="desktop-root">
-  <LaunchScreen v-if="screen === 'launch'" :battles="battles" :health="health" :busy="busy" :error="error" :can-resume="hasState()" :recent-sessions="recentSessions" @settings="openSettings" @resume="screen = 'workspace'" @start="startScenario" @reconnect="refreshBackend" @resume-session="resumeSession" @cancel="cancel" />
+  <LaunchScreen v-if="screen === 'launch'" :battles="battles" :health="health" :busy="busy" :error="error" :can-resume="hasState()" :recent-sessions="recentSessions" @settings="openSettings" @resume="screen = 'workspace'" @start="startScenario" @reconnect="refreshBackend" @resume-session="resumeSession" @delete-session="requestDelete" @cancel="cancel" />
   <template v-else>
   <header class="workspace-command-bar">
     <div class="product-mark"><img :src="'./icons/gentactix.png'" alt=""><strong>GenTactix <span>DSH</span></strong></div>
@@ -455,6 +483,17 @@ function flagLine(f: NumericFlag): string {
     </main>
   </div>
   </template>
+  <dialog ref="deleteDialog" class="settings-dialog tactical-window delete-dialog" aria-labelledby="delete-title" aria-describedby="delete-scope" @cancel="event => { if (deleting) event.preventDefault(); }">
+    <header class="window-heading"><span class="window-index">SAVED BATTLE</span><h2 id="delete-title">删除已保存战局</h2></header>
+    <div class="delete-content" v-if="pendingDelete">
+      <p class="delete-scenario">{{ pendingDelete.scenario }}</p>
+      <p>已推进 {{ pendingDelete.turn_count }} 回合 · {{ pendingDelete.session_id }}</p>
+      <p id="delete-scope">将删除此战局的本机存档并从列表移除，需要保留时请先打开战局并导出。底层审计轨迹仍保留，其他战局及模型配置不受影响。</p>
+      <p v-if="pendingDelete.session_id === sessionId">这是当前打开的战局；删除后将清空当前界面。</p>
+      <p v-if="deleteError" class="bad" role="alert">{{ deleteError }}</p>
+    </div>
+    <footer class="window-footer"><button autofocus :disabled="deleting" @click="deleteDialog?.close()">取消</button><button class="danger-action" :disabled="deleting" @click="confirmDelete">{{ deleting ? '正在删除…' : '确认删除' }}</button></footer>
+  </dialog>
   <dialog ref="settingsDialog" class="settings-dialog tactical-window" aria-labelledby="settings-title">
     <header class="window-heading"><span class="window-index">RUNTIME</span><h2 id="settings-title">DSH · LLM配置</h2><button @click="settingsDialog?.close()" aria-label="关闭模型配置">×</button></header>
     <LlmSettings ref="settingsPanel" embedded :disabled="!!busy" @changed="async () => { health = await api.health(); }" @busy="label => busy = label" />

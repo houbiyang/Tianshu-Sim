@@ -20,6 +20,81 @@ def scenario():
 
 
 class BattlefieldTests(unittest.TestCase):
+    def test_data_quality_distinguishes_known_zero_losses_from_missing_counts(self):
+        state = scenario()
+        state['red_units'][0]['personnel'].update(current=1000, casualties=0, noncombat_losses=0)
+        view = battlefield.build_battlefield_view(state)
+        quality = {r['key']: r for r in view['data_quality']}
+        self.assertEqual((quality['personnel']['recorded'], quality['personnel']['status']), (1, 'partial'))
+        self.assertEqual(view['losses']['units'][0]['personnel']['loss_rate'], 0)
+        self.assertEqual(quality['supply_nodes']['status'], 'missing')
+        self.assertEqual(quality['terrain']['recorded'], 1)
+
+    def test_saved_hp_changes_are_visible_without_inventing_people(self):
+        first = {'current_time': '04:00', 'red_units': [{'name': '甲', 'hp': 100, 'morale': 90, 'supply': 80}], 'blue_units': []}
+        previous = copy.deepcopy(first)
+        previous['red_units'][0]['hp'] = 80
+        current = copy.deepcopy(first)
+        current['red_units'][0].update(hp=60, morale=70, supply=40)
+        untouched = copy.deepcopy(current)
+        view = battlefield.build_battlefield_view(current, previous=previous, trajectory=[{'after': first}])
+        row = view['operational']['units'][0]
+        self.assertEqual((row['baseline_hp'], row['hp_change'], row['hp_decline_rate']), (100, -20, .4))
+        team = view['operational']['teams'][0]
+        self.assertEqual((team['hp_decline'], team['mean_supply']), (40, 40))
+        self.assertIsNone(view['losses']['teams'][0]['personnel'])
+        self.assertEqual(current, untouched)
+
+    def test_hp_missing_baseline_reinforcements_and_retirement_are_not_total_losses(self):
+        first = {'red_units': [{'name': '退场', 'hp': 100}, {'name': '归零', 'hp': 50}], 'blue_units': []}
+        current = {'red_units': [{'name': '归零', 'hp': 0}, {'name': '增援', 'hp': 200}, {'name': '未知', 'hp': None}], 'blue_units': []}
+        view = battlefield.build_battlefield_view(current, previous=first, trajectory=[{'after': first}, {'after': current}])
+        rows = {r['name']: r for r in view['operational']['units']}
+        self.assertEqual(rows['归零']['hp_decline_rate'], 1)
+        self.assertIsNone(rows['退场']['hp_decline_rate'])
+        self.assertFalse(rows['退场']['active'])
+        self.assertEqual(rows['增援']['baseline_hp'], 200)
+        self.assertIsNone(rows['增援']['hp_change'])
+        team = view['operational']['teams'][0]
+        self.assertEqual((team['disabled_units'], team['comparable_units']), (1, 2))
+        self.assertIsNone(team['current_hp'])
+        standalone = battlefield.build_battlefield_view(current)['operational']['teams'][0]
+        self.assertIsNone(standalone['hp_decline_rate'])
+
+    def test_null_records_cannot_erase_known_counts_and_are_marked_carried(self):
+        prev = scenario()
+        current = copy.deepcopy(prev)
+        current['red_units'][0].update(personnel=None, equipment=None)
+        battlefield.carry_battlefield_state(prev, current)
+        row = battlefield.build_battlefield_view(current)['losses']['units'][0]
+        self.assertEqual(row['personnel']['casualties'], 80)
+        self.assertTrue(row['personnel']['carried_forward'])
+        self.assertTrue(row['equipment'][0]['carried_forward'])
+        self.assertIn('未完整更新', row['personnel']['note'])
+        current = copy.deepcopy(prev)
+        current['red_units'][0]['personnel']['casualties'] = None
+        battlefield.carry_battlefield_state(prev, current)
+        self.assertEqual(current['red_units'][0]['personnel']['casualties'], 80)
+
+    def test_explicit_new_retirement_record_is_retained_and_not_guessed(self):
+        prev = {'red_units': [{'name': '甲', 'hp': 10}], 'blue_units': []}
+        final = {'committed': 100, 'current': 50, 'casualties': 40, 'noncombat_losses': 10, 'source': '测试记录'}
+        current = {'red_units': [], 'blue_units': [], 'loss_records': [{'team': 'red', 'name': '甲', 'personnel': final}]}
+        battlefield.carry_battlefield_state(prev, current)
+        view = battlefield.build_battlefield_view(current)
+        self.assertEqual(view['losses']['teams'][0]['personnel']['loss_rate'], .4)
+        self.assertEqual(view['losses']['teams'][0]['active_current'], 0)
+        self.assertEqual(current['loss_records'][0]['personnel'], final)
+
+    def test_cumulative_losses_cannot_reset_even_with_same_baseline(self):
+        for field in ('casualties', 'noncombat_losses', 'destroyed'):
+            prev = scenario()
+            current = copy.deepcopy(prev)
+            target = current['red_units'][0]['equipment'][0] if field == 'destroyed' else current['red_units'][0]['personnel']
+            target[field] = 0
+            with self.assertRaisesRegex(ValueError, '累计损失'):
+                battlefield.carry_battlefield_state(prev, current)
+
     def test_zero_hp_retains_loss_records_without_live_fire_overlays(self):
         original = scenario()
         original['red_units'][0]['hp'] = 0
@@ -143,12 +218,15 @@ class BattlefieldTests(unittest.TestCase):
         self.assertIn("非真实道路", geometry["source"])
         state["supply_nodes"] = [{"id": "r1", "name": "仓库", "team": "red", "lat": 37.9, "lng": 127}]
         state["red_units"][0]["supply_node_id"] = "r1"
+        adj = adjudicator.adjudicate(state)
         line = battlefield.build_battlefield_view(state, adj)["supply_lines"][0]
         self.assertEqual(line["coordinates"][0], [37.9, 127])
         state["supply_routes"] = [{"team": "red", "unit_name": "炮兵", "waypoints": [[37.9, 127], [37.95, 127.01], [38, 127]], "status": "cut", "source": "测试路线"}]
+        adj = adjudicator.adjudicate(state)
         lines = battlefield.build_battlefield_view(state, adj)["supply_lines"]
         self.assertFalse(lines[0]["estimated"])
-        self.assertEqual(lines[0]["status"], "cut")
+        self.assertEqual(lines[0]["status"], "open")
+        self.assertEqual(lines[0]["declared_status"], "cut")
         self.assertEqual(len(lines), 2)
 
     def test_nested_partial_updates_preserve_baselines_zeroes_and_equipment_types(self):

@@ -189,6 +189,40 @@ def record_summary(record):
     return result
 
 
+def explanation_evidence(analysis):
+    """Keep every turn/decision/intervention without repeating branch metadata.
+
+    Each branch repeats scope, guards, clock and held-fixed descriptions. Sending
+    those copies to the model made a real 50-turn prompt exceed 375k tokens.
+    Full evidence remains in the analysis object and persisted trajectory.
+    """
+    decisions = ('id', 'team', 'unit_name', 'action', 'rationale', 'expected_effect', 'basis')
+    evidence = [{
+        'trace_id': t['id'], 'turn': t['turn'], 'clock': t.get('clock'),
+        'geometry_enabled': t.get('geometry_enabled'), 'guards': t.get('guards'),
+        'changes': t['changes'],
+        'decisions': [{k: d[k] for k in decisions if k in d} for d in t['decisions']],
+    } for t in analysis['timeline']]
+    attributions = [{
+        'trace_id': t['trace_id'], 'turn': t['turn'],
+        'evaluated_movers': t['evaluated_movers'], 'total_movers': t['total_movers'],
+        'effects': [{
+            'team': e['team'], 'name': e['name'], 'moved_km': e['moved_km'],
+            'status_changes': e['status_changes'],
+            'nonzero_metrics': [m for m in e['metrics'] if m['delta'] != 0],
+        } for e in t['effects']],
+        'interactions': t['interactions'],
+    } for t in analysis['attributions']]
+    return copy.deepcopy({
+        'coverage': {'trace_count': len(evidence), 'all_turns_included': True,
+                     'decision_count': sum(len(t['decisions']) for t in evidence)},
+        'evidence': evidence, 'attributions': attributions, 'scope': analysis['scope'],
+        'held_fixed': '其他单位终态、人员装备计数、环境、参数和回合跨度',
+        'metric_note': '仅省略delta=0的汇总指标；净变化为0仍可能存在单位状态互换，请核对status_changes。',
+        'limits': analysis['limits'],
+    })
+
+
 def analyze(records):
     turning, attributions = [], []
     for record in records:

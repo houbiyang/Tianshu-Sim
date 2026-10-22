@@ -71,7 +71,7 @@ function drawBattlefield() {
       L.marker(n.position, { icon: L.divIcon({ className: "supply-node", html: "▣", iconSize: [22, 22], iconAnchor: [11, 11] }) })
         .bindTooltip(textTooltip(`${n.name} · 补给节点 · ${n.source}`)).addTo(overlays.supply);
     }
-    const labels: Record<string, string> = { open: "通行记录", cut: "受阻", threatened: "受威胁", unknown: "通行未核实" };
+    const labels: Record<string, string> = { open: "几何未切断", cut: "几何受阻", threatened: "受威胁", unknown: "通行未核实" };
     for (const r of data.supply_lines) {
       const color = r.status === "cut" ? "#e05a4e" : r.estimated || r.status !== "open" ? "#e0a83e" : "#4caf7d";
       L.polyline(r.coordinates, { color, weight: 2, dashArray: r.estimated ? "7 6" : undefined, className: "bf-supply" })
@@ -284,10 +284,10 @@ onBeforeUnmount(() => { sizeObserver?.disconnect(); map?.remove(); map = null; }
     <div v-if="!overview" class="map-toolbar" aria-label="战场地图图层">
       <button @click="toggleTerrainBase" :aria-pressed="terrainBase">{{ terrainBase ? '卫星底图' : '地形底图' }}</button>
       <label><input type="checkbox" v-model="showUnitLabels" />单位标注</label>
-      <label><input type="checkbox" v-model="visible.terrain" />地形要素 {{ view?.terrain.features.length ?? 0 }}</label>
-      <label><input type="checkbox" v-model="visible.sectors" />射界 {{ view?.fields_of_fire.length ?? 0 }}</label>
+      <label><input type="checkbox" v-model="visible.terrain" />地形要素 {{ view?.terrain.features.length || '未记录' }}</label>
+      <label><input type="checkbox" v-model="visible.sectors" />射界 {{ view?.fields_of_fire.length || '未记录' }}</label>
       <label><input type="checkbox" v-model="visible.ranges" />火力射程 {{ view?.fire_ranges.length ?? 0 }}</label>
-      <label><input type="checkbox" v-model="visible.supply" />补给线 {{ view?.supply_lines.length ?? 0 }}</label>
+      <label><input type="checkbox" v-model="visible.supply" />补给线 {{ view?.supply_lines.length || '未记录' }}</label>
       <span class="map-key">虚线：估计 · 红色补给线：受阻 · 射界未算遮挡</span>
     </div>
     <div ref="el" class="map-fill" role="region" :aria-label="overview ? '中国地图' : '战场态势地图'"></div>

@@ -5,7 +5,7 @@ import folium
 
 TERRAIN_COLORS = {"ridge": "#b87940", "river": "#39a9d1", "road": "#c6bb99",
                   "woods": "#4d9362", "urban": "#a398bd", "fortification": "#ddac50"}
-STATUS_LABELS = {"open": "通行记录", "cut": "受阻", "threatened": "受威胁", "unknown": "通行未核实"}
+STATUS_LABELS = {"open": "几何未切断", "cut": "几何受阻", "threatened": "受威胁", "unknown": "通行未核实"}
 
 
 def _tooltip(text):

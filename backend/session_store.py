@@ -91,4 +91,5 @@ def load_all():
 
 
 def remove(session_id):
-    (directory() / (session_id + '.json')).unlink(missing_ok=True)
+    with _WRITE_LOCK:
+        (directory() / (session_id + '.json')).unlink(missing_ok=True)

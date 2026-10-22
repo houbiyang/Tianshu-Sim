@@ -5,7 +5,7 @@ import { api } from '../api';
 import MapView from './MapView.vue';
 
 const props = defineProps<{ battles: Battle[]; health: Health | null; busy: string; error: string; canResume: boolean; recentSessions: { session_id: string; turn_count: number; scenario: string }[] }>();
-const emit = defineEmits<{ settings: []; resume: []; reconnect: []; cancel: []; resumeSession: [id: string]; start: [value: { scenario: string; battle: string; time_step: string; use_rag: boolean; use_adjudicator: boolean }] }>();
+const emit = defineEmits<{ settings: []; resume: []; reconnect: []; cancel: []; resumeSession: [id: string]; deleteSession: [session: { session_id: string; turn_count: number; scenario: string }]; start: [value: { scenario: string; battle: string; time_step: string; use_rag: boolean; use_adjudicator: boolean }] }>();
 const minimized = ref(false);
 const mode = ref<'catalog' | 'assistant' | 'recent'>('catalog');
 const query = ref('');
@@ -59,7 +59,7 @@ async function ask() {
         <div class="creation-modes" role="tablist" aria-label="想定创建方式">
           <button role="tab" :aria-selected="mode === 'catalog'" :class="{ active: mode === 'catalog' }" @click="mode = 'catalog'">战役资料库 <span>{{ battles.length }}</span></button>
           <button role="tab" :aria-selected="mode === 'assistant'" :class="{ active: mode === 'assistant' }" @click="mode = 'assistant'">问答生成</button>
-          <button v-if="recentSessions.length" role="tab" :aria-selected="mode === 'recent'" :class="{ active: mode === 'recent' }" @click="mode = 'recent'">已保存战局 <span>{{ recentSessions.length }}</span></button>
+          <button role="tab" :aria-selected="mode === 'recent'" :class="{ active: mode === 'recent' }" @click="mode = 'recent'">已保存战局 <span>{{ recentSessions.length }}</span></button>
         </div>
         <div v-if="mode === 'catalog'" class="catalog-body" role="tabpanel">
           <label class="search-field"><span>搜索</span><input v-model="query" placeholder="名称、年代或战役关键词" aria-label="搜索战役"></label>
@@ -84,7 +84,13 @@ async function ask() {
           <small v-if="sources.length" class="muted">本地参考：{{ sources.map(s => s.section).join('、') }}</small>
           <p v-if="ready" class="draft-ready">想定草案已就绪，可进入下一步编辑确认。</p>
         </div>
-        <div v-else class="recent-battles" role="tabpanel"><button v-for="s in recentSessions" :key="s.session_id" :disabled="!!busy" @click="emit('resumeSession', s.session_id)"><span><strong>{{ s.scenario }}</strong><small>已推进 {{ s.turn_count }} 回合 · {{ s.session_id }}</small></span><span>打开战局 →</span></button></div>
+        <div v-else class="recent-battles" role="tabpanel">
+          <p v-if="!recentSessions.length" class="empty-catalog">暂无已保存战局。可从战役资料库或问答生成开始新的推演。</p>
+          <article v-for="s in recentSessions" :key="s.session_id" class="saved-battle" :data-session-id="s.session_id">
+            <button class="open-battle" :disabled="!!busy" @click="emit('resumeSession', s.session_id)"><span><strong>{{ s.scenario }}</strong><small>已推进 {{ s.turn_count }} 回合 · {{ s.session_id }}</small></span><span>打开战局 →</span></button>
+            <button class="delete-battle" :disabled="!!busy" :aria-label="`删除战局 ${s.session_id}`" @click="emit('deleteSession', s)">删除</button>
+          </article>
+        </div>
         <footer class="window-footer"><span>{{ mode === 'recent' ? '恢复保存的态势、回合与分析记录' : '选定想定后，再配置推演规则' }}</span><button v-if="mode !== 'recent'" class="primary" :disabled="!!busy || planning || (mode === 'catalog' ? !selected : !ready)" @click="phase = 'configure'">继续配置 <span>→</span></button></footer>
       </template>
       <template v-else>

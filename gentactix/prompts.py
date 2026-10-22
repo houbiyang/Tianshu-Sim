@@ -5,7 +5,7 @@
 """
 
 import json
-from . import sim_clock
+from . import sim_clock, reporting
 from .unit_types import modern_unit_instruction
 from .battlefield import DISPLAY_INSTRUCTION
 from .anchors import node_metadata
@@ -48,7 +48,7 @@ REPORT_STYLE_RULES = """
             学界对四十万之数有争议；秦军总数史书未载」。
           - 无史料时：写「本回合无史料支撑，态势系依军事常识推演」。
           - 30—60 字，不分点，不展开论述。
-        """
+        """ + reporting.INSTRUCTION
 
 TIME_FORMAT_RULE = (
     "\n        ⏱️ current_time 必须是**简短的时间表述**（8—18 字），"
@@ -113,7 +113,8 @@ def build_init_prompt(scenario_input, available_nodes, briefing=""):
              "morale"(士气0-100)、"supply"(补给0-100)
            - 单个单位的标准写法（严格照此结构输出，字段一个都不能少）：
              {{"name": "赵军前锋营", "type": "步兵", "lat": 35.71, "lng": 112.93, "hp": 1000,
-               "combat_power": 70, "speed": 5, "attack_range": 200, "morale": 85, "supply": 90}}
+               "combat_power": 70, "speed": 5, "attack_range": 200, "morale": 85, "supply": 90,
+               "personnel": {{"committed": null, "current": null, "casualties": null, "noncombat_losses": null, "source": "缺少该单位人数资料"}}, "equipment": []}}
            - ⚠️ 最高级警告：键名绝对不允许写成 "名称"、"类型"、"兵力"、"战斗力" 这类中文键名，
              否则地图渲染层取不到单位名，所有军标都会退化成「未知单位」。键名只准用上面给出的英文。
            - ⚠️ 示例里的 lat/lng 只是**结构占位**，严禁照抄到实际单位上。每个单位的坐标必须
@@ -209,6 +210,7 @@ def build_step_prompt(war_state, next_turn_num, time_step, use_live_intel, brief
 {modern_unit_instruction(json.dumps(war_state, ensure_ascii=False) + briefing)}
 {DISPLAY_INSTRUCTION}
         当前战场数据：{json.dumps(war_state, ensure_ascii=False)}
+        updated_state内每个单位保留personnel与equipment；数值未知用null，已有记录必须按本回合结果更新，不得省略。
 {briefing_block}{adjudication_block}
        ### 强制任务：
        {sim_clock.instruction(war_state, time_step)}

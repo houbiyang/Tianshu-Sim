@@ -30,6 +30,7 @@ export const api = {
   battles: () => request<{ battles: Battle[] }>("GET", "/api/battles"),
   corpus: () => request<{ files: number; chunks: number; chars: number; dir: string }>("GET", "/api/corpus"),
   sessions: () => request<{ sessions: { session_id: string; turn_count: number; scenario: string; initialized: boolean }[] }>('GET', '/api/sessions'),
+  deleteSession: (sid: string) => request<{ ok: boolean; session_id: string; audit_retained: boolean }>('DELETE', `/api/sessions/${sid}`),
   createSession: (opts: {
     scenario: string; time_step: string; use_adjudicator: boolean;
     battle: string | null; use_rag: boolean; use_live_intel: boolean;

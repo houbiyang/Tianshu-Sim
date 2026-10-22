@@ -64,8 +64,23 @@ The soak runner also supports `--resume`: it continues from the last committed
 checkpoint and retains earlier attempts. It restarts the native runtime after
 turn 10. The export audit checks every snapshot, including turns committed before
 a failed verification; optional loss records and guard warnings remain visible.
+Use `--scenario-file <UTF-8-file>` for explicit test conditions. In the summary,
+`completed` means the target turn was reached; `passed` additionally requires
+every recorded request to have succeeded, including attempts before a resume.
+`failed_requests` is retained. Neither flag certifies model narrative quality.
+
+For the 8-unit, 15-minute teaching scenario, `audit_outputs.py --live-dir <dir>
+--out <report.json>` checks personnel/equipment accounting, ranges, display
+sectors, route discrepancies, clocks and raw-output completeness. It also reports
+warnings that require interpretation; zero supply is an index, not an ammunition
+count. See the [50-turn audit](../../docs/50步推演与输出审计-2026-10-22.md)
+for manual narrative checks and the distinction between structural and semantic
+acceptance. These scenario-specific checks are not generic historical validation.
 
 For Linux packages, use a separate Xvfb display and `GENTACTIX_PORT`,
 `GENTACTIX_DESKTOP_DATA`, and CDP port. `desktop_key.py` exercises native menus.
 Keep the sandbox enabled. Verify file downloads, restart persistence and owned
 backend shutdown. Compare published SHA256 digests with the local artifacts.
+# 补给与输出一致性回放
+
+`python tools/qa/replay_consistency.py --export <战局导出.json> --out <新目录>` 使用当前规则只读重算全部轨迹，检查地图/内核路径一致、射击几何及正文已知错误。旧越界事件标为rejected，不自动旋转射界；原文件SHA256与失败分类写入summary.json。此工具不进行真实模型续推，也不证明保留下来的自然语言均正确。

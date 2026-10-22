@@ -99,15 +99,12 @@ def _branch_candidate(result, before, record):
 
 
 def _explanation_prompt(analysis):
-    evidence = [{'trace_id': t['id'], 'turn': t['turn'], 'changes': t['changes'], 'decisions': t['decisions']}
-                for t in analysis['timeline']]
     return (CAPABILITY_NOTE + '\n你是战局分析员。依据下面执行证据，给出简短、可核对的归因假说。'
             '状态变化不能直接证明意图或因果；不要输出内部思维链、胜率或因果贡献百分比。'
             '每条假说必须引用提供的trace_id，并说明替代解释和局限。只返回JSON：'
             '{"summary":"...","hypotheses":[{"claim":"...","evidence_ids":["..."],'
-            '"alternative":"...","limitation":"..."}]}\n' + json.dumps({
-                'evidence': evidence, 'attributions': analysis['attributions'],
-                'scope': analysis['scope']}, ensure_ascii=False))
+            '"alternative":"...","limitation":"..."}]}\n' + json.dumps(
+                causal.explanation_evidence(analysis), ensure_ascii=False, separators=(',', ':')))
 
 
 def build_router(get_session, serialized):

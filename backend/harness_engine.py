@@ -28,6 +28,7 @@ from gentactix.config import MAX_API_RETRIES
 from gentactix.geo import get_coordinate_errors
 from gentactix.state import normalize_state_units
 from gentactix.battlefield import CAPABILITY_NOTE
+from gentactix import fire_control, reporting
 from . import runtime_bridge, extensions
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -53,7 +54,7 @@ _load_dotenv()
 LLM_BASE_URL = os.environ.get("GENTACTIX_LLM_BASE_URL", "http://127.0.0.1:8000/v1")
 LLM_API_KEY = os.environ.get("GENTACTIX_LLM_API_KEY", "")
 LLM_MODEL = os.environ.get("GENTACTIX_LLM_MODEL", "qwen3.8-flash-next-iq3_s")
-LLM_MAX_TOKENS = int(os.environ.get("GENTACTIX_LLM_MAX_TOKENS", "16384"))
+LLM_MAX_TOKENS = int(os.environ.get("GENTACTIX_LLM_MAX_TOKENS", "65536"))
 
 # 独立 Harness home / workspace：与 ~/.dsh 完全隔离
 DSH_HOME = os.environ.get("GENTACTIX_DSH_HOME", str(ROOT / ".dsh-wargame-home"))
@@ -85,7 +86,9 @@ def role_policy(role="engine", *, tools=False):
                 "causal": 8192, "counterfactual": LLM_MAX_TOKENS}
     prefix = "GENTACTIX_" + role.upper()
     saved = ROLE_POLICIES.get(role, {})
-    default_effort = 'low' if role in ('chat', 'strategist', 'causal') else None
+    # Preserve high-effort adjudication; reasoning and final JSON share one cap.
+    # Explicit saved choices, including None (inherit DSH), remain authoritative.
+    default_effort = 'high' if role == 'engine' else ('low' if role in ('chat', 'strategist', 'causal') else None)
     return {"role": role, "max_tokens": min(LLM_MAX_TOKENS, saved.get('max_tokens', int(os.environ.get(prefix + "_MAX_TOKENS", defaults.get(role, LLM_MAX_TOKENS))))),
             "reasoning_effort": saved.get('reasoning_effort', os.environ.get(prefix + "_REASONING_EFFORT") or default_effort),
             "max_steps": RUNTIME_MAX_STEPS,
@@ -369,7 +372,13 @@ def _gate(result):
         }
         hint = hints.get(code, '请打开「模型配置」测试当前连接，核对接口、模型ID、密钥和输出预算。')
         if result.finish_reason == 'max-tokens':
-            hint = '输出预算耗尽，请在「模型配置」增加token上限，或减小想定规模后重试。'
+            usage = next(((event.get('data') or {}).get('usage') or {} for event in reversed(getattr(result, 'events', []) or [])
+                          if event.get('type') == 'assistant/message'), {})
+            used = usage.get('outputTokens')
+            consumed = f'（本次模型输出 {used} token）' if type(used) is int else ''
+            hint = (f'输出预算耗尽{consumed}，推理与最终正文共用此预算。'
+                    '请在「模型配置」同时检查全局与当前角色上限（推演为战场裁决），提高预算或减少单次生成内容后重试；'
+                    '失败输出不会提交，原战局保留。')
         raise HarnessRunError(
             f"harness 未完成（finish_reason={result.finish_reason}），"
             f"本次输出已拒收；{hint}")
@@ -566,7 +575,7 @@ def get_ai_response(prompt: str, role_id: str | None = None,
 def get_ai_response_with_retry(prompt: str, max_retries: int = MAX_API_RETRIES,
                                role_id: str | None = None,
                                observer: RunObserver | None = None,
-                               cancel_check=None, native_context=None) -> dict:
+                               cancel_check=None, native_context=None, previous_state=None) -> dict:
     """带反思循环的推演引擎，强制纠正 AI 坐标幻觉（语义与旧 engine 一致）。
 
     cancel_check在重试之间生效；项目原生插件另外通过Agent.cancel取消在途调用。
@@ -581,25 +590,29 @@ def get_ai_response_with_retry(prompt: str, max_retries: int = MAX_API_RETRIES,
         # 键名归一化必须早于坐标校验（中文键 → is_naval 判不出海军的坑）
         normalize_state_units(result_json)
         state_to_check = result_json.get("updated_state", result_json)
-        errors = get_coordinate_errors(state_to_check)
+        errors = list(get_coordinate_errors(state_to_check))
+        fire_errors = fire_control.errors(state_to_check, previous_state)
+        errors.extend(fire_errors)
 
         if not errors:
             if attempt > 0:
-                ENGINE_NOTICES.append({"level": "success", "message": "✅ 模型已成功自我修正坐标！"})
+                ENGINE_NOTICES.append({"level": "success", "message": "✅ 模型已修正坐标/射击几何冲突。"})
             return result_json
 
         ENGINE_NOTICES.append({
             "level": "warning",
-            "message": f"🛑 检测到海军单位上岸，正在进行第 {attempt + 1} 次重新推理...",
+            "message": f"检测到坐标/射击几何冲突，正在进行第 {attempt + 1} 次重新推理。",
         })
 
-        error_feedback = "\n\n【系统最高警告：坐标物理规则冲突！】\n你刚才生成的 JSON 中存在以下致命地理错误：\n"
+        error_feedback = "\n\n【系统校验：坐标/射击几何冲突，候选未提交】\n刚才的JSON存在以下错误：\n"
         for err in errors:
             error_feedback += f"- {err}\n"
-        error_feedback += "请你立刻重新评估战局，重新生成一组合法的 JSON 数据。必须确保所有海军单位的经纬度都在海洋中！"
+        error_feedback += "重新返回完整合法JSON，维持原回合时间及账本。不得伪造射击起点或扩大射程绕过验证；若允许转向，明确更新fire_sector并提供fire_sector_change.reason。固定射界不可旋转。"
 
         current_prompt += error_feedback
 
+    if fire_errors:
+        raise ValueError('射击几何连续校验失败，候选未提交：' + '；'.join(fire_errors))
     ENGINE_NOTICES.append({
         "level": "error",
         "message": f"⚠️ AI 连续 {max_retries} 次未能修正坐标错误，系统强制放行，请注意地图穿模。",
@@ -611,7 +624,8 @@ def get_ai_response_with_retry(prompt: str, max_retries: int = MAX_API_RETRIES,
 # 🧠 引擎 B：战略复盘
 # ==========================================
 def get_strategic_review(history, current_state, role_id: str | None = None,
-                         prefix: str = "", observer: RunObserver | None = None) -> tuple[str, str]:
+                         prefix: str = "", observer: RunObserver | None = None,
+                         adjudication=None) -> tuple[str, str]:
     """首席战略推演官深度复盘。返回 (reasoning, conclusion)。
 
     思维链随事件流的 reasoning 内容块到达（不在 RunResult 顶层字段），
@@ -620,12 +634,19 @@ def get_strategic_review(history, current_state, role_id: str | None = None,
     """
     prompt = prefix + f"""
     {CAPABILITY_NOTE}
+    {reporting.INSTRUCTION}
     你现在是最高统帅部的首席战略推演官璇玑。
     以下是本次沙盘推演从开战至今的全部战报记录：
     {json.dumps(history, ensure_ascii=False, indent=2)}
 
     这是当前最新的战场单位状态（包含残余兵力、位置、士气、补给）：
     {json.dumps(current_state, ensure_ascii=False, indent=2)}
+
+    这是程序当前几何裁决（null表示未启用或不可用）：
+    {json.dumps(adjudication, ensure_ascii=False, separators=(',', ':'))}
+    状态中supply_routes.status只是模型的原通断声明，不能称为内核结论。
+    只能使用以上程序裁决的units[].supply及supply_paths[].status描述几何通断；
+    几何连通不是运达记录，更不是开火权限。当前没有弹药发数账本，禁止声称无弹可射。
 
     请你抛开一切 JSON 格式束缚，用极其专业的军事术语，写一份 500 字左右的【战局深度复盘】。
     要求：

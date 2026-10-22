@@ -7,7 +7,7 @@ const props = defineProps<{ disabled: boolean; embedded?: boolean }>();
 const emit = defineEmits<{ changed: []; busy: [label: string] }>();
 const open = ref(!!props.embedded);
 const current = ref<LlmConfig | null>(null);
-const form = reactive({ base_url: '', model: '', api_key: '', max_tokens: 16384, context_window: 262144, timeout_seconds: 900,
+const form = reactive({ base_url: '', model: '', api_key: '', max_tokens: 65536, context_window: 262144, timeout_seconds: 900,
   clear_api_key: false, max_steps: 8, max_tool_calls: 16, role_policies: {} as LlmConfig['role_policies'] });
 const roleNames: Record<string, string> = { engine: '战场裁决', strategist: '战略研判', chat: '战局问答', planner: '想定生成', causal: '因果分析', counterfactual: '反事实分支', 'connection-test': '连接测试' };
 const preset = ref('vllm');
@@ -30,6 +30,13 @@ function choosePreset() {
   const item = current.value?.presets.find(p => p.id === preset.value);
   if (item) Object.assign(form, { base_url: item.base_url, model: item.model, api_key: '' });
   message.value = ''; error.value = '';
+}
+function useBattleBudget() {
+  const budget = Math.min(form.context_window, Math.max(form.max_tokens, 65536));
+  form.max_tokens = budget;
+  form.role_policies.engine = { max_tokens: budget,
+    reasoning_effort: form.role_policies.engine ? form.role_policies.engine.reasoning_effort : 'high' };
+  message.value = '已同步全局与裁决角色预算，保留当前推理强度。点击保存后生效。';
 }
 async function save() {
   working.value = true; error.value = ''; message.value = '';
@@ -71,8 +78,11 @@ async function testConnection() {
         <input id="llm-key" v-model="form.api_key" type="password" autocomplete="new-password" :disabled="disabled || working" placeholder="同一地址留空保留已有密钥">
         <label class="check"><input type="checkbox" v-model="form.clear_api_key" :disabled="disabled || working">清除已有密钥（无鉴权vLLM）</label>
         <p class="muted">同一地址留空保留已有密钥；更换地址需重新填写。密钥不回显，配置使用认证加密保存，解密密钥存放于独立的用户配置目录。</p>
-        <label for="llm-max-tokens">输出token上限</label>
+        <label for="llm-max-tokens">全局输出token上限（含推理与正文）</label>
         <input id="llm-max-tokens" v-model.number="form.max_tokens" type="number" min="128" max="262144" :disabled="disabled || working">
+        <p v-if="form.role_policies.engine" class="muted">战场裁决有效上限：{{ Math.min(form.max_tokens, form.role_policies.engine.max_tokens) }} token（取全局与角色上限较小值）。只提高全局上限不会提高已保存的角色上限。</p>
+        <button type="button" @click="useBattleBudget" :disabled="disabled || working">填写裁决建议预算</button>
+        <p class="muted">建议为完整战局预留 65,536 token；此按钮保留当前推理强度。上限不是固定消耗，仍受服务实际容量限制。</p>
         <label for="llm-context">上下文容量</label>
         <input id="llm-context" v-model.number="form.context_window" type="number" min="1024" max="2000000" :disabled="disabled || working">
         <label for="llm-timeout">超时（秒）</label>
@@ -88,10 +98,10 @@ async function testConnection() {
             <input :id="`budget-${role}`" v-model.number="policy.max_tokens" type="number" min="128" max="262144" :disabled="disabled || working">
             <label :for="`effort-${role}`">推理强度</label>
             <select :id="`effort-${role}`" v-model="policy.reasoning_effort" :disabled="disabled || working">
-              <option :value="null">服务默认</option><option value="low">低</option><option value="medium">中</option><option value="high">高</option><option value="xhigh">极高</option>
+              <option :value="null">继承DSH默认</option><option value="low">低</option><option value="medium">中</option><option value="high">高</option><option value="xhigh">极高</option>
             </select>
           </div>
-          <p class="muted">角色输出受全局上限约束。推理强度是否受支持由模型服务决定；不确定时选择服务默认。</p>
+          <p class="muted">角色输出受全局上限约束。继承DSH默认可能启用高推理强度，并不代表关闭推理。推理强度是否受支持由模型服务决定。</p>
         </details>
         <p v-if="current.storage" class="muted">加密配置：{{ current.storage.path }}</p>
         <p v-if="current.storage?.error" class="bad" role="alert">{{ current.storage.error }}</p>

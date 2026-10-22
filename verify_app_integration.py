@@ -42,7 +42,7 @@ FIXTURE = {
     "red_units": [
         {"name": "赵军主力", "type": "步兵", "lat": 35.9006, "lng": 112.8556,
          "hp": 8000, "combat_power": 60, "speed": 5, "attack_range": 200,
-         "morale": 80, "supply": 80},
+         "morale": 80, "supply": 80, "supply_node_id": "zhao-rear"},
         {"name": "赵军辎重营", "type": "步兵", "lat": 35.7876, "lng": 112.9790,
          "hp": 3000, "combat_power": 40, "speed": 5, "attack_range": 200,
          "morale": 70, "supply": 90},
@@ -53,6 +53,9 @@ FIXTURE = {
          "morale": 85, "supply": 70},
     ],
     "engagements": [],
+    # The supply source is explicit: an arbitrary friendly unit is not a depot.
+    "supply_nodes": [{"id": "zhao-rear", "team": "red", "lat": 35.7876,
+                      "lng": 112.9790, "source": "测试设定"}],
     "situation_report": "两军在丹河两岸对峙。",
     "source_note": "考据：兵力数字系推演。",
 }

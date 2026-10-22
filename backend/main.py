@@ -26,7 +26,7 @@ from fastapi.responses import Response, JSONResponse
 from pydantic import BaseModel, Field
 
 from gentactix import (adjudication_lib, adjudicator, anchors, battlefield, causal, geo, integrity,
-                       prompts, rag, state, sim_clock)
+                       prompts, rag, state, sim_clock, fire_control, reporting)
 
 from . import agent_tools, harness_engine, extensions, runtime_bridge, session_store, llm_settings, runtime_identity
 
@@ -46,7 +46,7 @@ async def lifespan(_app):
     harness_engine.close_harness()
 
 
-app = FastAPI(title="GenTactix dsh backend", version="3.1.2", lifespan=lifespan)
+app = FastAPI(title="GenTactix dsh backend", version="3.1.3", lifespan=lifespan)
 
 # Electron 渲染进程（dev: vite 端口 / prod: file://）都要能访问本机后端
 app.add_middleware(
@@ -264,7 +264,8 @@ def _retrieve_briefing(session: dict, query: str, phase: str):
 def _snapshot(session: dict) -> dict:
     # 🐛 面板补算兜底（与 app.py 同语义）：开关开着但没有裁决结果时
     # （初始化时内核失败、或旧会话恢复），按当前战局补算一次，面板绝不空白。
-    if session["use_adjudicator"] and not session["adj_last"] and session["war_state"]:
+    if (session["use_adjudicator"] and session["war_state"]
+            and (not session["adj_last"] or session['adj_last'].get('version') != adjudicator.ADJUDICATOR_VERSION)):
         if session.get("adj_spec") is None:
             session["adj_spec"] = adjudicator.load_battle_spec(
                 scenario_text=session.get("scenario_input", ""),
@@ -286,11 +287,13 @@ def _snapshot(session: dict) -> dict:
         },
         "war_state": session["war_state"],
         "last_war_state": session["last_war_state"],
-        "battlefield": battlefield.build_battlefield_view(session["war_state"], session["adj_last"]),
+        "battlefield": battlefield.build_battlefield_view(session["war_state"], session["adj_last"],
+            previous=session.get('last_war_state'), trajectory=session.get('trajectory')),
         "history": session["history"],
         "review": {
             "text": session["review_text"],
             "reasoning": session["review_reasoning"],
+            "audit": session.get('review_audit'),
         },
         "chat_messages": session["chat_messages"],
         "adjudication": {
@@ -524,9 +527,15 @@ def create_session(req: CreateSessionRequest):
 @_serialized
 def delete_session(session_id: str):
     with _SESSION_LOCK:
-        _SESSIONS.pop(session_id, None)
-        session_store.remove(session_id)
-    return {"ok": True}
+        _get(session_id)
+        # Keep the in-memory battle if removing its checkpoint fails.
+        try:
+            session_store.remove(session_id)
+        except OSError as exc:
+            raise HTTPException(status_code=500, detail='无法删除本机存档，战局已保留；请检查存储目录权限后重试') from exc
+        _SESSIONS.pop(session_id)
+        harness_engine.forget_role_sessions(session_id)
+    return {"ok": True, "session_id": session_id, "audit_retained": True}
 
 
 @app.get("/api/sessions/{session_id}")
@@ -576,6 +585,7 @@ def init_session(session_id: str):
         # 3. 锚点吸附 + 海军强制落水
         geo.sanitize_init_units(init_state, available_nodes)
         sim_clock.initialize(init_state)
+        fire_control.enforce(init_state)
         if session.get('cancel_requested'):
             raise RuntimeError('用户已取消，初始化不提交')
 
@@ -593,14 +603,16 @@ def init_session(session_id: str):
         start_time = init_state.get("current_time", "未知时间")
         initial_report = init_state.get(
             "situation_report", "各单位已进入战斗位置，战役即将打响。")
+        initial_report, report_audit = reporting.render(initial_report, init_state, turn=0, adjudication=adj_last)
+        init_state['situation_report'] = initial_report
         initial_note = init_state.get("source_note")
         history = [state.compose_report_entry(
-            initial_report, initial_note,
-            prefix=f"**【T+0 | {start_time}】初始态势评估**：\n")]
+            initial_report, initial_note)]
 
         trace_record = extensions.prepare_record(session, before=None, after=init_state,
             turn=0, epoch=init_epoch, params=dict(adj_spec.explicit) if adj_spec else {},
-            prompt=init_prompt, observer=observer, report=initial_report)
+            prompt=init_prompt, observer=observer, report=initial_report,
+            guards={'report': report_audit})
 
         # ✅ 原子提交：任何一步失败都不动会话，重试初始化不会留下半截战局
         session["rag_last"] = rag_meta
@@ -615,6 +627,7 @@ def init_session(session_id: str):
         # 复盘与对话必须是一张白纸（防上一局张冠李戴）
         session["review_text"] = None
         session["review_reasoning"] = None
+        session['review_audit'] = None
         session["chat_messages"] = []
         session["history"] = history
         session["decision_log"] = []
@@ -696,7 +709,7 @@ def next_turn(session_id: str):
                             'evaluate_action、inspect_trajectory、evaluate_counterfactual。先核对状态和可行性；'
                             '最终直接返回updated_state/report/decisions的JSON，不使用应用层tool_calls协议。')
             result = harness_engine.get_ai_response_with_retry(step_prompt, role_id=engine_role,
-                observer=observer, cancel_check=cancel_check, native_context={
+                observer=observer, cancel_check=cancel_check, previous_state=prev_state, native_context={
                     'session': {k: copy.deepcopy(session.get(k)) for k in ('war_state', 'use_rag', 'scenario_input',
                         'battle_choice', 'history', 'trajectory')}, 'pre_adj': pre_adj})
         elif session.get("use_agent_tools"):
@@ -707,7 +720,7 @@ def next_turn(session_id: str):
         else:
             result = harness_engine.get_ai_response_with_retry(
                 step_prompt, role_id=engine_role, observer=observer,
-                cancel_check=cancel_check)
+                cancel_check=cancel_check, previous_state=prev_state)
 
         updated_data = result.get("updated_state", result)
         sim_clock.enforce_step(prev_state, updated_data, time_step)
@@ -722,18 +735,12 @@ def next_turn(session_id: str):
                 updated_data["eliminated"] = declared
         updated_data, roster = integrity.reconcile_roster(prev_state, updated_data)
         battlefield.carry_battlefield_state(prev_state, updated_data)
+        fire_control.enforce(updated_data, prev_state)
         numeric_flags = integrity.check_numeric_integrity(prev_state, updated_data)
 
         report_text = result.get("report")
         if not report_text and isinstance(updated_data, dict):
             report_text = updated_data.get("report", f"【T+{next_turn_num}】系统未能成功生成文字战报，但战场态势已发生改变。")
-        history_entry = None
-        if report_text:
-            note = result.get("source_note")
-            if not note and isinstance(updated_data, dict):
-                note = updated_data.get("source_note")
-            history_entry = state.compose_report_entry(report_text, note)
-
         # 事后裁决 + 位移越界检查（只报告，不拉回坐标）
         if session["use_adjudicator"]:
             adj_last = _safe_adjudicate(
@@ -744,12 +751,21 @@ def next_turn(session_id: str):
             adj_last = None
             violations = []
 
+        report_text, report_audit = reporting.render(report_text, updated_data, prev_state,
+            turn=next_turn_num, adjudication=adj_last)
+        # Prevent stale model prose inside the state from poisoning later prompts.
+        updated_data.pop('situation_report', None)
+        updated_data.pop('report', None)
+        note = result.get('source_note') or updated_data.get('source_note')
+        history_entry = state.compose_report_entry(report_text, note)
+
         if cancel_check():
             raise RuntimeError('用户已取消，候选战局不提交')
         trace_record = extensions.prepare_record(session, before=prev_state, after=updated_data,
             turn=next_turn_num, params=adj_params, prompt=step_prompt, result=result,
             observer=observer, report=report_text or '',
-            guards={'roster': roster, 'numeric_flags': numeric_flags, 'movement_violations': violations})
+            guards={'roster': roster, 'numeric_flags': numeric_flags, 'movement_violations': violations,
+                    'fire_geometry': {'status': 'verified'}, 'report': report_audit})
 
         # ✅ 全部校验通过 → 原子提交：上面任何一步抛异常都到不了这里，
         #    战局、回合数、日志、裁决一律保持调用前原样（502 不留半截状态）。
@@ -805,13 +821,19 @@ def review(session_id: str):
     session["progress"] = observer.progress
     session['active_observer'] = observer
     try:
+        # Refresh legacy geometry before the reviewer sees any status claims.
+        _snapshot(session)
         reasoning, conclusion = harness_engine.get_strategic_review(
             session["history"], session["war_state"],
             role_id=strategist_role,
             prefix=_amnesia_prefix(session, strategist_role) if strategist_role else "",
-            observer=observer)
+            observer=observer, adjudication=session.get('adj_last'))
         if session.get('cancel_requested'):
             raise RuntimeError('用户已取消，复盘不提交')
+        conclusion, review_audit = reporting.render(conclusion, session['war_state'],
+            session.get('last_war_state'), adjudication=session.get('adj_last'), review=True)
+        review_artifact = extensions.persist_artifact(session, 'review-audit', review_audit)
+        session['review_audit'] = {'artifact_id': review_artifact, **extensions.safe(review_audit)}
         session["review_reasoning"] = reasoning
         session["review_text"] = conclusion
         session["engine_last_meta"] = observer.meta()
@@ -892,6 +914,7 @@ def export_session(session_id: str):
         "review": {
             "reasoning": session["review_reasoning"],
             "conclusion": session["review_text"],
+            "audit": session.get('review_audit'),
         },
         "chat_messages": session["chat_messages"],
         "trajectory": session.get('trajectory', []),

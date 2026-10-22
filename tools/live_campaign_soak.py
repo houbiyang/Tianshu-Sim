@@ -16,6 +16,7 @@ def main():
     parser.add_argument('--out', type=Path, required=True)
     parser.add_argument('--turns', type=int, default=20)
     parser.add_argument('--resume', action='store_true')
+    parser.add_argument('--scenario-file', type=Path, help='UTF-8 teaching scenario; saved with the initial checkpoint')
     args = parser.parse_args()
     if not 1 <= args.turns <= 100:
         parser.error('--turns must be between 1 and 100')
@@ -31,9 +32,13 @@ def main():
     summary_path = out / 'summary.json'
     summary = json.loads(summary_path.read_text()) if args.resume and summary_path.exists() else {
         'live_model_calls': True, 'stubbed': False, 'checks': [], 'turns': [], 'passed': False}
-    summary.update(target_turns=args.turns, passed=False)
+    summary.update(target_turns=args.turns, completed=False, passed=False)
 
     def save():
+        summary['failed_requests'] = [row for row in summary['checks'] if row['http'] != 200]
+        summary['all_requests_succeeded'] = not summary['failed_requests']
+        # Completing via resume must not erase earlier failed attempts.
+        summary['passed'] = summary.get('completed', False) and summary['all_requests_succeeded']
         summary_path.write_text(json.dumps(summary, ensure_ascii=False, indent=2))
 
     def call(client, name, method, path, payload=None):
@@ -61,7 +66,7 @@ def main():
                 assert not api._SESSIONS, 'Use a fresh output directory or --resume'
                 battle = next(b['name'] for b in api.battles()['battles'] if '上甘岭' in b['name'])
                 sid = call(client, 'create', 'POST', '/api/sessions', {
-                    'scenario': '上甘岭局部教学想定，1952年10月14日04:00。只设置红蓝双方各两个代表性连级单位（步兵与支援），控制在四个单位。围绕597.9高地持续观察阵地争夺、坑道、补给与损耗，计划连续20回合，每回合严格15分钟。不预设战果，不跳过时间。',
+                    'scenario': args.scenario_file.read_text(encoding='utf-8') if args.scenario_file else f'上甘岭局部教学想定，1952年10月14日04:00。只设置红蓝双方各两个代表性连级单位（步兵与支援），控制在四个单位。围绕597.9高地持续观察阵地争夺、坑道、补给与损耗，计划连续{args.turns}回合，每回合严格15分钟。不预设战果，不跳过时间。',
                     'battle': battle, 'time_step': '15分钟', 'use_adjudicator': True,
                     'use_rag': True, 'persist_roles': True, 'use_agent_tools': True,
                     'agent_mode': 'native'})['session_id']
@@ -98,7 +103,7 @@ def main():
                     save()
             exported = call(client, 'export', 'GET', f'/api/sessions/{sid}/export')
             (out / 'export.json').write_text(json.dumps(exported, ensure_ascii=False, indent=2))
-            summary['passed'] = exported['turn_count'] == args.turns
+            summary['completed'] = exported['turn_count'] == args.turns
             save()
     finally:
         save()

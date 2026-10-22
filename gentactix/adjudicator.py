@@ -36,11 +36,11 @@ import hashlib
 import json
 import math
 
-from . import adjudication_lib
+from . import adjudication_lib, supply as supply_paths
 from .unit_types import classify_unit
 
 # 版本标记：界面上显示，用来区分「内核改了」和「这局确实没变化」
-ADJUDICATOR_VERSION = "geo-4"
+ADJUDICATOR_VERSION = "geo-5"
 
 # 平面近似的换算系数（km / 度）
 _KM_PER_DEG_LAT = 110.57
@@ -372,17 +372,17 @@ def _centroid(units):
 def _rear_point(own_units, enemy_centroid, unit):
     """补给源位置：己方最靠后的单位（离敌方重心最远者）。
 
-    为什么这样定义：不引入任何假设（不需要知道「后方基地在哪」），
-    纯粹从现有态势推出来，同输入必然同输出。若被评估单位自己就是最靠后的
+    仅供缺少显式节点/路线的旧想定回退使用，是估计而非基地定位。
+    从现有态势推出来，同输入必然同输出。若被评估单位自己就是最靠后的
     那一个，则沿「背离敌方重心」方向外推 8 km 作为虚拟辎重位置 ——
     否则单个单位永远「补给未切断」，判定形同虚设。
     """
     if enemy_centroid is None:
         return None
-    candidates = [u for u in own_units if u is not unit]
+    candidates = list(own_units)
     if candidates:
         rear = max(candidates, key=lambda u: distance_km(u["pos"], enemy_centroid))
-        if distance_km(rear["pos"], unit["pos"]) >= 0.5:
+        if rear is not unit and distance_km(rear["pos"], unit["pos"]) >= 0.5:
             return rear["pos"]
     away = (bearing_deg(enemy_centroid, unit["pos"])) % 360.0
     return offset_point(unit["pos"], away, 8.0)
@@ -392,19 +392,41 @@ def _blocked_along(start, end, threats, step_km=0.5):
     """从 start 到 end 的直线是否穿过敌方控制圈。
 
     返回 (是否被阻断, 阻断者名称, 距 start 多远被阻断)。
-    直线采样而非图搜索：补给线是道路，道路在沙盘尺度上就是直线段，
-    再做 A* 只会把「公路绕行」这种不存在的信息编出来。
+    局部等距投影下求线段与控制圆的首次交点，避免0.5km采样漏过0.1km控制圈。
+    不生成道路或绕行路线；step_km仅为旧调用兼容保留。
     """
     total = distance_km(start, end)
-    if total < 1e-6:
-        return False, None, None
-    bearing = bearing_deg(start, end)
-    steps = max(1, int(math.ceil(total / step_km)))
-    for i in range(steps + 1):
-        point = offset_point(start, bearing, total * i / steps)
-        for name, tpos, radius in threats:
-            if distance_km(point, tpos) <= radius:
-                return True, name, total * i / steps
+    scale = _KM_PER_DEG_LNG * math.cos(math.radians((start[0] + end[0]) / 2))
+    dx, dy = (end[1] - start[1]) * scale, (end[0] - start[0]) * _KM_PER_DEG_LAT
+    a = dx * dx + dy * dy
+    hits = []
+    for name, tpos, radius in threats:
+        x, y = (tpos[1] - start[1]) * scale, (tpos[0] - start[0]) * _KM_PER_DEG_LAT
+        c = x * x + y * y - radius * radius
+        if c <= 0:
+            hits.append((0.0, name))
+        elif a > 1e-12:
+            b = -2 * (dx * x + dy * y)
+            discriminant = b * b - 4 * a * c
+            if discriminant >= 0:
+                t = (-b - math.sqrt(discriminant)) / (2 * a)
+                if 0 <= t <= 1:
+                    hits.append((total * t, name))
+    if hits:
+        distance, name = min(hits)
+        return True, name, distance
+    return False, None, None
+
+
+def _blocked_path(points, threats):
+    """First interception measured from the recipient along the actual polyline."""
+    travelled = 0.0
+    reverse = list(reversed(points))
+    for start, end in zip(reverse, reverse[1:]):
+        blocked, name, distance = _blocked_along(start, end, threats)
+        if blocked:
+            return True, name, travelled + distance
+        travelled += distance_km(start, end)
     return False, None, None
 
 
@@ -559,11 +581,21 @@ def adjudicate(war_state, time_step="30分钟", turn=0, params=None):
 
         # --- 补给线 ---
         rear = _rear_point(own, enemy_centroid, unit)
-        if rear is None:
-            supply, cut_by, cut_km = "无后方", None, None
+        paths, path_warnings = supply_paths.resolve_paths(war_state, unit['team'], unit['raw'], rear)
+        for path in paths:
+            blocked, blocker, distance = _blocked_path(path['coordinates'], threats)
+            path.update(status='cut' if blocked else 'open', cut_by=blocker,
+                        cut_at_km=None if distance is None else round(distance, 3),
+                        status_source='geometry', source=path['source'] + '；通断按此路径的敌控区交点计算，非实际运达')
+            if path['declared_status'] not in ('unknown', path['status']):
+                path['source'] += '；模型原通断声明为' + path['declared_status'] + '，以几何结果为准'
+        # Any usable alternative keeps geometric connectivity; retain every path for display.
+        selected = next((p for p in paths if p['status'] == 'open'), paths[0] if paths else None)
+        if selected is None:
+            supply, cut_by, cut_km = ("未知" if path_warnings else "无后方"), None, None
         else:
-            blocked, cut_by, cut_km = _blocked_along(unit["pos"], rear, threats)
-            supply = "已切断" if blocked else "未切断"
+            cut_by, cut_km = selected['cut_by'], selected['cut_at_km']
+            supply = "已切断" if selected['status'] == 'cut' else "未切断"
 
         # --- 包围 / 退路 ---
         sealed = _sealed_ratio(unit["pos"], threats, encircle_km)
@@ -597,7 +629,10 @@ def adjudicate(war_state, time_step="30分钟", turn=0, params=None):
             "supply": supply,
             "cut_by": cut_by,
             "cut_at_km": None if cut_km is None else round(cut_km, 2),
-            "supply_path": [list(rear), list(unit["pos"])] if rear else [],
+            "supply_path": selected['coordinates'] if selected else [],
+            "supply_paths": paths,
+            "supply_basis": selected['basis'] if selected else 'unknown',
+            "supply_warnings": path_warnings,
             "sealed_ratio": round(sealed, 3),
             "encirclement": encirclement,
             "retreat": "可退" if retreat_ok else "已断",
@@ -642,6 +677,7 @@ def adjudicate(war_state, time_step="30分钟", turn=0, params=None):
         "contact_km": contact_km,
         "control_radius_km": control_km,
         "units": rows,
+        "supply_input_digest": supply_paths.input_digest(war_state),
         "skipped_units": skipped,
         "facts": facts,
         "summary": summary,

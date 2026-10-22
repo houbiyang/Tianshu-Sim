@@ -206,6 +206,7 @@ export interface CountMetric {
   valid: boolean;
   note: string;
   source: string;
+  carried_forward?: boolean;
   loss_rate: number | null;
   secondary_rate: number | null;
   readiness_rate: number | null;
@@ -235,6 +236,19 @@ export interface BattlefieldView {
     units: { name: string; team: "red" | "blue"; status: string; personnel: CountMetric | null; equipment: CountMetric[] }[];
     teams: { team: "red" | "blue"; total_units: number; recorded_units: number; archived_units: number; active_current: number | null; personnel: CountMetric | null; equipment: CountMetric[] }[];
   };
+  operational?: {
+    note: string;
+    units: { team: 'red' | 'blue'; name: string; active: boolean; status: string;
+      baseline_hp: number | null; baseline_time: string | null; current_hp: number | null;
+      previous_hp: number | null; hp_change: number | null; hp_decline: number | null;
+      hp_decline_rate: number | null; morale: number | null; supply: number | null }[];
+    teams: { team: 'red' | 'blue'; active_units: number; disabled_units: number;
+      hp_recorded_units: number; comparable_units: number; changed_units: number;
+      current_hp: number | null; hp_decline: number | null; hp_decline_rate: number | null;
+      hp_change: number | null; mean_morale: number | null; mean_supply: number | null }[];
+  };
+  data_quality?: { key: string; label: string; recorded: number; total: number | null;
+    status: 'available' | 'partial' | 'missing'; note: string }[];
   warnings: string[];
   notes: string[];
 }
