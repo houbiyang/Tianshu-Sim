@@ -1,6 +1,6 @@
 {
   "name": "gentactix-desktop",
-  "version": "3.1.4",
+  "version": "3.2.0",
   "private": true,
   "description": "GenTactix · dsh harness 版桌面前端（Vue3 + Electron）",
   "homepage": "https://github.com/snow-wind-001/Gentactix-DSH",

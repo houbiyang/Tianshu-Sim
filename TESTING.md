@@ -424,3 +424,7 @@ DSH连接实际配置的Qwen模型，短JSON、初始化、下一回合、问答
 入口：`verify_missions.py`、`verify_mission_backend.py`、`tools/accept_missions.py`、`tools/qa/mission_browser.js`。详细结果与边界见[逐场验收报告](docs/局部推演规则与逐场验收-2026-10-22.md)。没有重启既有8700进程、重新打包或上传。
 
 最后恢复显示修复后，桌面API、运行插件与局部API联合52/52复测通过；修复仅恢复参数来源显示，不改变已验收的教学结算。
+
+## Linux v3.2.0 发布验收（2026-10-23）
+
+隔离Python构建环境执行172/172回归通过，无SDK跳过；前端typecheck/build通过，npm审计0项漏洞。编译后端验证45个资料条目、20个固定演习、无模型初始化、导出导入、恢复和外部Origin拒绝。实际AppImage在Xvfb中检查原生模型菜单、64k预算、图标、固定初态、地图、真实JSON下载、刷新及桌面重启恢复，未关闭沙箱。Debian检查菜单、图标与包内资料；便携归档核对文件及符号链接。打包检查未重新调用真实模型，沿用上一节的20场真实验收证据；详见[版本说明](docs/releases/v3.2.0.md)。
