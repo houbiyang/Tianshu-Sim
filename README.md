@@ -118,20 +118,20 @@
 
 ## 安装与启动
 
-当前桌面版：[v3.2.0](https://github.com/snow-wind-001/Gentactix-DSH/releases/tag/v3.2.0)。新增资料、局部演习与打包验收见[版本说明](docs/releases/v3.2.0.md)。
+当前桌面版：[v3.2.1](https://github.com/snow-wind-001/Gentactix-DSH/releases/tag/v3.2.1)。DeepSeek 接口兼容修复、DSH 运行时及安装验收见[版本说明](docs/releases/v3.2.1.md)。
 
 从 [Releases](https://github.com/snow-wind-001/Gentactix-DSH/releases) 下载 Linux x86_64 安装包。包内包含后端和 DSH runtime，无需另装 Python 或 Conda；运行推演仍需可用的模型服务。
 
 | 格式 | 使用方式 |
 | --- | --- |
-| Ubuntu `.deb` | 使用系统安装器安装，或执行 `sudo apt install ./GenTactix-DSH-<版本>-amd64.deb`；安装后在应用菜单搜索 **GenTactix** |
+| Ubuntu `.deb` | 使用系统安装器安装，或执行 `sudo apt install ./GenTactix-DSH-3.2.1-amd64.deb`；安装后在应用菜单搜索 **GenTactix** |
 | `.AppImage` | 赋予执行权限后双击运行；无 FUSE 时可加 `APPIMAGE_EXTRACT_AND_RUN=1` 启动 |
 | `.tar.gz` | 解压后运行其中的 `gentactix-dsh` |
 
 在源码工作区中，也可为 AppImage 安装当前用户的菜单项和桌面图标：
 
 ```bash
-python3 tools/install_linux.py release/GenTactix-DSH-3.2.0-x86_64.AppImage --project-root .
+python3 tools/install_linux.py release/GenTactix-DSH-3.2.1-x86_64.AppImage --project-root .
 ```
 
 详细步骤、构建方法及配置迁移见[桌面使用说明](docs/桌面启动与配置.md)。当前提供 Linux 包，尚未验证 Windows 或 macOS 安装包。

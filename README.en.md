@@ -118,7 +118,7 @@ Use the startup conversation to create a scenario, optionally linked to an exist
 
 ## Install and launch
 
-Current desktop release: [v3.2.0](https://github.com/snow-wind-001/Gentactix-DSH/releases/tag/v3.2.0). See the [release notes](docs/releases/v3.2.0.md) for campaign data, local exercises and package validation.
+Current desktop release: [v3.2.1](https://github.com/snow-wind-001/Gentactix-DSH/releases/tag/v3.2.1). See the [release notes](docs/releases/v3.2.1.md) for the DeepSeek endpoint fix, bundled DSH runtime and installation validation.
 
 Download a Linux x86_64 package from [Releases](https://github.com/snow-wind-001/Gentactix-DSH/releases). Packages include the backend and DSH runtime; a separate Python or Conda installation is unnecessary. Simulations still require a working model service.
 
@@ -131,7 +131,7 @@ Download a Linux x86_64 package from [Releases](https://github.com/snow-wind-001
 From a source checkout, install an AppImage with a per-user menu entry and desktop icon:
 
 ```bash
-python3 tools/install_linux.py release/GenTactix-DSH-3.2.0-x86_64.AppImage --project-root .
+python3 tools/install_linux.py release/GenTactix-DSH-3.2.1-x86_64.AppImage --project-root .
 ```
 
 See the [desktop guide (Chinese)](docs/桌面启动与配置.md) for packaging and configuration migration. Linux packages are provided; Windows and macOS packages have not been validated.

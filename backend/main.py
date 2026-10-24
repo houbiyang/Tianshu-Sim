@@ -46,7 +46,7 @@ async def lifespan(_app):
     harness_engine.close_harness()
 
 
-app = FastAPI(title="GenTactix dsh backend", version="3.2.0", lifespan=lifespan)
+app = FastAPI(title="GenTactix dsh backend", version="3.2.1", lifespan=lifespan)
 
 # Electron 渲染进程（dev: vite 端口 / prod: file://）都要能访问本机后端
 app.add_middleware(

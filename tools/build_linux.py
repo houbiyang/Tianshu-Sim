@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parent.parent
 env = os.environ.copy()
 # ROS/system PYTHONPATH can leak unrelated packages into a frozen application.
 env.pop('PYTHONPATH', None)
+env['PYTHONNOUSERSITE'] = '1'
 command = [sys.executable, '-m', 'PyInstaller', '--noconfirm', '--clean', '--onedir',
            '--name', 'gentactix-backend', '--distpath', str(ROOT / 'dist-backend'),
            '--workpath', str(ROOT / 'build-backend'), '--specpath', str(ROOT / 'build-backend'),

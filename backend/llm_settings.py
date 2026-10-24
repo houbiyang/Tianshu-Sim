@@ -15,13 +15,22 @@ LOAD_ERROR = ''
 ROLES = ('engine', 'strategist', 'chat', 'planner', 'causal', 'counterfactual', 'connection-test')
 PRESETS = [
     {'id': 'vllm', 'label': 'vLLM / OpenAI兼容', 'base_url': 'http://127.0.0.1:8000/v1', 'model': ''},
-    {'id': 'deepseek', 'label': 'DeepSeek Flash（兼容V4）', 'base_url': 'https://api.deepseek.com/v1', 'model': 'deepseek-flash'},
+    {'id': 'deepseek', 'label': 'DeepSeek Flash（兼容V4）', 'base_url': 'https://api.deepseek.com/anthropic', 'model': 'deepseek-flash'},
 ]
+
+
+def migrate_endpoint(url):
+    """Map legacy official Chat-Completions roots to the DSH Messages root."""
+    parsed = urlsplit(url)
+    if parsed.scheme == 'https' and parsed.hostname == 'api.deepseek.com' and parsed.port is None \
+            and parsed.path.rstrip('/') in ('', '/v1'):
+        return 'https://api.deepseek.com/anthropic'
+    return url
 
 
 def validate(value):
     value = dict(value)
-    url = str(value.get('base_url', '')).strip().rstrip('/')
+    url = migrate_endpoint(str(value.get('base_url', '')).strip().rstrip('/'))
     parsed = urlsplit(url)
     if parsed.scheme not in ('http', 'https') or not parsed.hostname or parsed.username or parsed.password or parsed.query or parsed.fragment:
         raise ValueError('API地址须为HTTP/HTTPS地址，不得包含用户名、密码、查询参数或片段')

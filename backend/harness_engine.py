@@ -65,6 +65,7 @@ CONTEXT_WINDOW = int(os.environ.get("GENTACTIX_CONTEXT_WINDOW", "262144"))
 # 单次模型调用超时：实测大生成可到 ~10 分钟，默认 900s 容纳之（超时 ⇒ 可见失败）
 REQUEST_TIMEOUT_SECONDS = float(os.environ.get("GENTACTIX_REQUEST_TIMEOUT_SECONDS", "900"))
 from . import llm_settings
+LLM_BASE_URL = llm_settings.migrate_endpoint(LLM_BASE_URL)
 _saved_llm = llm_settings.load()
 ROLE_POLICIES = (_saved_llm or {}).get('role_policies') or {}
 RUNTIME_MAX_STEPS = (_saved_llm or {}).get('max_steps', int(os.environ.get('GENTACTIX_MAX_RUNTIME_STEPS', '8')))
@@ -404,7 +405,11 @@ def _gate(result):
         hints = {
             'MISSING_CREDENTIAL': '当前接口缺少API Key，请打开「模型配置」填写有效密钥后测试连接。',
             'TRANSPORT': '无法连接当前LLM接口，请在「模型配置」核对API地址、服务状态和网络，并测试当前连接。',
+            'AUTH': 'LLM接口鉴权失败，请在「模型配置」检查密钥。',
             'AUTHENTICATION': 'LLM接口鉴权失败，请在「模型配置」检查密钥。',
+            'HTTP_404': ('LLM接口返回404：当前API地址没有DSH所需的Messages路由。'
+                         'DeepSeek官方接口请使用 https://api.deepseek.com/anthropic；'
+                         '其他服务请核对其Messages兼容地址。'),
         }
         hint = hints.get(code, '请打开「模型配置」测试当前连接，核对接口、模型ID、密钥和输出预算。')
         if result.finish_reason == 'max-tokens':

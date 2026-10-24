@@ -17,8 +17,10 @@ except ImportError:
 
 
 def config(**changes):
-    return dict(base_url='http://127.0.0.1:8000/v1', model='test-model', api_key='fixture-placeholder',
-                max_tokens=2048, context_window=16384, timeout_seconds=60, **changes)
+    value = dict(base_url='http://127.0.0.1:8000/v1', model='test-model', api_key='fixture-placeholder',
+                 max_tokens=2048, context_window=16384, timeout_seconds=60)
+    value.update(changes)
+    return value
 
 
 class SettingsTests(unittest.TestCase):
@@ -28,6 +30,28 @@ class SettingsTests(unittest.TestCase):
             with self.assertRaises(ValueError): llm_settings.validate(value)
         value = config(); value['max_tokens'] = 32768
         with self.assertRaises(ValueError): llm_settings.validate(value)
+
+    def test_official_deepseek_legacy_endpoint_migrates_to_messages(self):
+        for endpoint in ('https://api.deepseek.com', 'https://api.deepseek.com/v1'):
+            value = config(base_url=endpoint, model='deepseek-flash')
+            self.assertEqual(llm_settings.validate(value)['base_url'],
+                             'https://api.deepseek.com/anthropic')
+        value = config(base_url='https://gateway.example/v1')
+        self.assertEqual(llm_settings.validate(value)['base_url'], 'https://gateway.example/v1')
+
+    def test_legacy_vault_load_preserves_secret_during_endpoint_migration(self):
+        from cryptography.fernet import Fernet
+        with tempfile.TemporaryDirectory() as directory, \
+             patch.object(llm_settings, 'CONFIG_PATH', Path(directory) / 'llm.enc'), \
+             patch.object(llm_settings, 'KEY_PATH', Path(directory) / 'vault.key'):
+            llm_settings.KEY_PATH.write_bytes(Fernet.generate_key())
+            legacy = config(base_url='https://api.deepseek.com/v1', model='deepseek-flash')
+            payload = json.dumps(legacy).encode('utf-8')
+            llm_settings.CONFIG_PATH.write_bytes(
+                llm_settings.HEADER + llm_settings._cipher().encrypt(payload))
+            loaded = llm_settings.load()
+            self.assertEqual(loaded['base_url'], 'https://api.deepseek.com/anthropic')
+            self.assertEqual(loaded['api_key'], 'fixture-placeholder')
 
     def test_secret_saved_privately_and_not_in_public_config(self):
         from types import SimpleNamespace
@@ -45,7 +69,7 @@ class SettingsTests(unittest.TestCase):
             self.assertNotIn(b'127.0.0.1', llm_settings.CONFIG_PATH.read_bytes())
             self.assertEqual(llm_settings.load()['api_key'], 'fixture-only-secret')
             self.assertEqual(llm_settings.KEY_PATH.stat().st_mode & 0o777, 0o600)
-            value['base_url'] = 'https://api.deepseek.com/v1'; value['model'] = 'deepseek-v4-flash'
+            value['base_url'] = 'https://api.deepseek.com/anthropic'; value['model'] = 'deepseek-v4-flash'
             result = llm_settings.apply(fake, value)
             self.assertFalse(result['api_key_configured'])
             self.assertEqual(fake.LLM_API_KEY, '')
@@ -229,7 +253,7 @@ class SettingsApiTests(unittest.TestCase):
         brain.assert_not_called()
 
     def test_keyless_vllm_uses_placeholder_but_deepseek_requires_key(self):
-        for endpoint, expected in [('http://127.0.0.1:8000/v1', 'EMPTY'), ('https://api.deepseek.com/v1', '')]:
+        for endpoint, expected in [('http://127.0.0.1:8000/v1', 'EMPTY'), ('https://api.deepseek.com/anthropic', '')]:
             with patch.object(h, 'LLM_BASE_URL', endpoint), patch.object(h, 'LLM_API_KEY', ''), \
                  patch.object(h, '_harness', None), patch.object(h, 'NATIVE_RUNTIME', False), \
                  patch.object(h, 'DeepSeekHarness') as runtime:
@@ -244,6 +268,16 @@ class SettingsApiTests(unittest.TestCase):
             h._gate(result)
         self.assertIn('模型配置', str(error.exception))
         self.assertIn('API Key', str(error.exception))
+        self.assertNotIn('fixture-sensitive-value', str(error.exception))
+
+    def test_http_404_names_messages_endpoint_without_echoing_runtime_error(self):
+        from types import SimpleNamespace
+        result = SimpleNamespace(finish_reason='error', final_response='', events=[{'type': 'turn/end',
+            'data': {'reason': {'kind': 'error', 'error': {'code': 'HTTP_404', 'message': 'fixture-sensitive-value'}}}}])
+        with self.assertRaises(h.HarnessRunError) as error:
+            h._gate(result)
+        self.assertIn('Messages', str(error.exception))
+        self.assertIn('api.deepseek.com/anthropic', str(error.exception))
         self.assertNotIn('fixture-sensitive-value', str(error.exception))
 
 

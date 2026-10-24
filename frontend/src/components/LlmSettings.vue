@@ -56,7 +56,7 @@ async function testConnection() {
     const result = await api.testLlm();
     message.value = `DSH真实连接通过：${result.model}`;
   } catch (e) { error.value = String(e); }
-  finally { working.value = false; emit('busy', ''); }
+  finally { working.value = false; emit('busy', ''); emit('changed'); }
 }
 </script>
 

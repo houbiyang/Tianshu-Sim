@@ -45,6 +45,7 @@ release/
 dist-backend/
 build-backend/
 .packaging-venv/
+.packaging-py310/
 *.spec
 
 # ---- dsh harness 版推演：独立 home / workspace（绝不与 ~/.dsh 混用）----
