@@ -5,18 +5,22 @@
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from "vue";
 import L from "leaflet";
 import offlineLand from '../../public/maps/land-110m.geojson?raw';
-import type { Snapshot, Unit } from "../types";
+import type { Snapshot, Unit, CommandPreview, MapPoint } from "../types";
 import {
   TILE_LAYERS, natoHtml, unitPopup, iterEngagementSpecs,
   impactSectorVertices, engagementColors, withDemoEngagement, toFloat,
   escapeHtml,
 } from "../tactical";
 
-const props = defineProps<{ snap: Snapshot | null; selftest: boolean; overview?: boolean }>();
+const props = defineProps<{ snap: Snapshot | null; selftest: boolean; overview?: boolean;
+  commandPreview?: CommandPreview | null; selectedUnit?: { team: string; name: string } | null;
+  picking?: 'move' | 'fire' | null }>();
+const emit = defineEmits<{ 'unit-select': [team: string, name: string]; 'map-target': [point: MapPoint] }>();
 
 const el = ref<HTMLDivElement | null>(null);
 let map: L.Map | null = null;
 let layerGroup: L.LayerGroup | null = null;
+let commandLayer: L.LayerGroup | null = null;
 let centeredSession: string | null = null;
 const visible = reactive({ terrain: true, ranges: true, sectors: true, supply: true });
 const view = computed(() => props.snap?.battlefield);
@@ -149,11 +153,43 @@ function drawUnits(snap: Snapshot, team: "red" | "blue", color: string) {
     if (!pos) continue;
     const marker = L.marker(pos, {
       riseOnHover: true,
-      icon: L.divIcon({ className: "nato-marker", html: natoHtml(u, team), iconSize: null as unknown as undefined }),
+      bubblingMouseEvents: false, title: `${team === 'red' ? '红' : '蓝'}方 ${u.name ?? ''}`, alt: String(u.name ?? '单位'),
+      icon: L.divIcon({ className: "nato-marker" + (props.selectedUnit?.team === team && props.selectedUnit.name === u.name ? ' command-selected' : ''), html: natoHtml(u, team), iconSize: null as unknown as undefined }),
     });
-    marker.bindPopup(unitPopup(u), { maxWidth: 200 });
+    const node = document.createElement('div');
+    node.innerHTML = unitPopup(u);
+    let overlapping = 0;
+    // Overlapping markers always expose a list; do not pick an arbitrary unit.
+    for (const side of ['red', 'blue'] as const) for (const other of snap.war_state?.[`${side}_units`] ?? []) {
+      const otherPos = unitPos(other);
+      if (!otherPos || Math.abs(otherPos[0]-pos[0]) > .00001 || Math.abs(otherPos[1]-pos[1]) > .00001) continue;
+      overlapping++;
+      const button = document.createElement('button');
+      button.textContent = `选择${side === 'red' ? '红' : '蓝'}方 ${other.name ?? ''}`;
+      button.onclick = () => { emit('unit-select', side, String(other.name ?? '')); marker.closePopup(); };
+      node.appendChild(button);
+    }
+    marker.bindPopup(node, { maxWidth: 240 });
+    marker.on('click', () => { if (overlapping === 1) emit('unit-select', team, String(u.name ?? '')); });
+    marker.on('add', () => marker.getElement()?.setAttribute('aria-label', `${team === 'red' ? '红' : '蓝'}方 ${u.name ?? '单位'}`));
     marker.bindTooltip(textTooltip(String(u.name || '未知单位')), { direction: 'right' });
     layerGroup!.addLayer(marker);
+  }
+}
+
+function drawCommandPreview() {
+  commandLayer?.clearLayers();
+  const p = props.commandPreview;
+  if (!p || !commandLayer) return;
+  const origin: [number, number] = [p.origin.lat, p.origin.lng];
+  L.circle(origin, { radius: p.moveKm * 1000, color: '#e9cb7d', weight: 1, dashArray: '4 6', fillOpacity: .04, interactive: false })
+    .addTo(commandLayer);
+  if (p.destination) {
+    const target: [number, number] = [p.destination.lat, p.destination.lng];
+    const distance = L.latLng(origin).distanceTo(L.latLng(target)) / 1000;
+    L.polyline([origin, target], { color: '#e9cb7d', weight: 3, dashArray: '8 7' })
+      .bindTooltip(textTooltip(`预定直线 ${distance.toFixed(2)} km · 本轮预算 ${p.moveKm.toFixed(2)} km · 未计算道路/高程通行`)).addTo(commandLayer);
+    L.circleMarker(target, { radius: 7, color: '#ffe5a0', fillOpacity: .5 }).bindTooltip('预定目的地，尚未执行').addTo(commandLayer);
   }
 }
 
@@ -229,6 +265,10 @@ onMounted(() => {
   // 与 build_tactical_map 一致：以战局 center 开局、zoom 11；后续回合只重画图层，
   // 不重置用户缩放（对应 app.py 固定组件 key 的意图）
   map = L.map(el.value, { center: battleCenter(props.snap), zoom: props.snap?.war_state ? 11 : 4, zoomControl: true });
+  map.on('click', (event: L.LeafletMouseEvent) => {
+    if (props.picking === 'move' && !(event.originalEvent?.target as Element | null)?.closest('.leaflet-marker-icon'))
+      emit('map-target', { lat: event.latlng.lat, lng: event.latlng.lng });
+  });
   // Bundled public-domain coastlines keep the China overview usable without tile access.
   map.createPane('offline-land');
   map.getPane('offline-land')!.style.zIndex = '150';
@@ -274,12 +314,16 @@ onMounted(() => {
   new Fullscreen().addTo(map);
 
   layerGroup = L.layerGroup().addTo(map);
+  commandLayer = L.layerGroup().addTo(map);
   render();
+  drawCommandPreview();
   sizeObserver = new ResizeObserver(() => map?.invalidateSize({ pan: false }));
   sizeObserver.observe(el.value);
 });
 
 watch(() => [props.snap, props.selftest], render, { deep: true });
+watch(() => props.selectedUnit, render, { deep: true });
+watch(() => props.commandPreview, drawCommandPreview, { deep: true });
 watch(visible, drawBattlefield);
 
 onBeforeUnmount(() => { sizeObserver?.disconnect(); map?.remove(); map = null; });
@@ -313,6 +357,7 @@ onBeforeUnmount(() => { sizeObserver?.disconnect(); map?.remove(); map = null; }
 <style>
 /* Folium DivIcon 等价：去掉 Leaflet 默认的白底边框 */
 .nato-marker { background: transparent; border: none; }
+.nato-marker.command-selected { filter: drop-shadow(0 0 5px #ffe196); outline: 2px solid #ffe196; outline-offset: 5px; border-radius: 2px; }
 .fire-marker { background: transparent; border: none; font-size: 20px; text-align: center; }
 .trail-arrow { background: transparent; border: none; }
 .supply-node { background: #222b38; color: #f0c777; border: 1px solid #f0c777; text-align: center; font-size: 17px; line-height: 20px; }

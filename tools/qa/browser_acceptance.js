@@ -5,7 +5,9 @@ async page => {
   await page.setViewportSize({ width: 1530, height: 980 });
   await page.reload();
   await page.locator('.battle-option').first().waitFor();
-  assert(await page.locator('.battle-option').count() === 10, 'catalog count');
+  const backend = await page.evaluate(() => window.gentactix?.backendUrl ?? 'http://127.0.0.1:8700');
+  const catalog = (await (await page.request.get(backend + '/api/battles')).json()).battles;
+  assert(await page.locator('.battle-option').count() === catalog.length, 'catalog count matches backend');
   await page.screenshot({ path: out + 'launch-final.png' });
   await page.getByRole('button', { name: '抗美援朝', exact: true }).click();
   assert(await page.locator('.battle-option').count() === 9, 'Korea count');
@@ -20,7 +22,7 @@ async page => {
   await page.locator('#llm-model').fill('固定响应界面验收');
   await page.getByText('角色预算与运行控制', { exact: true }).click();
   await page.locator('#budget-chat').fill('1024');
-  await page.locator('#effort-chat').selectOption('low');
+  await page.locator('#effort-chat').selectOption('high');
   await page.getByRole('button', { name: '保存配置', exact: true }).click();
   await page.getByRole('status').filter({ hasText: '加密保存' }).waitFor();
   await page.getByRole('button', { name: '测试当前连接', exact: true }).click();
@@ -94,6 +96,6 @@ async page => {
   await page.screenshot({ path: out + 'settings-mobile-final.png' });
   await page.getByRole('button', { name: '完成', exact: true }).click();
   assert(errors.length === 0, 'JavaScript errors: ' + errors.join(';'));
-  return { catalog: 10, korea: 9, search: true, encrypted_save: true, role_budget: true, connection_fixture: true,
+  return { catalog: catalog.length, korea: 9, search: true, encrypted_save: true, role_budget: true, connection_fixture: true,
     planner_fixture: true, init_next_fixture: true, strict_15min: true, causal: true, restore: true, export_download: true, review: true, chat: true, failed_chat_retry: true, mobile: true, page_errors: errors };
 }

@@ -84,3 +84,74 @@ backend shutdown. Compare published SHA256 digests with the local artifacts.
 # 补给与输出一致性回放
 
 `python tools/qa/replay_consistency.py --export <战局导出.json> --out <新目录>` 使用当前规则只读重算全部轨迹，检查地图/内核路径一致、射击几何及正文已知错误。旧越界事件标为rejected，不自动旋转射界；原文件SHA256与失败分类写入summary.json。此工具不进行真实模型续推，也不证明保留下来的自然语言均正确。
+
+## Visual commands and native unit Agents
+
+`verify_commands.py` exercises the pure command domain across all 20 fixed missions;
+`verify_command_backend.py` checks permissions, idempotence, atomic checkpoint failure,
+crash traces, current-state versions, draft provenance and native/missing-runtime behavior.
+The full `verify_all.py` isolates SDK homes and the role index as well as model settings.
+
+`verify_command_recovery.py` adds complete-turn unavailable/retired task cleanup,
+unknown-position holds, read-only import preview, disk-only collision protection
+and explicit control-scope cleanup. Preview and confirm share the same validator.
+
+For the recovery/fault browser suite, start a separate fixture and Vite on the
+ports below. Use a fresh output directory for each run:
+
+```bash
+GENTACTIX_QA_PORT=18880 GENTACTIX_QA_OUT="$PWD/.cache/qa/command-recovery-runtime" \
+  python tools/qa/command_fixture.py
+# In frontend/: npx vite --host 127.0.0.1 --port 18884
+playwright-cli -s=recovery open about:blank
+playwright-cli -s=recovery run-code --filename=tools/qa/command_recovery_browser.js
+```
+
+The seven cases cover stale/late drafts, known 409 rejection, a committed response
+lost in transit, scoped comparisons, confirmed permission transitions, and import
+preview/cancel/invalid/duplicate/restore. A retry after a lost response must retain
+the original batch even if the user refreshes command observations.
+`command_desktop.js` runs against that same isolated API in an attached Electron
+file renderer; it checks same-turn import refresh, a subsequent turn, and unit
+receipt coverage. Native menu shortcuts are exercised with `desktop_key.py` on
+an isolated Xvfb display; never use the user's normal desktop profile.
+
+For browser acceptance, run `python tools/qa/command_fixture.py` (18870), serve
+`frontend/` using Vite at 18874, then use a separate browser session:
+
+```bash
+playwright-cli -s=commands open about:blank
+playwright-cli -s=commands run-code --filename=tools/qa/command_browser.js
+```
+
+The fixture cannot call a real model. It checks map targeting, Escape/focus return,
+continuous tasks, unit/global draft confirmation, cancellation, version conflicts,
+and wide/narrow layouts. Inspect `passed:true` and screenshots in
+`.cache/qa/commands-browser/`; CLI exit code alone is insufficient.
+
+```bash
+python tools/qa/command_live.py --live
+```
+
+This explicitly calls the locally configured model through DSH. It reads the root
+encrypted configuration and user Vault key without changing them. Isolated games,
+DSH journals and summaries go to `.cache/qa/commands-live/`. The run exercises two
+native unit identities, observation tools, restart/resume, live cancellation and
+retry, explicit memory reset, four-turn deterministic replay and an ordinary open
+position-command test. Earlier attempts
+are retained. A synthetic teaching pass does not validate historical casualties.
+
+Worker dependency updates also require `npm audit`, `npm run typecheck`, the
+Wrangler dry-run with `--containers-rollout none`, and `node tools/qa/worker_runtime.mjs`.
+The last check sends a real local HTTP request through Miniflare and is included
+in `verify_all.py --with-worker`. The scoped Miniflare→Undici override should be
+removed once upstream includes the patched dependency, followed by these checks.
+
+For release packages, start the frozen backend in disposable data/runtime
+directories on 18731, then run `python tools/qa/packaged_commands.py --url
+http://127.0.0.1:18731 --out .cache/qa/package-checks`. Add `--live` to test DSH
+parsing and one native unit with its observation tool. This runner uses HTTP and
+does not import the source backend. `packaged_ui.js` expects an actual AppImage
+on isolated API port 18732 and an attached CDP browser; it checks commands,
+receipts, imports and settings through the bundled renderer/backend. Never point
+these runners at the user's live game directory.

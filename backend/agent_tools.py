@@ -35,6 +35,11 @@ _OBSERVE_KEYS = (
     ("hp", ("hp", "兵力", "兵力值")),
     ("morale", ("morale", "士气")),
     ("supply", ("supply", "补给")),
+    ("personnel", ("personnel",)),
+    ("equipment", ("equipment",)),
+    ("logistics", ("logistics",)),
+    ("attack_range", ("attack_range",)),
+    ("fire_sector", ("fire_sector",)),
 )
 
 _LAT_KEYS = ("lat", "current_lat", "latitude", "纬度")
@@ -88,7 +93,7 @@ def exec_get_observation(war_state, args) -> dict:
         lat, lng = state.extract_lat_lng(unit)
         row = {"team": team, "lat": lat, "lng": lng}
         for out_key, aliases in _OBSERVE_KEYS:
-            row[out_key] = state.get_unit_field(unit, *aliases)
+            row[out_key] = copy.deepcopy(state.get_unit_field(unit, *aliases))
         units.append(row)
     if names and not units:
         return {"ok": False, "error": f"未找到指定单位：{sorted(names)}"}

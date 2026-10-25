@@ -34,6 +34,12 @@ cd frontend && npm run typecheck && npm run build       # vue-tsc strict + produ
 
 ## Architecture
 
+### Approved roadmap: visual commands and DSH unit decisions
+
+Before implementing map-based unit control, natural-language orders, command queues or unit agents, read [the approved development plan](docs/战棋指挥与DSH智能体开发规划.md). It records the implemented M0–M4 scope, compatibility requirements and evidence. These features are packaged in [v3.3.0](docs/releases/v3.3.0.md); consult its acceptance report for tested limits.
+
+DSH reuse is an explicit user requirement. Reuse the installed SDK, existing Cordis plugin, native Agent services, session/event evidence, cancellation, forks and request policies. Do not build another generic agent runtime, tool registry, session database or model transport. Application code owns only wargame identity, command semantics, permissions, deterministic rules and authoritative state commits. Validate missing native contracts before adapting them; don't assume Web/core RPC methods are exposed by the installed Python SDK. Preserve existing model settings and saved battles during isolated development.
+
 ### The turn pipeline
 
 `app.py` is deliberately thin (sidebar, button callbacks, rendering); all logic lives in `gentactix/` so it is testable without a Streamlit runtime. Initialization and turn advancement share these stages (anchors apply at initialization):
@@ -185,3 +191,19 @@ Desktop sessions select `simulation_mode=open|replay`, optionally `mission_id`. 
 `/api/missions`, `MissionPanel.vue`, and `counterfactual(mode=mission, orders=...)` expose goals, supply ledger, initial hash and same-prestate command ablations. Native model-state forks are unavailable in fixed missions and historical replay; they remain available in ordinary open simulation. `timeSteps.ts` normalizes 日 to 天 without losing unfamiliar valid durations. `rag.search(..., phase=step, simulation_mode=open)` pins goals/constraints, uncertainties and unit/logistics rules using family heading aliases, excluding outcome/timeline sections. Do not confuse this with eliminating model historical prior knowledge.
 
 `verify_missions.py` / `verify_mission_backend.py` are offline tests. `tools/accept_missions.py` runs isolated real DSH sessions, verifies all committed steps by offline replay, then checks command differences, accounting, clock, supply depletion, goal termination and checkpoint restore. Runtime failures stay in attempt archives. Successful synthetic exercises do not establish historical validity.
+
+### Visual commands and native unit Agents
+
+`gentactix/commands.py` owns only the pure command domain: registry, rules/permissions, revisions, continuous tasks and receipts. `backend/command_routes.py` uses the existing operation lock and checkpoints for draft parsing, queue confirmation/cancellation, unit records, open branches and readonly command comparison. Old sessions without `command_state` retain the legacy next API; enabled sessions require a versioned, idempotent batch. A detached complete world/queue/receipt checkpoint is saved before memory commits. Orphan pre-commit traces are archived on retry rather than counted as committed turns.
+
+`backend/unit_planning.py` binds selected units to `harness_engine.unit_run`; the Cordis plugin uses native `ctx.agents.create/resume` without parent-chat seed. Unit session IDs include game/epoch/unit identity. A missing journal is an error; only an explicit user reset creates fresh memory. Native forks and unit runs share notification, cancellation and gate handling. Human commands override proposals; native failure never silently becomes batch success. Engine policy is reused, preserving configured effort and budget. `agent_tools.get_observation` includes detached personnel/equipment/logistics fields.
+
+`CommandCenter.vue` owns drafts and queues; `App.vue` owns selection/preview, and `MapView.vue` emits map events. No dragging to teleport. Fixed missions support their existing action sets; ordinary open commands verify hold/move and label other effects as model estimates. `causal.decisions_from` has no 16-item cap; absent reasons, human orders and real native runs have distinct provenance. Replay retrieval is not proof of a historical command.
+
+Command preparation separates blocked tasks from expired/unavailable actors; expired actors never receive injected holds. Commit receipts keep the original command ID, including retired actors, and remain detached until checkpoint success. Unknown-position ordinary units may hold without invented coordinates; their receipts label the missing geometry.
+
+Natural-language drafts and command comparisons are bound to their full input/observation context; input changes and late responses must not reuse old results. Keep HTTP status in `ApiError`: a known 409 releases the batch, while an unknown network outcome retains its idempotency key across refresh. A control-scope change must preview and explicitly clean affected orders/Agent switches without weakening backend permissions.
+
+`ImportSession.vue` uses `/api/sessions/import/preview` and the existing confirmed import route. Both share `_prepare_import`; preview never checkpoints. Import refuses IDs already in memory or on disk, including unreadable existing checkpoints. JSON restores journal references, not native DSH journal contents.
+
+Run `verify_commands.py`, `verify_command_backend.py`, `verify_command_recovery.py`, then the full `verify_all.py`. Browser and real model commands live under `tools/qa/command_*`; live runs require `--live` and isolate state/runtime directories. Do not publish raw `.cache/qa/` model data or replace real games/configuration during testing.

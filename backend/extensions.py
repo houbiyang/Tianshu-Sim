@@ -61,7 +61,11 @@ def _store(context):
     directory.mkdir(parents=True, exist_ok=True)
     path = directory / f'turn-{record["turn"]:06d}.json'
     if path.exists():
-        raise ValueError('轨迹提交已存在，拒绝覆盖：' + record['id'])
+        if not context.get('recover_orphan') or record['id'] in context.get('committed_ids', []):
+            raise ValueError('轨迹提交已存在，拒绝覆盖：' + record['id'])
+        # A crash may leave a trace before its authoritative checkpoint. Preserve
+        # that rejected attempt while allowing the unchanged turn to be retried.
+        path.rename(path.with_name(path.stem + '.uncommitted-' + uuid.uuid4().hex + '.json'))
     fd, temp = tempfile.mkstemp(prefix='.commit-', suffix='.json', dir=directory)
     try:
         with os.fdopen(fd, 'w', encoding='utf-8') as stream:
@@ -87,7 +91,7 @@ for _name in manifest['plugins']:
 
 
 def prepare_record(session, *, before, after, turn, epoch=None, params=None,
-                   prompt='', result=None, observer=None, report='', guards=None):
+                   prompt='', result=None, observer=None, report='', guards=None, recover_orphan=False):
     epoch = session.get('role_epoch', 0) if epoch is None else epoch
     trace_id = f'{session["id"]}:e{epoch}:t{turn}'
     record = {'version': causal.VERSION, 'id': trace_id, 'turn': turn, 'epoch': epoch,
@@ -100,17 +104,32 @@ def prepare_record(session, *, before, after, turn, epoch=None, params=None,
               'decisions': causal.decisions_from(result or {}, before, after, trace_id),
               'runs': copy.deepcopy(observer.runs if observer is not None else []),
               'tool_executions': copy.deepcopy(observer.tool_executions if observer is not None else [])}
+    if (result or {}).get('command_context') is not None:
+        record['command_context'] = copy.deepcopy(result['command_context'])
     refs = [{'session_id': run['session_id'], 'seq': event.get('seq')}
             for run in record['runs'] for event in run.get('events', [])
             if event.get('type') == 'assistant/message' and isinstance(event.get('seq'), int)]
     for decision in record['decisions']:
-        decision['dsh_event_ref'] = refs[-1] if refs else None
+        eligible = [run for run in record['runs'] if run['id'] in decision.get('run_ids', [])]
+        local_refs = [{'session_id': run['session_id'], 'seq': e['seq']} for run in eligible
+                      for e in run.get('events', []) if e.get('type') == 'assistant/message' and isinstance(e.get('seq'), int)]
+        decision['dsh_event_ref'] = (local_refs[-1] if local_refs else None) if 'source' in decision else (refs[-1] if refs else None)
     context = {'before': before, 'after': after, 'time_step': session['time_step']}
     prepared = registry.emit('prepare_commit', context)
     record['clock'] = prepared.get('clock-audit') if before else {'status': 'initial'}
     record = safe(record)
-    registry.emit('before_commit', {'record': record, 'session_id': session['id']})
+    registry.emit('before_commit', {'record': record, 'session_id': session['id'],
+        'recover_orphan': recover_orphan, 'committed_ids': [r['id'] for r in session.get('trajectory', [])]})
     return record
+
+
+def discard_uncommitted(session, record):
+    if any(r['id'] == record['id'] for r in session.get('trajectory', [])):
+        return
+    directory = Path(os.environ.get('GENTACTIX_TRACE_DIR', str(ROOT / '.cache' / 'trajectories')))
+    path = directory / session['id'] / f'epoch-{record["epoch"]}' / f'turn-{record["turn"]:06d}.json'
+    if path.exists():
+        path.rename(path.with_name(path.stem + '.uncommitted-' + uuid.uuid4().hex + '.json'))
 
 
 def persist_artifact(session, kind, value):

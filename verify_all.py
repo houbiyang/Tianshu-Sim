@@ -33,6 +33,11 @@ def main():
     env.pop("PYTHONPATH", None)
     env["PYTHONIOENCODING"] = "utf-8"
     env["WRANGLER_SEND_METRICS"] = "false"
+    # Cross-suite role/SDK fallbacks must never touch a real user's role index.
+    isolated = OUTPUT / 'offline-runtime'
+    for name, suffix in (('SESSION_DIR', 'sessions'), ('TRACE_DIR', 'traces'), ('ROLE_INDEX', 'roles.json'), ('DSH_HOME', '.dsh-wargame-home'), ('DSH_WORKSPACE', '.dsh-wargame-workspace'),
+                         ('LLM_CONFIG', 'llm.enc'), ('VAULT_KEY_FILE', 'vault.key')):
+        env['GENTACTIX_' + name] = str(isolated / suffix)
 
     def run(name, command, timeout=180):
         started = time.monotonic()
@@ -79,6 +84,7 @@ def main():
         run("typecheck", [npm, "run", "typecheck"])
         run("worker_build", [npx, "wrangler", "deploy", "--dry-run", "--containers-rollout", "none",
                              "--outdir", str(OUTPUT / "worker")])
+        run("worker_runtime", [shutil.which('node') or 'node', 'tools/qa/worker_runtime.mjs'])
     if args.with_container:
         run("docker_build", ["docker", "build", "--platform", "linux/amd64", "-t", "gentactix:qa", "."], timeout=900)
         check = (

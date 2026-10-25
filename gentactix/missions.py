@@ -116,7 +116,10 @@ def prompt(world, instruction='', briefing=''):
     view = {k: v for k, v in world.items() if k not in ('mission', 'situation_report', 'source_note')}
     return ('你是局部教学推演的命令规划员。只提出命令，程序计算结果。禁止按历史结局安排伤亡。'
             '地图、人数与装备均为明确教学假设，不是已考证历史编制。双方分别根据当前态势行动。'
-            '仅返回JSON {"orders":[{"unit":"精确名称","action":"hold"}],"reason":"简短决策依据"}。'
+            '仅返回JSON {"orders":[{"unit":"精确名称","action":"hold"}],'
+            '"decisions":[{"team":"red|blue","unit_name":"精确名称","action":"hold",'
+            '"rationale":"本单位公开依据","expected_effect":"预期"}]}。'
+            'decisions覆盖所有单位，包括待命与失能，不设条数上限；不以总体理由冒充每个单位依据。'
             '每个可用单位至多一条命令，未列单位原地待命。不可改写任何状态、人数、时钟或规则。'
             'move附lat/lng，fire附target（敌方单位名）；其余命令不附坐标。'
             'move不能超过max_move_km，food<4时上限减半；fire目标须在本轮开始时attack_range米以内且ammo>=3。'

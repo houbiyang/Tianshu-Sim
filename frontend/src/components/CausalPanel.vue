@@ -100,9 +100,9 @@ const delta = (m: MetricContrast) => m.delta > 0 ? `+${m.delta}` : String(m.delt
 
       <h4>决策与DSH执行轨迹</h4>
       <details v-for="trace in data.timeline" :key="trace.id" :id="trace.id" class="trace" data-testid="decision-trace">
-        <summary>T+{{ trace.turn }} · {{ trace.decisions.length }}条模型决策声明 · {{ trace.runs.length }}次DSH调用 · 时间{{ clockName(trace.clock?.status) }}</summary>
+        <summary>T+{{ trace.turn }} · {{ trace.decisions.length }}条单位决策／命令回执 · {{ trace.runs.length }}次DSH调用 · 时间{{ clockName(trace.clock?.status) }}</summary>
         <p class="trace-id">{{ trace.id }}</p><p>{{ trace.report }}</p>
-        <div v-for="decision in trace.decisions" :key="decision.id"><b>{{ decision.unit_name || decision.team }}：{{ decision.action }}</b><p>模型声明的依据：{{ decision.rationale }}</p><p>预期：{{ decision.expected_effect }}</p></div>
+        <div v-for="decision in trace.decisions" :key="decision.id"><b>{{ decision.unit_name || decision.team }}：{{ decision.action }}</b><p>来源：{{ decision.source ?? '模型声明' }} · 公开依据：{{ decision.rationale }}</p><p>预期：{{ decision.expected_effect }}</p><code v-if="decision.dsh_event_ref">{{ decision.dsh_event_ref.session_id }} : {{ decision.dsh_event_ref.seq }}</code></div>
         <p v-if="!trace.decisions.length" class="muted">本回合没有可采纳的决策声明；只保留实际状态变化，不补写动机。</p>
         <div v-for="run in trace.runs" :key="run.id" class="run"><code>{{ run.session_id }}</code><p>事件 {{ run.first_seq ?? '未知' }}—{{ run.last_seq ?? '未知' }} · {{ run.finish_reason }} · {{ run.evidence }}</p>
           <div class="table-scroll"><table><thead><tr><th>序号</th><th>DSH事件</th><th>工具 / 请求策略</th></tr></thead><tbody><tr v-for="(event, i) in run.events" :key="i"><td>{{ event.seq ?? '—' }}</td><td>{{ event.type }}</td><td>{{ event.name ?? event.tools?.join(', ') ?? (event.request_config ? JSON.stringify(event.request_config) : '') }}</td></tr></tbody></table></div></div>

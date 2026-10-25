@@ -68,7 +68,10 @@ def main():
         shutil.copyfile(menu, shortcut)
         shortcut.chmod(0o755)
         # GNOME may require a trusted launcher; failure does not affect the menu.
-        trusted = subprocess.run(['gio', 'set', str(shortcut), 'metadata::trusted', 'true'], capture_output=True)
+        # Conda's gio may lack Ubuntu's GVfs metadata backend. Use the host tool
+        # so the desktop shortcut can be trusted in the user's actual session.
+        gio = shutil.which('gio', path='/usr/bin:/bin') or shutil.which('gio') or 'gio'
+        trusted = subprocess.run([gio, 'set', str(shortcut), 'metadata::trusted', 'true'], capture_output=True)
         print('Desktop shortcut:', shortcut, '(trusted)' if trusted.returncode == 0 else '(GNOME may require Allow Launching)')
     print('Applications menu entry:', menu)
     print('Executable:', executable)

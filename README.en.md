@@ -13,11 +13,12 @@ A desktop workspace for historical campaign simulation and decision review. Buil
 - **Replayable local exercises:** 20 WWII China entries offer fixed initial states and seven teaching rule types for orders, personnel/equipment ledgers, inventory and objectives. Command counterfactuals reuse the same pre-state. These are synthetic exercises, not historically calibrated deployments; see the [design and limits](docs/可重放推演设计.md) (Chinese).
 - **Turn progression:** select the turn duration and let the application maintain the clock. State checks preserve the roster and flag missing units, invalid coordinates and numeric anomalies. Optional geometric adjudication constrains movement, supply connectivity and encirclement.
 - **DSH agents and plugins:** Native tool mode supports persistent role sessions, read-only domain tools, runtime events, budgets and in-flight cancellation. An application-level JSON tool mode remains available for compatibility.
+- **Visual commands:** select units, choose actions and pick destinations or enemy targets on the map. Unit/global language produces drafts for confirmation; queues support continuous movement, cancellation and per-unit receipts. Opt in to independent native DSH unit Agents; human orders take precedence. Historical replay can create a separate open branch.
 - **Decision review:** inspect reports, key decisions and turning points; use traces for attribution analysis. Geometric counterfactuals and paired model branches leave the main campaign state intact.
 - **Sources and saves:** local historical retrieval, campaign-specific adjudication parameters, checkpoints, recovery and JSON import/export.
 - **Model settings:** configure vLLM / OpenAI-compatible or DeepSeek endpoints, models, credentials, timeouts and role budgets through the menu. Settings are stored encrypted.
 
-Editable research packages: [Long March](data/long_march/README.md) and [WWII China](data/anti_japanese_war/README.md), documented in Chinese. Cards retain sources, conflicting accounts and unknown values; new geometry presets are teaching estimates. Previously installed releases require a rebuild to include these additions.
+Editable research packages: [Long March](data/long_march/README.md) and [WWII China](data/anti_japanese_war/README.md), documented in Chinese. Cards retain sources, conflicting accounts and unknown values; new geometry presets are teaching estimates. Install the new desktop package to update an older application; pulling source alone does not update an installed binary.
 
 ![Workspace tested with fixture responses](docs/screenshots/workspace.png)
 
@@ -118,7 +119,7 @@ Use the startup conversation to create a scenario, optionally linked to an exist
 
 ## Install and launch
 
-Current desktop release: [v3.2.1](https://github.com/snow-wind-001/Gentactix-DSH/releases/tag/v3.2.1). See the [release notes](docs/releases/v3.2.1.md) for the DeepSeek endpoint fix, bundled DSH runtime and installation validation.
+Current desktop release: [v3.3.0](https://github.com/snow-wind-001/Gentactix-DSH/releases/tag/v3.3.0). Packages include visual commands, native unit Agents, decision receipts and import recovery. See the [release notes](docs/releases/v3.3.0.md) for changes and packaged-app validation.
 
 Download a Linux x86_64 package from [Releases](https://github.com/snow-wind-001/Gentactix-DSH/releases). Packages include the backend and DSH runtime; a separate Python or Conda installation is unnecessary. Simulations still require a working model service.
 
@@ -131,7 +132,7 @@ Download a Linux x86_64 package from [Releases](https://github.com/snow-wind-001
 From a source checkout, install an AppImage with a per-user menu entry and desktop icon:
 
 ```bash
-python3 tools/install_linux.py release/GenTactix-DSH-3.2.1-x86_64.AppImage --project-root .
+python3 tools/install_linux.py release/GenTactix-DSH-3.3.0-x86_64.AppImage --project-root .
 ```
 
 See the [desktop guide (Chinese)](docs/桌面启动与配置.md) for packaging and configuration migration. Linux packages are provided; Windows and macOS packages have not been validated.
@@ -140,8 +141,14 @@ See the [desktop guide (Chinese)](docs/桌面启动与配置.md) for packaging a
 
 1. Open **配置 → DSH · LLM配置** (`Ctrl+,`), configure the endpoint and model, save, and test the connection. For vLLM, the model ID must match the server's `served-model-name`.
 2. Choose a campaign or create a scenario through the startup conversation. Select open simulation or historical replay, then review the turn duration, retrieval and adjudication settings. WWII China entries also offer a fixed local exercise; its initialization requires no model call.
-3. Advance turns, inspect the map and reports, ask questions, review decisions or compare counterfactual branches.
-4. Export the campaign as JSON or restore a saved session from the startup screen.
+3. Click a map marker or **单位指挥** (Unit commands) in the map's upper-right corner. Choose a supported action and click the map for a movement destination. Confirmation queues the order; **下一轮推演** (Next turn) executes it.
+4. Select unit or global scope, describe the order, and parse a draft. Review its destination/target and duration before confirmation. Input, scope or map-target changes invalidate old drafts; consultation remains read-only.
+5. Open **本单位决策／执行回执** for plans, actual positions, personnel/logistics changes and provenance. Enable native DSH Agents per unit when needed; other uncontrolled units retain batch planning. Replay is read-only: create a separate open branch to change decisions.
+6. Export JSON or use **导入战局** on the startup/workspace menu, review the preview, and confirm restoration. Existing memory/disk IDs cannot be overwritten. Legacy exports need the original snapshot; JSON does not include native DSH journals.
+
+Continuous movement respects each turn's budget and ends when an actor becomes unavailable or retires. Control-scope changes preview affected orders and Agents before explicit cleanup. Known version conflicts refresh before retry; unknown network outcomes retain their original batch to avoid duplicate turns. Ordinary open scenarios currently verify hold/move only; additional actions are available under the relevant fixed local rules.
+
+![Unit commands in the v3.3.0 package, using a synthetic teaching exercise](docs/screenshots/commands.png)
 
 Settings use Fernet authenticated encryption in `.gentactix-llm.enc` in the project directory. The decryption key is stored separately in the user's configuration directory. If the installation directory is read-only, the desktop app uses a writable project directory under user data. Public source and packages contain no personal API key. A user with access to both the ciphertext and key can still decrypt the settings.
 
@@ -177,6 +184,8 @@ The original Streamlit interface remains in `app.py`; launch it with `.venv/bin/
 | `verify_*.py`, `tools/` | Regression checks, live model probes, build and installation tools |
 
 ## Validation and limits
+
+Version 3.3.0 implements the [visual-command and DSH-agent plan](docs/战棋指挥与DSH智能体开发规划.md) and TDD fixes for stale drafts, retries, task expiry, unknown-position holds, comparison provenance, imports and control-scope transitions. Source regression: **36/36 groups, 322 cases, zero skips**; browser, Electron and **8 real DSH checks** passed, preserving high reasoning effort and a 65,536-token engine budget. See the [TDD evidence](docs/战棋指挥TDD修复与复测-2026-10-25.md) and [packaged validation](docs/releases/v3.3.0.md). Missing unit evidence in older games is labelled missing, never reconstructed as a genuine Agent trace.
 
 ```bash
 .venv/bin/python verify_all.py

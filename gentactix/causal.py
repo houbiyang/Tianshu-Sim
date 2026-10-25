@@ -122,7 +122,7 @@ def decisions_from(result, before, after, trace_id):
     raw = result.get('decisions') or []
     if not isinstance(raw, list):
         return []
-    for item in raw[:16]:
+    for item in raw:
         if not isinstance(item, dict) or item.get('team') not in ('red', 'blue'):
             continue
         unit = str(item.get('unit_name') or '')
@@ -134,7 +134,8 @@ def decisions_from(result, before, after, trace_id):
                           'unit_name': unit, 'action': item['action'][:500],
                           'rationale': str(item.get('rationale') or '')[:500],
                           'expected_effect': str(item.get('expected_effect') or '')[:500],
-                          'basis': 'model_declared', 'evidence_ids': [trace_id]})
+                          'basis': item.get('source', 'model_declared'), 'evidence_ids': [trace_id],
+                          **{k: copy.deepcopy(item[k]) for k in ('source', 'unit_id', 'run_ids', 'history_refs') if k in item}})
     return decisions
 
 
@@ -196,7 +197,8 @@ def explanation_evidence(analysis):
     those copies to the model made a real 50-turn prompt exceed 375k tokens.
     Full evidence remains in the analysis object and persisted trajectory.
     """
-    decisions = ('id', 'team', 'unit_name', 'action', 'rationale', 'expected_effect', 'basis')
+    decisions = ('id', 'team', 'unit_name', 'action', 'rationale', 'expected_effect', 'basis',
+                 'source', 'unit_id', 'run_ids', 'dsh_event_ref', 'history_refs')
     evidence = [{
         'trace_id': t['id'], 'turn': t['turn'], 'clock': t.get('clock'),
         'geometry_enabled': t.get('geometry_enabled'), 'guards': t.get('guards'),

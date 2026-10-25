@@ -3,7 +3,7 @@ import os
 import sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT))
-out=ROOT/'.cache/qa/missions/browser';out.mkdir(parents=True,exist_ok=True)
+out=Path(os.environ.get('GENTACTIX_QA_OUT',str(ROOT/'.cache/qa/missions/browser')));out.mkdir(parents=True,exist_ok=True)
 for key,suffix in [('SESSION_DIR','sessions'),('TRACE_DIR','traces'),('ROLE_INDEX','roles.json'),('LLM_CONFIG','llm.enc'),('VAULT_KEY_FILE','vault.key')]:os.environ['GENTACTIX_'+key]=str(out/suffix)
 os.environ['GENTACTIX_NATIVE_RUNTIME']='0'
 from backend import main, harness_engine as h

@@ -78,7 +78,7 @@ export function apply(ctx) {
     try {
       const body = await readBody(req);
       if (req.url === '/health') return send(200, { plugin: name, mode: 'native', ptc: false,
-        tools: definitions.map(x => x[0]), capabilities: ['cancel', 'fork', 'request-policy', 'events'], counters });
+        tools: definitions.map(x => x[0]), capabilities: ['cancel', 'fork', 'request-policy', 'events', 'unit-sessions'], counters });
       if (req.url === '/configure') {
         if (typeof body.session_id !== 'string') throw new Error('session_id is required');
         policies.set(body.session_id, { ...body.policy, calls: 0 });
@@ -90,6 +90,54 @@ export function apply(ctx) {
         agent.cancel({ kind: 'user' });
         counters.cancellations++;
         return send(200, { ok: true, mode: 'native-agent-cancel', session_id: body.session_id });
+      }
+      if (req.url === '/unit-session') {
+        const id = body.session_id;
+        if (typeof id !== 'string' || !/^gentactix-unit-[a-zA-Z0-9-]+$/.test(id)) throw new Error('invalid unit Agent id');
+        const operation = body.operation ?? 'inspect';
+        let agent = ctx.agents.get(id);
+        if (operation === 'dispose') {
+          const handle = children.get(id);
+          if (!handle) throw new Error('unit Agent is not owned by this plugin');
+          await handle.dispose(); children.delete(id); policies.delete(id);
+          return send(200, { session_id: id, disposed: true });
+        }
+        if (operation === 'create' || operation === 'resume') {
+          if (agent) throw new Error('unit Agent already live');
+          const parent = body.parent_session_id ? ctx.agents.get(body.parent_session_id) : undefined;
+          if (body.parent_session_id && !parent) throw new Error('parent Agent is not live');
+          const route = body.agent_options ?? {};
+          if (Object.keys(route).some(k => !['provider', 'model', 'reasoningEffort', 'maxTokens'].includes(k))) throw new Error('invalid unit route');
+          const options = parent ? { ...parent.options } : route;
+          const handle = operation === 'resume'
+            ? await ctx.agents.resume({ resumeSessionId: id, agentOptions: options })
+            : await ctx.agents.create({ sessionId: id,
+              meta: { cwd: body.cwd, ...(parent ? { parentSession: parent.session.id } : {}) },
+              agentOptions: options });
+          children.set(id, handle); agent = handle.agent;
+          if (body.policy) policies.set(id, { ...body.policy, calls: 0 });
+        } else if (operation !== 'inspect') throw new Error('unsupported unit lifecycle operation');
+        if (!agent) return send(404, { error: 'unit Agent not live' });
+        return send(200, { session_id: id, parent_session_id: agent.session.header.parentSession ?? null,
+          event_count: agent.session.snapshotEvents().length,
+          factory: 'DSH.AgentRegistry', persistence: agent.session.snapshotEvents().length ? 'session_journal' : 'pending_first_turn' });
+      }
+      if (req.url === '/unit-run') {
+        const id = body.session_id;
+        if (typeof id !== 'string' || !id.startsWith('gentactix-unit-') || !children.has(id)) throw new Error('unit Agent is not owned by this plugin');
+        const agent = ctx.agents.get(id);
+        if (!agent || typeof body.prompt !== 'string') throw new Error('invalid unit run');
+        const offset = agent.session.snapshotEvents().length;
+        policies.set(id, { ...body.policy, calls: 0 });
+        agent.followup({ id: randomUUID(), role: 'user', content: [{ type: 'text', text: body.prompt }], source: { kind: 'user' } });
+        await agent.whenIdle();
+        const events = agent.session.snapshotEvents(offset);
+        const end = [...events].reverse().find(x => x.type === 'turn/end');
+        const message = [...events].reverse().find(x => x.type === 'assistant/message');
+        const blocks = message?.data?.message?.content ?? message?.data?.content ?? [];
+        const reason = end?.data?.reason;
+        return send(200, { session_id: id, finish_reason: typeof reason === 'string' ? reason : reason?.kind,
+          final_response: blocks.filter(x => x.type === 'text').map(x => x.text ?? '').join('\n'), events });
       }
       if (req.url === '/fork-run') {
         const parent = ctx.agents.get(body.parent_session_id);

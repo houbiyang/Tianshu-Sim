@@ -12,7 +12,7 @@ from types import SimpleNamespace
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
-out = ROOT / '.cache/qa/release-3.1.1/browser'
+out = Path(os.environ.get('GENTACTIX_QA_OUT', str(ROOT / '.cache/qa/release-3.1.1/browser')))
 out.mkdir(parents=True, exist_ok=True)
 for name, value in {'NATIVE_RUNTIME': '0', 'SESSION_DIR': str(out/'sessions'),
                     'TRACE_DIR': str(out/'traces'), 'LLM_CONFIG': str(out/'llm.enc'),

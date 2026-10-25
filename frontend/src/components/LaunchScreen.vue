@@ -6,7 +6,7 @@ import { normalizeStep, stepOptions } from '../timeSteps';
 import MapView from './MapView.vue';
 
 const props = defineProps<{ battles: Battle[]; health: Health | null; busy: string; error: string; canResume: boolean; recentSessions: { session_id: string; turn_count: number; scenario: string }[] }>();
-const emit = defineEmits<{ settings: []; resume: []; reconnect: []; cancel: []; resumeSession: [id: string]; deleteSession: [session: { session_id: string; turn_count: number; scenario: string }]; start: [value: { scenario: string; battle: string; time_step: string; use_rag: boolean; use_adjudicator: boolean; simulation_mode: string; mission_id: string }] }>();
+const emit = defineEmits<{ settings: []; import: []; resume: []; reconnect: []; cancel: []; resumeSession: [id: string]; deleteSession: [session: { session_id: string; turn_count: number; scenario: string }]; start: [value: { scenario: string; battle: string; time_step: string; use_rag: boolean; use_adjudicator: boolean; simulation_mode: string; mission_id: string }] }>();
 const minimized = ref(false);
 const mode = ref<'catalog' | 'assistant' | 'recent'>('catalog');
 const query = ref('');
@@ -56,7 +56,7 @@ async function ask() {
     <div class="launch-map"><MapView :snap="null" :selftest="false" :overview="true" /></div>
     <header class="command-bar">
       <div class="product-mark"><img :src="'./icons/gentactix.png'" alt=""><div><strong>GenTactix <span>DSH</span></strong><small>历史战役推演工作台</small></div></div>
-      <nav aria-label="应用菜单"><button class="active" @click="phase = 'select'; minimized = false">想定管理</button><button @click="emit('settings')">模型配置</button><button v-if="canResume" @click="emit('resume')">返回当前战局</button></nav>
+      <nav aria-label="应用菜单"><button class="active" @click="phase = 'select'; minimized = false">想定管理</button><button @click="emit('settings')">模型配置</button><button @click="emit('import')" :disabled="!!busy">导入战局</button><button v-if="canResume" @click="emit('resume')">返回当前战局</button></nav>
       <div class="connection-state"><i :class="{ online: health }"></i>{{ health ? '后端就绪' : '后端未连接' }}</div>
     </header>
 

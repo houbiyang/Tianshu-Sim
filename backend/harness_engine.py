@@ -487,6 +487,55 @@ def fork_run(parent, prompt, observer, *, role='counterfactual', context=None):
         # history with a newly created session as get_role_session may do.
         _role_sessions[parent_id] = harness.resume_session(parent_id)
     sid = f'gentactix-cf-{uuid.uuid4().hex}'
+    return _native_control_run(sid, '/fork-run', {
+        'parent_session_id': parent['session_id'], 'boundary': parent['last_seq'],
+        'session_id': sid, 'prompt': prompt,
+        'policy': role_policy(role, tools=context is not None)}, observer, context=context,
+        parent={'session_id': parent['session_id'], 'seq': parent['last_seq'],
+                'kind': 'native_agent_factory_seed'})
+
+
+def unit_run(binding, prompt, observer, *, context=None, namespace=None):
+    """Fresh native unit context or exact journal resume; no cloned parent chat."""
+    get_harness()
+    if not NATIVE_RUNTIME or not RUNTIME_STATUS.get('connected'):
+        raise RuntimeError('原生单位Agent插件未连接，不回退为批量模型假身份')
+    prefix = f'gentactix-unit-{namespace}-' if namespace else 'gentactix-unit-'
+    sid = binding.get('session_id') if binding else prefix + uuid.uuid4().hex
+    if not isinstance(sid, str) or not sid.startswith(prefix):
+        raise ValueError('单位原生会话绑定与战局/单位身份不匹配，禁止恢复别的角色上下文')
+    policy = role_policy('engine', tools=context is not None)
+    try:
+        lifecycle = runtime_bridge.control('/unit-session', {'operation': 'inspect', 'session_id': sid})
+    except Exception:
+        try:
+            lifecycle = runtime_bridge.control('/unit-session', {
+                'operation': 'resume' if binding else 'create', 'session_id': sid,
+                'cwd': DSH_WORKSPACE,
+                'agent_options': {'provider': 'deepseek-official', 'model': LLM_MODEL}, 'policy': policy})
+        except Exception as exc:
+            if binding:
+                raise RuntimeError('原生单位会话无法恢复，原战局未改。可关闭该单位Agent，或在指挥面板明确重建会话记忆；不会自动新建冒充恢复。') from exc
+            raise
+    result = _native_control_run(sid, '/unit-run', {'session_id': sid, 'prompt': prompt,
+        'policy': policy}, observer, context=context)
+    return result, {'session_id': sid, 'factory': lifecycle['factory'], 'persistence': 'session_journal'}
+
+
+def dispose_unit_sessions(bindings):
+    """Release only live owned native handles; journals remain available as evidence."""
+    if not RUNTIME_STATUS.get('connected'):
+        return
+    for binding in bindings.values():
+        try:
+            runtime_bridge.control('/unit-session', {'operation': 'dispose', 'session_id': binding['session_id']})
+        except Exception:
+            ENGINE_NOTICES.append({'level': 'info', 'message': '旧单位Agent已不在运行时；持久化日志保留'})
+
+
+def _native_control_run(sid, endpoint, body, observer, *, context=None, parent=None):
+    """Shared native event/cancel/gate adapter for forks and unit Agents."""
+    harness = get_harness()
     observer.active_sessions.add(sid)
     if context is not None:
         runtime_bridge.bind(sid, context)
@@ -502,16 +551,14 @@ def fork_run(parent, prompt, observer, *, role='counterfactual', context=None):
     reader = threading.Thread(target=consume, daemon=True)
     reader.start()
     try:
-        payload = runtime_bridge.control('/fork-run', {
-            'parent_session_id': parent['session_id'], 'boundary': parent['last_seq'],
-            'session_id': sid, 'prompt': prompt,
-            'policy': role_policy(role, tools=context is not None)}, timeout=REQUEST_TIMEOUT_SECONDS)
+        if observer.cancel_requested:
+            raise RuntimeError('用户已取消原生运行')
+        payload = runtime_bridge.control(endpoint, body, timeout=REQUEST_TIMEOUT_SECONDS)
         stop.set()
         reader.join(timeout=.5)
         subscription.drain(observer.on_notification)
         result = SimpleNamespace(**payload)
-        observer.record_result(result, parent={'session_id': parent['session_id'], 'seq': parent['last_seq'],
-                                               'kind': 'native_agent_factory_seed'})
+        observer.record_result(result, parent=parent)
         observer.last_finish = result.finish_reason
         return _gate(result)
     finally:

@@ -26,9 +26,9 @@ from fastapi.responses import Response, JSONResponse
 from pydantic import BaseModel, Field
 
 from gentactix import (adjudication_lib, adjudicator, anchors, battlefield, causal, geo, integrity,
-                       prompts, rag, state, sim_clock, fire_control, reporting, missions)
+                       prompts, rag, state, sim_clock, fire_control, reporting, missions, commands)
 
-from . import agent_tools, harness_engine, extensions, runtime_bridge, session_store, llm_settings, runtime_identity
+from . import agent_tools, harness_engine, extensions, runtime_bridge, session_store, llm_settings, runtime_identity, unit_planning
 
 ROOT = Path(__file__).resolve().parent.parent
 # 战局 → 角色会话 id 的记账索引（重启后 resume 用），只在角色会话开启时写
@@ -46,7 +46,7 @@ async def lifespan(_app):
     harness_engine.close_harness()
 
 
-app = FastAPI(title="GenTactix dsh backend", version="3.2.1", lifespan=lifespan)
+app = FastAPI(title="GenTactix dsh backend", version="3.3.0", lifespan=lifespan)
 
 # Electron 渲染进程（dev: vite 端口 / prod: file://）都要能访问本机后端
 app.add_middleware(
@@ -292,6 +292,7 @@ def _snapshot(session: dict) -> dict:
         "scenario": session["scenario_input"],
         "turn_count": session["turn_count"],
         "time_step": session["time_step"],
+        "branch_origin": copy.deepcopy(session.get('branch_origin')),
         "settings": {
             "simulation_mode": session.get('simulation_mode', 'open'),
             "mission_id": session.get('mission_id'),
@@ -367,6 +368,10 @@ class CreateSessionRequest(BaseModel):
 
 class NextTurnRequest(BaseModel):
     instruction: str = Field(default='', max_length=4000)
+    batch_id: str | None = Field(default=None, min_length=1, max_length=96, pattern=r'^[a-zA-Z0-9-]+$')
+    expected_turn: int | None = Field(default=None, ge=0, strict=True)
+    revision: int | None = Field(default=None, ge=0, strict=True)
+    world_version: str | None = None
 
 
 class ChatRequest(BaseModel):
@@ -460,10 +465,8 @@ def checkpoint_sessions():
     return {'ok': True, 'sessions': len(_SESSIONS), 'build': runtime_identity.status()}
 
 
-@app.post('/api/sessions/import')
-@_serialized
-def import_session(payload: dict):
-    """Restore a full export or a legacy export accompanied by its API snapshot."""
+def _prepare_import(payload: dict):
+    """One authoritative validator for read-only preview and confirmed restore."""
     document = payload.get('export', payload)
     if not isinstance(document, dict):
         raise HTTPException(status_code=422, detail='导出文件必须是JSON对象')
@@ -489,8 +492,6 @@ def import_session(payload: dict):
     import re
     if not isinstance(data, dict) or not re.fullmatch(r'[a-f0-9]{12}', str(data.get('id', ''))):
         raise HTTPException(status_code=422, detail='会话ID不合法')
-    if data['id'] in _SESSIONS:
-        raise HTTPException(status_code=409, detail='会话已存在，导入不会覆盖现有战局')
     if not isinstance(data.get('war_state'), dict) or not isinstance(data.get('history'), list):
         raise HTTPException(status_code=422, detail='缺少完整战局或战报')
     try:
@@ -506,6 +507,41 @@ def import_session(payload: dict):
         session_store.validate(restored)
     except (ValueError, TypeError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return restored
+
+
+def _import_conflict(session_id):
+    # An unreadable checkpoint is still user data; it must never be overwritten.
+    return session_id in _SESSIONS or (session_store.directory() / (session_id + '.json')).exists()
+
+
+@app.post('/api/sessions/import/preview')
+def preview_import_session(payload: dict):
+    if not _OP_LOCK.acquire(blocking=False):
+        raise HTTPException(status_code=409, detail='请完成或取消当前操作后预览导入')
+    try:
+        restored = _prepare_import(payload)
+        cs = restored.get('command_state') or {}
+        warnings = ['导入只恢复文件中的战局、命令与轨迹引用；不会覆盖已有同 ID 战局。']
+        if cs.get('unit_agents'):
+            warnings.append('DSH 原生会话日志不包含在 JSON 中；须保留原运行时日志。日志缺失时会明确拒绝续算，可手动重建单位 Agent。')
+        return {'session_id': restored['id'], 'scenario': restored['scenario_input'],
+            'turn_count': restored['turn_count'], 'time_step': restored['time_step'],
+            'simulation_mode': restored.get('simulation_mode', 'open'),
+            'unit_count': sum(len(restored['war_state'].get(key, [])) for key in ('red_units', 'blue_units')),
+            'order_count': len(cs.get('orders', [])), 'agent_count': len(cs.get('unit_agents', [])),
+            'conflict': _import_conflict(restored['id']), 'warnings': warnings}
+    finally:
+        _OP_LOCK.release()
+
+
+@app.post('/api/sessions/import')
+@_serialized
+def import_session(payload: dict):
+    """Restore an explicitly confirmed export; preview never writes a checkpoint."""
+    restored = _prepare_import(payload)
+    if _import_conflict(restored['id']):
+        raise HTTPException(status_code=409, detail='会话已存在，导入不会覆盖现有战局或磁盘存档')
     session_store.save(restored)
     _SESSIONS[restored['id']] = restored
     return {'session_id': restored['id'], 'turn_count': restored['turn_count']}
@@ -570,13 +606,14 @@ def create_session(req: CreateSessionRequest):
 @_serialized
 def delete_session(session_id: str):
     with _SESSION_LOCK:
-        _get(session_id)
+        existing = _get(session_id)
         # Keep the in-memory battle if removing its checkpoint fails.
         try:
             session_store.remove(session_id)
         except OSError as exc:
             raise HTTPException(status_code=500, detail='无法删除本机存档，战局已保留；请检查存储目录权限后重试') from exc
         _SESSIONS.pop(session_id)
+        harness_engine.dispose_unit_sessions(existing.get('command_state', {}).get('agent_sessions', {}))
         harness_engine.forget_role_sessions(session_id)
     return {"ok": True, "session_id": session_id, "audit_retained": True}
 
@@ -598,6 +635,7 @@ def get_progress(session_id: str):
 @_serialized
 def init_session(session_id: str):
     session = _get(session_id)
+    old_unit_sessions = copy.deepcopy(session.get('command_state', {}).get('agent_sessions', {}))
     scenario_input = session["scenario_input"]
 
     # 1. 高精坐标锚点匹配
@@ -685,6 +723,9 @@ def init_session(session_id: str):
         session['trajectory'] = [trace_record]
         session['causal_analysis'] = None
         session['counterfactuals'] = []
+        session.pop('command_state', None)
+        session.pop('command_proposals', None)
+        harness_engine.dispose_unit_sessions(old_unit_sessions)
         if engine_role:
             _record_role_index(session)
     except Exception as exc:  # noqa: BLE001
@@ -706,6 +747,25 @@ def next_turn(session_id: str, req: NextTurnRequest | None = None):
     session = _get(session_id)
     if not session["war_state"]:
         raise HTTPException(status_code=409, detail="请先初始化沙盘")
+    prepared = None
+    batch_hash = None
+    if session.get('command_state') is not None:
+        if not req or not req.batch_id:
+            raise HTTPException(409, '本局已启用战棋指挥，请刷新命令版本并提交批次')
+        batch_hash = commands.fingerprint(req.model_dump())
+        prior = session['command_state']['batches'].get(req.batch_id)
+        if prior:
+            if prior['input_hash'] != batch_hash:
+                raise HTTPException(409, '批次ID已用于其他命令，禁止重复扣减')
+            return {**_snapshot(session), 'command_result': {'replayed': True, **prior}}
+        try:
+            commands.check_revision(session, req.expected_turn, req.revision, req.world_version)
+            commands.assert_writable(session)
+            prepared = commands.prepare(session)
+        except commands.Conflict as exc:
+            raise HTTPException(409, str(exc)) from exc
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from exc
     if session.get('mission_id') and session['war_state']['mission']['status'] == 'completed':
         raise HTTPException(status_code=409, detail='目标已结算；请导出复盘或重新开局')
     instruction = req.instruction if req else ''
@@ -736,10 +796,12 @@ def next_turn(session_id: str, req: NextTurnRequest | None = None):
     # 智能体模式无条件用角色会话：工具结果必须回喂同一会话。
     engine_role = _brain_role_id(session, "engine",
                                  force=bool(session.get("use_agent_tools")))
-    if engine_role:
+    manual_complete = prepared and all(u['name'] in {x['order']['unit'] for x in prepared['manual']}
+        or not commands.available(u) for _, u in commands.iter_units(prev_state))
+    if engine_role and not manual_complete:
         harness_engine.get_role_session(engine_role)
 
-    # 协作式取消：旗标在**入口与步界**消费；单次在途模型调用不可中断。
+    # 应用旗标守住提交边界；运行时连接后由原生 Agent.cancel 中断在途调用。
     if _consume_cancel(session):
         raise HTTPException(status_code=409, detail="已取消：本回合未执行，战局未改动")
     observer = harness_engine.RunObserver(f"推演 T+{next_turn_num}")
@@ -748,28 +810,40 @@ def next_turn(session_id: str, req: NextTurnRequest | None = None):
     cancel_check = lambda: bool(session.get("cancel_requested"))
 
     try:
+        native_orders, native_decisions = unit_planning.plan(session, prepared, observer) if prepared else ([], [])
         step_prompt = (_amnesia_prefix(session, engine_role) if engine_role else "") + prompts.build_step_prompt(
             session["war_state"], next_turn_num, time_step,
             session["use_live_intel"], briefing, adjudication=pre_adj,
             simulation_mode=session.get('simulation_mode', 'open'))
         if instruction:
             step_prompt += '\n本轮指令（不得改写规则）：' + instruction
+        if prepared:
+            step_prompt += commands.instruction(prepared, native_orders)
         native = session.get('use_agent_tools') and session.get('agent_mode') == 'native'
         if session.get('mission_id'):
             step_prompt = missions.prompt(prev_state, instruction, briefing)
+            if prepared:
+                step_prompt += commands.instruction(prepared, native_orders)
             for attempt in range(2):
-                proposal = harness_engine.get_ai_response(step_prompt, role_id=engine_role,
-                    observer=observer, cancel_check=cancel_check)
+                covered = {x['order']['unit'] for x in prepared['manual']} | {o['unit'] for o in native_orders} if prepared else set()
+                all_covered = prepared and all(u['name'] in covered or not commands.available(u) for _, u in commands.iter_units(prev_state))
+                proposal = {'orders': [], 'decisions': []} if all_covered else harness_engine.get_ai_response(
+                    step_prompt, role_id=engine_role, observer=observer, cancel_check=cancel_check)
                 try:
-                    candidate = missions.advance(prev_state, proposal.get('orders'), time_step)
+                    executed = proposal.get('orders')
+                    if prepared:
+                        overridden = {o['unit'] for o in native_orders}
+                        executed = commands.merge_proposal(session, prepared,
+                            [o for o in (executed or []) if o.get('unit') not in overridden] + native_orders)
+                    candidate = missions.advance(prev_state, executed, time_step)
                     break
                 except (ValueError, KeyError, TypeError) as exc:
                     if attempt:
                         raise ValueError('命令校验重试后仍失败：' + str(exc)) from exc
                     step_prompt += '\n候选命令未通过，状态未改变。请纠正后完整重发orders：' + str(exc)
             result = {'updated_state': candidate, 'report': missions.report(candidate),
-                      'source_note': '教学规则' + missions.VERSION + '；命令由模型提出，状态由程序结算。',
-                      'decisions': [{'team': next(t for t, u in missions.units(prev_state) if u['name'] == o['unit']), 'unit_name': o['unit'], 'action': str(o), 'rationale': str(proposal.get('reason', ''))} for o in proposal['orders']]}
+                      'source_note': '教学规则' + missions.VERSION + '；候选行动经命令优先级校验，状态由程序结算。',
+                      'decisions': proposal.get('decisions', [])}
         elif native:
             step_prompt += ('\n【原生领域工具回合】可调用已注册的只读领域工具get_observation、retrieve_history、'
                             'evaluate_action、inspect_trajectory、evaluate_counterfactual。先核对状态和可行性；'
@@ -804,6 +878,27 @@ def next_turn(session_id: str, req: NextTurnRequest | None = None):
         battlefield.carry_battlefield_state(prev_state, updated_data)
         fire_control.enforce(updated_data, prev_state)
         numeric_flags = integrity.check_numeric_integrity(prev_state, updated_data)
+        next_cs = None
+        if prepared:
+            if not session.get('mission_id'):
+                executed = commands.verify_open(session, prepared, updated_data, native_orders)
+            declarations = result.get('decisions', [])
+            native_keys = {(d['team'], d['unit_name']) for d in native_decisions}
+            # Batch decisions refer only to batch runs, never an unrelated unit Agent's run.
+            native_runs = {r for d in native_decisions for r in d['run_ids']}
+            batch_runs = [r for r in observer.runs if r['id'] not in native_runs]
+            declarations = [{**{k: d.get(k) for k in ('team', 'unit_name', 'action', 'rationale', 'expected_effect')},
+                'source': 'model_batch', 'run_ids': [r['id'] for r in batch_runs]}
+                for d in declarations if isinstance(d, dict) and (d.get('team'), d.get('unit_name')) not in native_keys] + native_decisions
+            next_cs, result['decisions'] = commands.finish(session, prepared, updated_data,
+                executed=executed, rationales=declarations, runs=batch_runs)
+            next_cs['batches'][req.batch_id] = {'input_hash': batch_hash, 'turn': next_turn_num}
+            result['command_context'] = {k: copy.deepcopy(prepared[k]) for k in ('world_version', 'turn', 'manual', 'blocked', 'expired')}
+            result['command_context']['policies'] = {k: copy.deepcopy(prepared['state'][k]) for k in
+                ('revision', 'control_team', 'director', 'no_fire', 'intent')}
+        else:
+            result['decisions'] = commands.complete_decisions(prev_state, updated_data, result.get('decisions'),
+                observer.runs, replay=session.get('simulation_mode') == 'replay')
 
         report_text = result.get("report")
         if not report_text and isinstance(updated_data, dict):
@@ -832,8 +927,13 @@ def next_turn(session_id: str, req: NextTurnRequest | None = None):
             turn=next_turn_num, params=adj_params, prompt=step_prompt, result=result,
             observer=observer, report=report_text or '',
             guards={'roster': roster, 'numeric_flags': numeric_flags, 'movement_violations': violations,
-                    'fire_geometry': {'status': 'verified'}, 'report': report_audit})
+                    'fire_geometry': {'status': 'verified'}, 'report': report_audit}, recover_orphan=True)
 
+        # Build a detached checkpoint. A failed durable write cannot consume the queue.
+        live_session = session
+        session = session_store.serializable(session)
+        if next_cs is not None:
+            session['command_state'] = next_cs
         # ✅ 全部校验通过 → 原子提交：上面任何一步抛异常都到不了这里，
         #    战局、回合数、日志、裁决一律保持调用前原样（502 不留半截状态）。
         session["rag_last"] = rag_meta
@@ -860,6 +960,15 @@ def next_turn(session_id: str, req: NextTurnRequest | None = None):
         session['active_observer'] = None
         session.setdefault('trajectory', []).append(trace_record)
         session['causal_analysis'] = None
+        try:
+            session_store.validate(session)
+            session_store.save(session)
+        except Exception:
+            extensions.discard_uncommitted(live_session, trace_record)
+            session = live_session
+            raise
+        live_session.update(session)
+        session = live_session
         if engine_role:
             _record_role_index(session)
     except Exception as exc:  # noqa: BLE001
@@ -1013,3 +1122,5 @@ from .analysis_routes import build_router  # Router depends on the shared operat
 app.include_router(build_router(_get, _serialized))
 from .scenario_routes import build_router as build_scenario_router
 app.include_router(build_scenario_router(_serialized))
+from .command_routes import build_router as build_command_router
+app.include_router(build_command_router(_get, _serialized))

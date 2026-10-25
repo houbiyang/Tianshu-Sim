@@ -161,6 +161,7 @@ export interface Snapshot {
   scenario: string;
   turn_count: number;
   time_step: string;
+  branch_origin?: { session_id: string; turn: number; basis: string } | null;
   settings?: { simulation_mode?: 'open' | 'replay'; mission_id?: string | null; use_agent_tools: boolean; persist_roles: boolean; agent_mode: string; use_live_intel: boolean };
   war_state: WarState | null;
   last_war_state: WarState | null;
@@ -191,7 +192,7 @@ export interface TraceRun { id: string; session_id: string; first_seq: number | 
 export interface DecisionTrace { id: string; turn: number; report: string; time_step: string;
   clock: { status: string; note?: string }; geometry_enabled: boolean; runs: TraceRun[];
   changes: { team: string; name: string; moved_km: number | null; status: string }[];
-  decisions: { id: string; team: string; unit_name: string; action: string; rationale: string; expected_effect: string }[] }
+  decisions: { id: string; team: string; unit_name: string; action: string; rationale: string; expected_effect: string; source?: string; dsh_event_ref?: { session_id: string; seq: number } | null }[] }
 export interface MetricContrast { metric: string; factual: number; alternative: number; delta: number }
 export interface StatusContrast { team: string; name: string; field: string; factual: unknown; alternative: unknown }
 export interface GeometryEffect { turn: number; team: string; name: string; moved_km: number; status_change_count: number;
@@ -208,6 +209,30 @@ export interface CausalAnalysis { scope: string; timeline: DecisionTrace[];
   limits: string[]; counterfactuals: CounterfactualResult[] }
 
 export type Position = [number, number];
+export interface MapPoint { lat: number; lng: number }
+export interface CommandUnit { id: string; team: string; name: string; present: boolean; ambiguous: boolean;
+  type?: string; hp?: number; personnel?: { current?: number } | null; equipment?: unknown;
+  logistics?: { food?: number; ammo?: number } | null; attack_range?: number;
+  position: MapPoint | null; available: boolean; controllable: boolean;
+  capabilities: { actions: string[]; enabled: boolean; reason: string; move_km: number; movement_basis: string; unsupported: string[] } }
+export interface OrderDraft { id?: string; unit_id: string; action: string; duration: 'next' | 'until_arrived'; destination?: MapPoint; target_id?: string }
+export interface QueuedOrder extends OrderDraft { id: string; status: string; reason?: string }
+export interface CommandView { enabled: boolean; read_only: boolean; revision: number; world_version: string; turn: number; epoch: number;
+  control_team: string; director: boolean; no_fire: boolean; intent: string; units: CommandUnit[];
+  orders: QueuedOrder[]; unit_agents: string[] }
+export interface CommandRevision { expected_turn: number; revision: number; world_version: string }
+export interface CommandProposal { id: string; status: string; orders: OrderDraft[]; intent: string; no_fire: boolean; clarifications: string[] }
+export interface ImportPreview { session_id: string; scenario: string; turn_count: number; time_step: string;
+  simulation_mode: string; unit_count: number; order_count: number; agent_count: number; conflict: boolean; warnings: string[] }
+export interface UnitDecision { id: string; turn: number; unit_id: string; unit_name: string; team: string; action: string;
+  command_id?: string | null; planned?: { action?: string; lat?: number; lng?: number; destination?: MapPoint } | null;
+  expected_effect?: string; goal?: MapPoint | null; before_personnel?: { current?: number } | null; after_personnel?: { current?: number } | null;
+  before_logistics?: { food?: number; ammo?: number } | null; after_logistics?: { food?: number; ammo?: number } | null;
+  ledger?: { delivery?: number; food_consumed?: number; ammo_spent?: number } | null;
+  source: string; status: string; rationale: string; reason?: string; run_ids?: string[]; trace_id?: string;
+  dsh_event_ref?: { session_id: string; seq: number } | null; history_status?: string;
+  before_position?: MapPoint | null; after_position?: MapPoint | null; outcome_basis?: string }
+export interface CommandPreview { origin: MapPoint; destination: MapPoint | null; moveKm: number }
 export interface CountMetric {
   committed: number | null;
   current?: number | null;

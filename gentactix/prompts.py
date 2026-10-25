@@ -260,7 +260,7 @@ def build_step_prompt(war_state, next_turn_num, time_step, use_live_intel, brief
         3. 兵力只能减少。只有「援军抵达 / 就地整补」这类事件可以让 hp 增加，
            且必须在 report 里写明理由；否则会被标记为兵力异常。
         4. 单位已失去战斗力但仍保留在列表里时，把 hp 写成 0，不要留一个满编数字。
-        5. 在顶层decisions数组记录本回合最多6个关键决策：team（red/blue）、unit_name（已有番号）、
+        5. 在顶层decisions数组逐单位记录本回合行动（包括待命与失能），不得限制条数或遗漏单位：team（red/blue）、unit_name（已有番号）、
            action（具体命令）、rationale（简短依据）、expected_effect（预期影响）。
            这是可公开核对的决策摘要，不是内部思维链。决策意图不等于已证明的因果关系；
            未能确认决策时返回空数组，不为已发生的战果编造意图或因果贡献百分比。

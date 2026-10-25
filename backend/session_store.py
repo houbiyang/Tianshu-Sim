@@ -42,6 +42,9 @@ def validate(session):
     from gentactix import sim_clock
     if not isinstance(session, dict) or not re.fullmatch(r'[a-f0-9]{12}', str(session.get('id', ''))):
         raise ValueError('会话ID不合法')
+    if session.get('command_state') is not None:
+        from gentactix import commands
+        commands.validate_saved(session)
     from gentactix.state import DEFAULT_SESSION_STATE
     required = set(DEFAULT_SESSION_STATE) | {'time_step', 'use_adjudicator', 'battle_choice', 'use_rag', 'use_live_intel'}
     if required - session.keys():

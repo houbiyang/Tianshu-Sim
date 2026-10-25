@@ -3,7 +3,9 @@
 // 所有「数据实况」caption（交战统计、史料注入、守恒提示）照搬旧版文案口径。
 import { computed, nextTick, onMounted, onBeforeUnmount, reactive, ref, watch } from "vue";
 import { api } from "./api";
-import type { Battle, Health, NumericFlag, Snapshot } from "./types";
+import type { Battle, Health, NumericFlag, Snapshot, CommandPreview } from "./types";
+import CommandCenter from './components/CommandCenter.vue';
+import ImportSession from './components/ImportSession.vue';
 import MissionPanel from "./components/MissionPanel.vue";
 import { normalizeStep, stepOptions } from "./timeSteps";
 import MapView from "./components/MapView.vue";
@@ -17,6 +19,14 @@ import { mdToHtml } from "./markdown";
 
 const TIME_STEPS = computed(() => stepOptions(opts.time_step));
 const turnInstruction = ref("");
+const commandCenter = ref<InstanceType<typeof CommandCenter> | null>(null);
+const commandPreview = ref<CommandPreview | null>(null);
+const selectedUnit = ref<{ team: string; name: string } | null>(null);
+const commandPicking = ref<'move' | 'fire' | null>(null);
+function commandSnapshot(value: Snapshot) {
+  if (value.session_id !== sessionId.value) { sessionId.value = value.session_id; localStorage.setItem('gentactix-session', value.session_id); restoreOptions(value); }
+  apply(value);
+}
 
 const health = ref<Health | null>(null);
 const battles = ref<Battle[]>([]);
@@ -26,6 +36,12 @@ const sessionId = ref<string>("");
 const recentSessions = ref<{ session_id: string; turn_count: number; scenario: string }[]>([]);
 const screen = ref<'launch' | 'workspace'>('launch');
 const settingsDialog = ref<HTMLDialogElement | null>(null);
+const importDialog = ref<InstanceType<typeof ImportSession> | null>(null);
+function openImport() { if (!busy.value) void importDialog.value?.open(); }
+async function importedSession(value: Snapshot) {
+  commandSnapshot(value); restoreOptions(value); screen.value = 'workspace';
+  try { recentSessions.value = (await api.sessions()).sessions; } catch { /* Session is already restored. */ }
+}
 const deleteDialog = ref<HTMLDialogElement | null>(null);
 const pendingDelete = ref<{ session_id: string; turn_count: number; scenario: string } | null>(null);
 const deleting = ref(false);
@@ -201,7 +217,7 @@ async function init() {
   } else sessionId.value = previousSession;
 }
 
-const next = async () => { if (await run(`正在推演未来 ${snap.value?.time_step ?? ""} 的战况…`, () => api.next(sessionId.value, turnInstruction.value))) turnInstruction.value = ""; };
+const next = async () => { if (await run(`正在推演未来 ${snap.value?.time_step ?? ""} 的战况…`, () => commandCenter.value?.next(turnInstruction.value) ?? api.next(sessionId.value, turnInstruction.value))) turnInstruction.value = ""; };
 const review = () => run("参谋长正在深度复盘…", () => api.review(sessionId.value));
 
 async function cancel() {
@@ -288,11 +304,11 @@ function flagLine(f: NumericFlag): string {
 
 <template>
   <div class="desktop-root">
-  <LaunchScreen v-if="screen === 'launch'" :battles="battles" :health="health" :busy="busy" :error="error" :can-resume="hasState()" :recent-sessions="recentSessions" @settings="openSettings" @resume="screen = 'workspace'" @start="startScenario" @reconnect="refreshBackend" @resume-session="resumeSession" @delete-session="requestDelete" @cancel="cancel" />
+  <LaunchScreen v-if="screen === 'launch'" :battles="battles" :health="health" :busy="busy" :error="error" :can-resume="hasState()" :recent-sessions="recentSessions" @settings="openSettings" @import="openImport" @resume="screen = 'workspace'" @start="startScenario" @reconnect="refreshBackend" @resume-session="resumeSession" @delete-session="requestDelete" @cancel="cancel" />
   <template v-else>
   <header class="workspace-command-bar">
     <div class="product-mark"><img :src="'./icons/gentactix.png'" alt=""><strong>GenTactix <span>DSH</span></strong></div>
-    <nav aria-label="工作台菜单"><button @click="screen = 'launch'" :disabled="!!busy">想定管理</button><button @click="openSettings">模型配置</button><button @click="exportJson" :disabled="!hasState()">导出战局</button></nav>
+    <nav aria-label="工作台菜单"><button @click="screen = 'launch'" :disabled="!!busy">想定管理</button><button @click="openSettings">模型配置</button><button @click="openImport" :disabled="!!busy">导入战局</button><button @click="exportJson" :disabled="!hasState()">导出战局</button></nav>
     <span class="workspace-session">{{ snap?.scenario }}</span>
   </header>
   <div class="shell">
@@ -394,7 +410,13 @@ function flagLine(f: NumericFlag): string {
       </header>
 
       <MissionPanel v-if="snap?.war_state?.mission" :mission="snap.war_state.mission" :session-id="sessionId" :busy="!!busy" />
-      <div class="map-wrap" v-if="hasState()"><MapView :snap="snap" :selftest="selftest" /></div>
+      <div class="map-wrap command-workspace" v-if="hasState()">
+        <MapView :snap="snap" :selftest="selftest" :command-preview="commandPreview" :selected-unit="selectedUnit" :picking="commandPicking"
+          @unit-select="(team, name) => commandCenter?.select(team, name)" @map-target="point => commandCenter?.mapTarget(point)" />
+        <CommandCenter v-if="snap" ref="commandCenter" :session-id="sessionId" :snap="snap" :busy="!!busy"
+          @preview="commandPreview = $event" @selected="selectedUnit = $event" @picking="commandPicking = $event"
+          @busy="busy = $event" @snapshot="commandSnapshot" />
+      </div>
       <div class="idle" v-else>
         <img :src="'./logo.png'" alt="GenTactix" class="idle-logo" @error="($event.target as HTMLImageElement).style.display='none'" />
         <h3>系统处于最高物理静默状态</h3>
@@ -403,6 +425,7 @@ function flagLine(f: NumericFlag): string {
 
       <!-- 数据实况条：交战统计 / 史料注入 / 守恒提示，眼睛往下扫一眼就有答案 -->
       <div class="strip" v-if="hasState()">
+        <p class="caption" v-if="snap?.branch_origin">开放假设分支 · 来源 {{ snap.branch_origin.session_id }} / T+{{ snap.branch_origin.turn }} · {{ snap.branch_origin.basis }}</p>
         <p class="caption">{{ engCaption }}</p>
         <p class="caption" v-if="ragMapCaption">{{ ragMapCaption }}</p>
         <p class="caption" v-if="adjCaption">{{ adjCaption }}</p>
@@ -493,6 +516,7 @@ function flagLine(f: NumericFlag): string {
     </main>
   </div>
   </template>
+  <ImportSession ref="importDialog" @imported="importedSession" />
   <dialog ref="deleteDialog" class="settings-dialog tactical-window delete-dialog" aria-labelledby="delete-title" aria-describedby="delete-scope" @cancel="event => { if (deleting) event.preventDefault(); }">
     <header class="window-heading"><span class="window-index">SAVED BATTLE</span><h2 id="delete-title">删除已保存战局</h2></header>
     <div class="delete-content" v-if="pendingDelete">

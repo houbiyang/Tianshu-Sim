@@ -57,7 +57,7 @@ class MissionAPITests(unittest.TestCase):
         resumed=self.client.get(f'/api/sessions/{self.sid}').json()
         self.assertEqual(resumed['adjudication']['spec']['source_kind'],'local_teaching')
         self.assertEqual(resumed['adjudication']['last']['control_radius_km'],.25)
-        for trace in saved['trajectory'][1:]:self.assertEqual(len(trace['decisions']),3)
+        for trace in saved['trajectory'][1:]:self.assertEqual(len(trace['decisions']),6)
     def test_invalid_orders_atomic_retry(self):
         first=self.start()
         with patch.object(h,'get_ai_response',return_value={'orders':[{'unit':'bad','action':'hold'}]}) as model:
